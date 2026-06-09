@@ -894,6 +894,15 @@
           <button onclick="filterCat('Moda')" id="sb-cat-moda" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-white/60 hover:text-white hover:bg-white/5 transition"><i data-lucide="shirt" class="w-3.5 h-3.5"></i> Moda</button>
           <button onclick="filterCat('Deportes')" id="sb-cat-deportes" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-white/60 hover:text-white hover:bg-white/5 transition"><i data-lucide="trophy" class="w-3.5 h-3.5"></i> Deportes</button>
         </div>
+
+        <div class="pt-6 border-t border-white/5 space-y-1">
+          <div class="text-[9px] font-mono text-white/30 uppercase tracking-widest px-3 mb-2">Plataformas</div>
+          <button onclick="filterPlt('TT')" id="sb-plt-tt" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-white/60 hover:text-white hover:bg-white/5 transition"><i data-lucide="video" class="w-3.5 h-3.5"></i> TikTok</button>
+          <button onclick="filterPlt('IG')" id="sb-plt-ig" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-white/60 hover:text-white hover:bg-white/5 transition"><i data-lucide="instagram" class="w-3.5 h-3.5"></i> Instagram</button>
+          <button onclick="filterPlt('YT')" id="sb-plt-yt" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-white/60 hover:text-white hover:bg-white/5 transition"><i data-lucide="youtube" class="w-3.5 h-3.5"></i> YouTube</button>
+          <button onclick="filterPlt('AM')" id="sb-plt-am" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-white/60 hover:text-white hover:bg-white/5 transition"><i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i> Amazon</button>
+          <button onclick="filterPlt('ML')" id="sb-plt-ml" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-white/60 hover:text-white hover:bg-white/5 transition"><i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i> Mercado Libre</button>
+        </div>
       </aside>
 
       <!-- Dashboard Content View Area -->
@@ -1192,7 +1201,9 @@
     let aiSummaryLoaded = false;
 
     // Load Session & Profile state
-    function init() {
+    function init(){
+      console.log("TrendBase v2.1 loaded");
+      if(typeof initGSAPAnimations !== 'undefined') initGSAPAnimations();
       const sess = localStorage.getItem('tb_session');
       if(sess) {
         try {
@@ -1502,13 +1513,31 @@
     // ── FILTERS & CATEGORIES ─────────────────────────────────────────────────
     function filterCat(cat) {
       filter.cat = cat;
+      filter.plt = ''; // reset platform when category changes
       // update highlights in sidebar
-      document.querySelectorAll('aside button').forEach(b => b.classList.remove('text-champagne', 'bg-white/5'));
+      document.querySelectorAll('aside button').forEach(b => {
+        if(b.id && b.id.startsWith('sb-cat')) b.classList.remove('text-champagne', 'bg-white/5');
+        if(b.id && b.id.startsWith('sb-plt')) b.classList.remove('text-champagne', 'bg-white/5');
+      });
       const btnId = cat === '' ? 'sb-cat-all' : `sb-cat-${cat.toLowerCase()}`;
       const activeBtn = document.getElementById(btnId);
-      if(activeBtn) {
-        activeBtn.classList.add('text-champagne', 'bg-white/5');
-      }
+      if(activeBtn) activeBtn.classList.add('text-champagne', 'bg-white/5');
+      renderProducts(true);
+    }
+
+    function filterPlt(plt) {
+      filter.plt = plt;
+      filter.cat = ''; // reset category when platform changes
+      document.querySelectorAll('aside button').forEach(b => {
+        if(b.id && b.id.startsWith('sb-cat')) b.classList.remove('text-champagne', 'bg-white/5');
+        if(b.id && b.id.startsWith('sb-plt')) b.classList.remove('text-champagne', 'bg-white/5');
+      });
+      const activeBtn = document.getElementById(`sb-plt-${plt.toLowerCase()}`);
+      if(activeBtn) activeBtn.classList.add('text-champagne', 'bg-white/5');
+      
+      document.querySelectorAll('.dash-section').forEach(el=>el.classList.remove('active-section'));
+      document.getElementById('sec-tendencias').classList.add('active-section');
+      
       renderProducts(true);
     }
 
@@ -2836,6 +2865,34 @@
       t.style.display='flex';
       clearTimeout(t._to);
       t._to=setTimeout(()=>t.style.display='none',5000);
+    }
+
+    function initGSAPAnimations() {
+      if (typeof gsap === 'undefined') return;
+      gsap.from(".hero-fade-item", {
+        y: 40,
+        opacity: 0,
+        duration: 1.2,
+        stagger: 0.15,
+        ease: "power3.out",
+        delay: 0.2
+      });
+
+      const featureCards = gsap.utils.toArray('.bg-white\\/5.border.border-white\\/10');
+      if(featureCards.length) {
+        featureCards.forEach(card => {
+          gsap.from(card, {
+            scrollTrigger: {
+              trigger: card,
+              start: "top 85%"
+            },
+            y: 40,
+            opacity: 0,
+            duration: 0.8,
+            ease: "power2.out"
+          });
+        });
+      }
     }
 
     // Run app engine init
