@@ -2321,7 +2321,8 @@
     }
 
     // ── PRODUCTS DETAIL POPUP & SUPPLIERS ────────────────────────────────────
-    let currentProd = null;
+    // Remove duplicate let
+    // currentProd is already defined globally
     function openProduct(idx) {
       currentProd = idx;
       const p = PRODUCTS[idx];
@@ -2744,7 +2745,7 @@
     }
     setTimeout(animateCursorScheduler, 2000);
 
-    const AI_SYS='Sos el asistente IA de TrendBase, plataforma de tendencias para dropshippers de Argentina, Uruguay y Chile. Ayudás con: productos virales, márgenes estimados, proveedores, estrategias de venta. Respondé en español, conciso y útil. Máximo 3 párrafos.';
+    // AI_SYS already defined
     async function askAI(msg){
       if(aiLoading)return;
       var planData = currentPlan();
