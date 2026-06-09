@@ -136,7 +136,9 @@
 
       <!-- Nav Links for Dashboard (will toggle based on active view) -->
       <nav id="dash-nav" class="hidden items-center gap-6 text-sm font-medium">
-        <span class="text-white/40">Modo Dashboard</span>
+        <button onclick="goLanding()" class="text-white/70 hover:text-white transition hover-lift flex items-center gap-2">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i> Volver al Inicio
+        </button>
       </nav>
 
       <div class="flex items-center gap-4">
@@ -604,7 +606,7 @@
     </section>
 
     <!-- D. PHILOSOPHY — "The Manifesto" -->
-    <section id="philosophy" class="relative py-32 bg-black overflow-hidden flex items-center justify-center">
+    <section id="philosophy" class="relative min-h-[100dvh] bg-black overflow-hidden flex items-center justify-center">
       <!-- Unsplash gold paint architectural shadows texture at low opacity -->
       <div class="absolute inset-0 z-0 opacity-15">
         <img src="https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=1600" alt="TrendBase Luxury Gold Pattern" class="w-full h-full object-cover">
@@ -898,8 +900,8 @@
         <div class="pt-6 border-t border-white/5 space-y-1">
           <div class="text-[9px] font-mono text-white/30 uppercase tracking-widest px-3 mb-2">Plataformas</div>
           <button onclick="filterPlt('TT')" id="sb-plt-tt" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-white/60 hover:text-white hover:bg-white/5 transition"><i data-lucide="video" class="w-3.5 h-3.5"></i> TikTok</button>
-          <button onclick="filterPlt('IG')" id="sb-plt-ig" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-white/60 hover:text-white hover:bg-white/5 transition"><i data-lucide="instagram" class="w-3.5 h-3.5"></i> Instagram</button>
-          <button onclick="filterPlt('YT')" id="sb-plt-yt" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-white/60 hover:text-white hover:bg-white/5 transition"><i data-lucide="youtube" class="w-3.5 h-3.5"></i> YouTube</button>
+          <button onclick="filterPlt('IG')" id="sb-plt-ig" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-white/60 hover:text-white hover:bg-white/5 transition"><i data-lucide="camera" class="w-3.5 h-3.5"></i> Instagram</button>
+          <button onclick="filterPlt('YT')" id="sb-plt-yt" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-white/60 hover:text-white hover:bg-white/5 transition"><i data-lucide="monitor-play" class="w-3.5 h-3.5"></i> YouTube</button>
           <button onclick="filterPlt('AM')" id="sb-plt-am" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-white/60 hover:text-white hover:bg-white/5 transition"><i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i> Amazon</button>
           <button onclick="filterPlt('ML')" id="sb-plt-ml" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-white/60 hover:text-white hover:bg-white/5 transition"><i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i> Mercado Libre</button>
         </div>
@@ -1262,8 +1264,7 @@
       document.getElementById('view-landing').classList.add('active-view');
       document.getElementById('view-dash').classList.remove('active-view');
       
-      document.getElementById('landing-nav').classList.remove('hidden');
-      document.getElementById('landing-nav').classList.add('flex');
+      document.getElementById('landing-nav').classList.remove('!hidden');
       document.getElementById('dash-nav').classList.add('hidden');
       document.getElementById('dash-nav').classList.remove('flex');
 
@@ -1277,8 +1278,7 @@
       document.getElementById('view-landing').classList.remove('active-view');
       document.getElementById('view-dash').classList.add('active-view');
       
-      document.getElementById('landing-nav').classList.add('hidden');
-      document.getElementById('landing-nav').classList.remove('flex');
+      document.getElementById('landing-nav').classList.add('!hidden');
       document.getElementById('dash-nav').classList.remove('hidden');
       document.getElementById('dash-nav').classList.add('flex');
 
