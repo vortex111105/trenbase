@@ -1588,7 +1588,12 @@
       
       setTimeout(() => {
         renderAnalysisCatChart();
-        renderAnalysisChart();
+        populateAnalysisSelect();
+        const sel = document.getElementById('analysisProductSel');
+        if(sel && sel.options.length > 1) {
+          sel.selectedIndex = 1;
+          renderAnalysisHistory();
+        }
       }, 100);
     }
 
@@ -1730,6 +1735,21 @@
       sel.innerHTML = '<option value="">— Seleccioná un producto —</option>' + PRODUCTS.slice(0, 100).map((p, i) => `<option value="${i}">${p.name}</option>`).join('');
     }
 
+    var currentAnalysisPeriod = 30;
+    var analysisChartInst = null;
+
+    function setAnalysisPeriod(days) {
+      currentAnalysisPeriod = days;
+      document.getElementById('ap7').className = 'px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase transition hover:bg-white/5 text-white/40 hover:text-white';
+      document.getElementById('ap30').className = 'px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase transition hover:bg-white/5 text-white/40 hover:text-white';
+      document.getElementById('ap90').className = 'px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase transition hover:bg-white/5 text-white/40 hover:text-white';
+      
+      const btn = document.getElementById('ap' + days);
+      if(btn) btn.className = 'px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase transition ap-active bg-white/10 text-white';
+      
+      renderAnalysisHistory();
+    }
+
     function renderAnalysisHistory() {
       const sel = document.getElementById('analysisProductSel');
       if(!sel || sel.value === '') return;
@@ -1741,19 +1761,69 @@
       const tbody = document.getElementById('analysisTbody');
       if(!tbody) return;
 
-      tbody.innerHTML = (p.history || []).map((score, i) => {
-        const prev = p.history[i-1] || score;
+      let historySlice = p.history || [];
+      let labelsSlice = WEEKS.slice(0, historySlice.length);
+      
+      if (currentAnalysisPeriod === 30) {
+        historySlice = historySlice.slice(-4);
+        labelsSlice = labelsSlice.slice(-4);
+      } else if (currentAnalysisPeriod === 7) {
+        historySlice = historySlice.slice(-2);
+        labelsSlice = labelsSlice.slice(-2);
+      }
+
+      tbody.innerHTML = historySlice.map((score, i) => {
+        const prev = i > 0 ? historySlice[i-1] : score;
         const diff = score - prev;
         const changeClass = diff >= 0 ? 'text-green-400' : 'text-red-400';
         return `
           <tr class="text-xs">
-            <td class="p-3 font-mono text-white/50">${WEEKS[i]}</td>
+            <td class="p-3 font-mono text-white/50">${labelsSlice[i]}</td>
             <td class="p-3 font-bold text-white font-mono">${score}</td>
             <td class="p-3 font-mono font-bold ${changeClass}">${diff >= 0 ? '+' : ''}${diff}</td>
             <td class="p-3 text-white/70">${LEADERS[i % LEADERS.length]}</td>
           </tr>
         `;
       }).join('');
+      
+      renderAnalysisChart(labelsSlice, historySlice, p.name);
+    }
+    
+    function renderAnalysisChart(labels, data, name) {
+      const ctx = document.getElementById('analysisChart');
+      if(!ctx) return;
+      if (analysisChartInst) analysisChartInst.destroy();
+      
+      analysisChartInst = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'TrendScore: ' + name,
+            data: data,
+            borderColor: '#C9A84C',
+            backgroundColor: 'rgba(201, 168, 76, 0.1)',
+            fill: true,
+            tension: 0.4,
+            borderWidth: 2,
+            pointBackgroundColor: '#C9A84C',
+            pointBorderColor: '#000',
+            pointRadius: 4,
+            pointHoverRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            x: { display: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'rgba(255,255,255,0.5)', font: { family: 'monospace', size: 10 } } },
+            y: { display: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'rgba(255,255,255,0.5)', font: { family: 'monospace', size: 10 } } }
+          }
+        }
+      });
     }
 
     function calcROI() {
