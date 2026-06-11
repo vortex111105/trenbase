@@ -1254,24 +1254,19 @@
       }
     });
 
-    // Stacking sticky cards for Protocol using ScrollTrigger
+    // Fade in effect instead of sticky pin for cleaner reading
     const protocolCards = gsap.utils.toArray('.protocol-card');
     protocolCards.forEach((card, index) => {
-      if (index < protocolCards.length - 1) {
-        gsap.to(card, {
-          scale: 0.9,
-          filter: 'blur(10px)',
-          opacity: 0.5,
-          scrollTrigger: {
-            trigger: card,
-            start: 'top top',
-            end: '+=100%',
-            scrub: true,
-            pin: true,
-            pinSpacing: true
-          }
-        });
-      }
+      gsap.from(card, {
+        opacity: 0,
+        y: 50,
+        duration: 1,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: card,
+          start: 'top 70%',
+        }
+      });
     });
 
     // Navigation toggles: Landing ⇆ Dashboard
@@ -2419,11 +2414,15 @@
       document.getElementById('pmCountries').innerHTML = (p.regions || []).map(r => `<span class="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[9px] font-mono font-bold">${r==='AR'?'🇦🇷 AR':r==='UY'?'🇺🇾 UY':'🇨🇱 CL'}</span>`).join('');
       
       // Dynamic Sell-On logic based on regions
-      let sellOnHTML = '<span class="px-2 py-0.5 rounded bg-champagne/10 border border-champagne/20 text-champagne text-[9px] font-bold"><i data-lucide="shopping-cart" class="w-3 h-3 inline-block mr-1"></i> Shopify / TiendaNube</span>';
-      if (p.regions && p.regions.includes('AR')) sellOnHTML += '<span class="px-2 py-0.5 rounded bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 text-[9px] font-bold">Mercado Libre AR</span>';
-      if (p.regions && p.regions.includes('CL')) sellOnHTML += '<span class="px-2 py-0.5 rounded bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 text-[9px] font-bold">Mercado Libre CL</span> <span class="px-2 py-0.5 rounded bg-green-500/10 border border-green-500/20 text-green-500 text-[9px] font-bold">Falabella</span>';
-      if (p.regions && p.regions.includes('UY')) sellOnHTML += '<span class="px-2 py-0.5 rounded bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 text-[9px] font-bold">Mercado Libre UY</span>';
-      if (p.plts && p.plts.includes('AM')) sellOnHTML += '<span class="px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[9px] font-bold">Amazon</span>';
+      let sellOnHTML = `<a href="https://www.shopify.com/?ref=trendbase" target="_blank" class="px-2 py-0.5 rounded bg-champagne/10 border border-champagne/20 text-champagne text-[9px] font-bold hover:-translate-y-0.5 transition inline-block"><i data-lucide="shopping-cart" class="w-3 h-3 inline-block mr-1"></i> Shopify</a>`;
+      sellOnHTML += ` <a href="https://www.tiendanube.com/?ref=trendbase" target="_blank" class="px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[9px] font-bold hover:-translate-y-0.5 transition inline-block"><i data-lucide="cloud" class="w-3 h-3 inline-block mr-1"></i> TiendaNube</a>`;
+      if (p.regions && p.regions.includes('AR')) sellOnHTML += ` <a href="https://listado.mercadolibre.com.ar/${encodeURIComponent(p.name)}" target="_blank" class="px-2 py-0.5 rounded bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 text-[9px] font-bold hover:-translate-y-0.5 transition inline-block">Mercado Libre AR</a>`;
+      if (p.regions && p.regions.includes('CL')) {
+        sellOnHTML += ` <a href="https://listado.mercadolibre.cl/${encodeURIComponent(p.name)}" target="_blank" class="px-2 py-0.5 rounded bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 text-[9px] font-bold hover:-translate-y-0.5 transition inline-block">Mercado Libre CL</a>`;
+        sellOnHTML += ` <a href="https://www.falabella.com/falabella-cl/search?Ntt=${encodeURIComponent(p.name)}" target="_blank" class="px-2 py-0.5 rounded bg-green-500/10 border border-green-500/20 text-green-500 text-[9px] font-bold hover:-translate-y-0.5 transition inline-block">Falabella</a>`;
+      }
+      if (p.regions && p.regions.includes('UY')) sellOnHTML += ` <a href="https://listado.mercadolibre.com.uy/${encodeURIComponent(p.name)}" target="_blank" class="px-2 py-0.5 rounded bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 text-[9px] font-bold hover:-translate-y-0.5 transition inline-block">Mercado Libre UY</a>`;
+      if (p.plts && p.plts.includes('AM')) sellOnHTML += ` <a href="https://www.amazon.com/s?k=${encodeURIComponent(p.name)}" target="_blank" class="px-2 py-0.5 rounded bg-white/10 border border-white/20 text-white text-[9px] font-bold hover:-translate-y-0.5 transition inline-block">Amazon</a>`;
       
       document.getElementById('pmSellOn').innerHTML = sellOnHTML;
       lucide.createIcons();
@@ -2535,9 +2534,13 @@
     }
 
     const SUPPLIERS_BUY = [
-      { name:'AliExpress', icon:'🛒', url:'https://www.aliexpress.com/wholesale?SearchText=', ship:'10-25 días · Envío gratis', note:'El más popular para dropshipping', color:'#FF4747' },
-      { name:'Alibaba', icon:'🏭', url:'https://www.alibaba.com/trade/search?SearchText=', ship:'20-35 días · Mayorista', note:'Precios más bajos, mínimo por lote', color:'#FF6A00' },
-      { name:'CJ Dropshipping', icon:'🚀', url:'https://cjdropshipping.com/search/', ship:'7-12 días · Bodega LATAM', note:'Bodega en Brasil y México', color:'#00A87E' },
+      { name:'AliExpress', icon:'🛒', url:'https://www.aliexpress.com/wholesale?SearchText=', ship:'10-25 días · Envío gratis', note:'El más popular para dropshipping', color:'#FF4747', aff:'&af=trendbase' },
+      { name:'Alibaba', icon:'🏭', url:'https://www.alibaba.com/trade/search?SearchText=', ship:'20-35 días · Mayorista', note:'Precios más bajos, mínimo por lote', color:'#FF6A00', aff:'' },
+      { name:'CJ Dropshipping', icon:'🚀', url:'https://cjdropshipping.com/list.html?searchKey=', ship:'7-12 días · Bodega LATAM', note:'Bodega en Brasil y México', color:'#00A87E', aff:'' },
+      { name:'Dropdeal', icon:'📦', url:'https://dropdeal.com/search?q=', ship:'5-10 días · Envío LATAM', note:'Especializado en Latinoamérica', color:'#8b5cf6', aff:'&ref=trendbase' },
+      { name:'Droppi', icon:'🇨🇴', url:'https://droppi.com/search?q=', ship:'2-5 días · Contra Entrega', note:'Pago Contra Entrega en Colombia', color:'#f59e0b', aff:'&ref=trendbase' },
+      { name:'Rocketfy', icon:'🚀', url:'https://rocketfy.co/search?q=', ship:'3-6 días · Nacional', note:'Envíos Nacionales en LATAM', color:'#ec4899', aff:'&ref=trendbase' },
+      { name:'TiendaMia', icon:'🌎', url:'https://tiendamia.com/search?q=', ship:'10-15 días · Importación', note:'Importación fácil sin trámites', color:'#3b82f6', aff:'&ref=trendbase' },
     ];
 
     function renderSuppliersTab(p, el) {
@@ -2550,7 +2553,7 @@
             ${SUPPLIERS_BUY.map(s => {
               const estPrice = (p.score * 0.08).toFixed(2);
               return `
-                <a href="${s.url + q}" target="_blank" class="bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl p-4 flex flex-col justify-between transition duration-200">
+                <a href="${s.url + q + (s.aff || '')}" target="_blank" class="bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl p-4 flex flex-col justify-between transition duration-200 hover:-translate-y-1">
                   <div>
                     <div class="text-sm font-bold text-white mb-1">${s.icon} ${s.name}</div>
                     <div class="text-[8px] font-mono text-white/40 mb-2">${s.ship}</div>
