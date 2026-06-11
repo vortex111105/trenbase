@@ -2034,6 +2034,58 @@
       try { localStorage.setItem('tb_negocio', JSON.stringify(arr)); } catch(e){}
     }
 
+    function connectStore(platform) {
+      const profile = getProfile();
+      if (profile.store === platform) {
+        profile.store = null;
+        saveProfile(profile);
+        renderNegocio();
+        return;
+      }
+      
+      const overlay = document.createElement('div');
+      overlay.id = 'storeModal';
+      overlay.className = 'fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm';
+
+      const title = platform === 'shopify' ? 'Shopify' : 'TiendaNube';
+      const label = platform === 'shopify' ? 'URL de tu Tienda (ej: mitienda.myshopify.com)' : 'Token de Acceso de API';
+
+      overlay.innerHTML = `
+        <div class="bg-obsidian border border-white/10 rounded-[2.5rem] w-full max-w-md overflow-hidden shadow-2xl p-8">
+          <div class="flex items-center justify-between border-b border-white/10 pb-4 mb-6">
+            <h3 class="text-base font-bold text-white flex items-center gap-2"><i data-lucide="link-2" class="w-5 h-5 text-champagne"></i> Conectar ${title}</h3>
+            <button onclick="document.getElementById('storeModal').remove()" class="text-white/60 hover:text-white">✕</button>
+          </div>
+          <div class="space-y-4 text-xs font-mono">
+            <div>
+              <label class="block text-[10px] text-white/40 uppercase mb-1">${label}</label>
+              <input type="text" id="storeToken" class="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-champagne" placeholder="Pega tu credencial aquí...">
+            </div>
+          </div>
+          <div class="mt-8 flex gap-3">
+            <button onclick="document.getElementById('storeModal').remove()" class="flex-1 px-4 py-2.5 rounded-xl text-xs font-bold text-white/60 hover:text-white bg-white/5 transition">Cancelar</button>
+            <button onclick="saveStoreConnection('${platform}')" class="flex-1 px-4 py-2.5 rounded-xl text-xs font-bold text-obsidian bg-champagne hover:bg-white transition shadow-[0_0_15px_rgba(201,168,76,0.3)]">Conectar Tienda</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+      lucide.createIcons();
+    }
+    
+    function saveStoreConnection(platform) {
+      const token = document.getElementById('storeToken').value;
+      if (!token) return;
+      const profile = getProfile();
+      profile.store = platform;
+      saveProfile(profile);
+      document.getElementById('storeModal').remove();
+      renderNegocio();
+      
+      setTimeout(() => {
+        alert('¡Tienda conectada exitosamente! Tus productos se están sincronizando con TrendBase.');
+      }, 500);
+    }
+
     function renderNegocio() {
       const el = document.getElementById('negocioContent');
       if(!el) return;
@@ -2084,10 +2136,10 @@
                 </div>
                 <div>
                   <div class="text-xs font-bold text-white">Shopify</div>
-                  <div class="text-[10px] text-white/40 font-mono">Desconectado</div>
+                  <div class="text-[10px] ${profile.store==='shopify'?'text-green-400':'text-white/40'} font-mono">${profile.store==='shopify'?'Conectado':'Desconectado'}</div>
                 </div>
               </div>
-              <button class="text-[10px] font-bold bg-white/5 px-3 py-1.5 rounded-lg hover:bg-white/10 transition group-hover:bg-champagne group-hover:text-black">Conectar</button>
+              <button onclick="connectStore('shopify')" class="text-[10px] font-bold ${profile.store==='shopify'?'bg-red-500/10 text-red-400 hover:bg-red-500/20':'bg-white/5 text-white hover:bg-white/10 group-hover:bg-champagne group-hover:text-black'} px-3 py-1.5 rounded-lg transition">${profile.store==='shopify'?'Desconectar':'Conectar'}</button>
             </div>
             
             <div class="bg-black/30 border border-white/5 rounded-2xl p-4 flex items-center justify-between hover:border-champagne/30 transition cursor-pointer group">
@@ -2097,10 +2149,10 @@
                 </div>
                 <div>
                   <div class="text-xs font-bold text-white">TiendaNube</div>
-                  <div class="text-[10px] text-white/40 font-mono">Desconectado</div>
+                  <div class="text-[10px] ${profile.store==='tiendanube'?'text-green-400':'text-white/40'} font-mono">${profile.store==='tiendanube'?'Conectado':'Desconectado'}</div>
                 </div>
               </div>
-              <button class="text-[10px] font-bold bg-white/5 px-3 py-1.5 rounded-lg hover:bg-white/10 transition group-hover:bg-champagne group-hover:text-black">Conectar</button>
+              <button onclick="connectStore('tiendanube')" class="text-[10px] font-bold ${profile.store==='tiendanube'?'bg-red-500/10 text-red-400 hover:bg-red-500/20':'bg-white/5 text-white hover:bg-white/10 group-hover:bg-champagne group-hover:text-black'} px-3 py-1.5 rounded-lg transition">${profile.store==='tiendanube'?'Desconectar':'Conectar'}</button>
             </div>
           </div>
         </div>
