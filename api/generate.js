@@ -38,10 +38,11 @@ Formato:
 
 const SUPPLIERS = [
   { name: 'AliExpress', icon: 'AE', meta: 'Envío estándar · 15-25 días', aff: true },
-  { name: 'Alibaba', icon: 'AB', meta: 'Mayorista · 20-35 días', aff: true },
-  { name: 'DHgate', icon: 'DH', meta: 'Envío directo · 15-30 días', aff: true },
-  { name: 'CJ Dropshipping', icon: 'CJ', meta: 'Bodega LATAM · 7-12 días', aff: false },
   { name: 'Dropdeal', icon: 'DD', meta: 'Envío a LATAM · 5-10 días', aff: true },
+  { name: 'Droppi', icon: 'DR', meta: 'Pago Contra Entrega Colombia · 2-5 días', aff: true },
+  { name: 'Rocketfy', icon: 'RF', meta: 'Envíos Nacionales LATAM · 3-6 días', aff: true },
+  { name: 'CJ Dropshipping', icon: 'CJ', meta: 'Bodega LATAM · 7-12 días', aff: false },
+  { name: 'TiendaMia', icon: 'TM', meta: 'Importación fácil · 10-15 días', aff: true },
   { name: 'Zendrop', icon: 'ZD', meta: 'Envío express · 3-7 días', aff: false },
   { name: 'Spocket', icon: 'SP', meta: 'Proveedores locales · 5-8 días', aff: true },
 ];
@@ -53,11 +54,14 @@ function searchUrl(platform, name) {
     Alibaba: `https://www.alibaba.com/trade/search?SearchText=${q}`,
     DHgate: `https://www.dhgate.com/wholesale/search.do?act=search&searchkey=${q}`,
     'CJ Dropshipping': `https://cjdropshipping.com/list.html?searchKey=${q}`,
-    Dropdeal: `https://dropdeal.com/search?q=${q}`,
+    Dropdeal: `https://dropdeal.com/search?q=${q}&ref=trendbase`,
+    Droppi: `https://droppi.com/search?q=${q}&ref=trendbase`,
+    Rocketfy: `https://rocketfy.co/search?q=${q}&ref=trendbase`,
+    TiendaMia: `https://tiendamia.com/ar/search?q=${q}&ref=trendbase`,
     Zendrop: `https://app.zendrop.com/find-products?search=${q}`,
     Spocket: `https://app.spocket.co/products?search=${q}`,
   };
-  return map[platform] || `https://www.aliexpress.com/wholesale?SearchText=${q}`;
+  return map[platform] || `https://www.aliexpress.com/wholesale?SearchText=${q}&af=trendbase`;
 }
 
 async function generateBatch(apiKey, label, count) {
