@@ -1047,14 +1047,22 @@
           </div>
 
           <!-- Oportunidades y Tendencias por región -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div class="bg-white/5 border border-white/10 rounded-[2rem] p-6 space-y-4">
-              <h3 class="text-xs font-mono text-champagne uppercase tracking-widest border-b border-white/5 pb-2">Oportunidades Recomendadas</h3>
+              <h3 class="text-xs font-mono text-champagne uppercase tracking-widest border-b border-white/5 pb-2">Oportunidades</h3>
               <div id="opportunityList" class="divide-y divide-white/5"></div>
             </div>
             <div class="bg-white/5 border border-white/10 rounded-[2rem] p-6 space-y-4">
-              <h3 class="text-xs font-mono text-champagne uppercase tracking-widest border-b border-white/5 pb-2">Distribución por País</h3>
-              <div id="regionHeatmap" class="grid grid-cols-1 sm:grid-cols-3 gap-4"></div>
+              <h3 class="text-xs font-mono text-champagne uppercase tracking-widest border-b border-white/5 pb-2">Por País</h3>
+              <div id="regionHeatmap" class="flex flex-col gap-2"></div>
+            </div>
+            <div class="bg-white/5 border border-white/10 rounded-[2rem] p-6 space-y-4">
+              <h3 class="text-xs font-mono text-champagne uppercase tracking-widest border-b border-white/5 pb-2">Top Márgenes</h3>
+              <div id="topMarginList" class="divide-y divide-white/5"></div>
+            </div>
+            <div class="bg-white/5 border border-white/10 rounded-[2rem] p-6 space-y-4">
+              <h3 class="text-xs font-mono text-champagne uppercase tracking-widest border-b border-white/5 pb-2">Categorías</h3>
+              <div id="analysisCatChart" class="space-y-4"></div>
             </div>
           </div>
 
@@ -1257,10 +1265,10 @@
           scrollTrigger: {
             trigger: card,
             start: 'top top',
-            end: 'bottom top',
+            end: '+=100%',
             scrub: true,
             pin: true,
-            pinSpacing: false
+            pinSpacing: true
           }
         });
       }
