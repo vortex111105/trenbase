@@ -1413,13 +1413,17 @@
     }
 
     // ── RENDER PRODUCTS ──────────────────────────────────────────────────────
+    function getProductImage(name) {
+      return `https://tse2.mm.bing.net/th?q=${encodeURIComponent(name + ' producto aliexpress')}&w=300&h=300&c=7&rs=1&p=0`;
+    }
+
     function renderLandingProducts() {
       const container = document.getElementById('landingProducts');
       if(!container) return;
       
       const list = (PRODUCTS || []).slice(0, 8);
       container.innerHTML = list.map((p, i) => {
-        const image = p.img || `https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=600`;
+        const image = p.img || getProductImage(p.name);
         return `
           <div onclick="openProduct(${i})" class="bg-white/5 border border-white/10 rounded-[2rem] overflow-hidden hover-lift shadow-sm cursor-pointer p-4 space-y-4">
             <div class="aspect-video w-full rounded-2xl overflow-hidden bg-black/20 relative">
@@ -1471,7 +1475,12 @@
         return `
           <tr onclick="openProduct(${idx})" class="hover:bg-white/5 transition cursor-pointer text-xs">
             <td class="p-4 text-center font-mono text-white/40">${start + i + 1}</td>
-            <td class="p-4 font-bold text-white">${p.name}</td>
+            <td class="p-4">
+              <div class="flex items-center gap-3">
+                <img src="${getProductImage(p.name)}" alt="${p.name}" class="w-8 h-8 rounded border border-white/10 bg-black/20 object-cover" loading="lazy">
+                <span class="font-bold text-white">${p.name}</span>
+              </div>
+            </td>
             <td class="p-4 font-mono text-champagne">${p.score}</td>
             <td class="p-4 font-mono text-green-400">${p.change}</td>
             <td class="p-4 font-mono text-green-400">${p.marginStr}</td>
@@ -2329,7 +2338,7 @@
       if(!p) return;
 
       document.getElementById('pmTitle').textContent = p.name;
-      document.getElementById('pmImgWrap').innerHTML = `<img src="${p.img || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=600'}" class="w-full h-full object-cover">`;
+      document.getElementById('pmImgWrap').innerHTML = `<img src="${p.img || getProductImage(p.name)}" class="w-full h-full object-cover">`;
       document.getElementById('pmScore').textContent = p.score;
       document.getElementById('pmChange').textContent = p.change;
       document.getElementById('pmMargin').textContent = p.marginStr;
@@ -2400,7 +2409,7 @@
             return `
               <div onclick="openProduct(${idx})" class="bg-white/5 border border-white/10 rounded-[2rem] overflow-hidden hover-lift p-4 space-y-4 cursor-pointer">
                 <div class="aspect-video w-full rounded-2xl overflow-hidden bg-black/20 relative">
-                  <img src="${p.img || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=600'}" class="w-full h-full object-cover">
+                  <img src="${p.img || getProductImage(p.name)}" class="w-full h-full object-cover">
                   <span class="absolute top-3 left-3 text-[9px] font-mono font-bold uppercase bg-champagne text-obsidian px-2 py-0.5 rounded">${p.cat}</span>
                 </div>
                 <div class="space-y-2">
