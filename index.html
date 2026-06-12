@@ -1587,6 +1587,22 @@
         } catch(e){}
       }
       
+      // Auto-Upgrade interceptor for LemonSqueezy redirects
+      if(window.location.search.includes('payment=success') || window.location.search.includes('subscribed=1') || window.location.search.includes('success=true')) {
+        if(!user) {
+          // If returned but not logged in, wait or just set plan
+          plan = 'pro';
+          localStorage.setItem('tb_plan', 'pro');
+        } else {
+          plan = 'pro';
+          localStorage.setItem('tb_plan', 'pro');
+          // Limpiar la URL para que no quede el parametro
+          window.history.replaceState({}, document.title, window.location.pathname);
+          // Opcional: entrar directo al dash
+          setTimeout(() => enterDash(), 500);
+        }
+      }
+      
       // Load products
       loadProducts();
       renderPublicLeaderboard();
