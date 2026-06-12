@@ -1739,5 +1739,37 @@
     init();
   </script>
 
+
+  <!-- MODAL: INTEGRACIONES -->
+  <div id="integrationsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onclick="if(event.target===this) this.classList.add('hidden')">
+    <div class="bg-obsidian border border-white/10 rounded-3xl w-full max-w-md shadow-2xl p-8 relative">
+      <button onclick="document.getElementById('integrationsModal').classList.add('hidden')" class="absolute top-6 right-6 text-white/40 hover:text-white">✕</button>
+      <h3 class="text-xl font-extrabold text-white mb-2">Conectar Tienda</h3>
+      <p class="text-xs text-white/60 mb-6">Conecta tu tienda para exportar productos en 1 clic.</p>
+      
+      <div class="space-y-4">
+        <div>
+          <label class="block text-[10px] font-bold text-white/40 uppercase mb-2">Plataforma</label>
+          <select id="int-platform" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-champagne">
+            <option value="shopify">Shopify</option>
+            <option value="tiendanube">TiendaNube</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-white/40 uppercase mb-2">URL de la Tienda</label>
+          <input id="int-url" type="text" placeholder="ej: mitienda.myshopify.com" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-champagne placeholder:text-white/20">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-white/40 uppercase mb-2">Access Token (Admin API)</label>
+          <input id="int-token" type="password" placeholder="shpat_..." class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-champagne placeholder:text-white/20">
+          <p class="text-[9px] text-white/40 mt-2">Crea una App Privada en tu tienda y genera un Admin API Access Token con permisos de lectura y escritura de productos.</p>
+        </div>
+        <button onclick="saveIntegration()" class="w-full py-3 bg-champagne text-obsidian rounded-xl text-sm font-bold hover:bg-white transition flex justify-center items-center gap-2 mt-4">
+          <i data-lucide="link" class="w-4 h-4"></i> Guardar Conexión
+        </button>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>

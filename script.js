@@ -2051,3 +2051,124 @@
 
     // Run app engine init
     init();
+
+
+// --- INTEGRACIONES TIENDAS ---
+
+async function saveIntegration() {
+  const platform = document.getElementById('int-platform').value;
+  const url = document.getElementById('int-url').value;
+  const token = document.getElementById('int-token').value;
+
+  if (!url || !token) {
+    if (typeof showToast === 'function') showToast('Por favor completa URL y Token', 'error');
+    else if (typeof toast === 'function') toast('Por favor completa URL y Token', 'error', 3000);
+    else alert('Por favor completa URL y Token');
+    return;
+  }
+
+  // Guardar localmente
+  localStorage.setItem('trendbase_store_platform', platform);
+  localStorage.setItem('trendbase_store_url', url);
+  localStorage.setItem('trendbase_store_token', token);
+
+  // Si hay usuario logueado, guardarlo en Supabase metadata
+  if (typeof user !== 'undefined' && user) {
+    try {
+      await fetch('/api/auth', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          action: 'update_metadata', 
+          email: user.email, 
+          metadata: { store_platform: platform, store_url: url, store_token: token } 
+        })
+      });
+    } catch(e) {
+      console.error('No se pudo guardar en la nube', e);
+    }
+  }
+
+  document.getElementById('integrationsModal').classList.add('hidden');
+  
+  if (typeof showToast === 'function') showToast('¡Tienda conectada exitosamente!', 'success');
+  else if (typeof toast === 'function') toast('¡Tienda conectada exitosamente!', 'success', 3000);
+  else alert('¡Tienda conectada exitosamente!');
+}
+
+function loadIntegration() {
+  const p = localStorage.getItem('trendbase_store_platform');
+  const u = localStorage.getItem('trendbase_store_url');
+  const t = localStorage.getItem('trendbase_store_token');
+  
+  if (p) document.getElementById('int-platform').value = p;
+  if (u) document.getElementById('int-url').value = u;
+  if (t) document.getElementById('int-token').value = t;
+}
+
+// Cargar al inicio si el modal existe
+document.addEventListener('DOMContentLoaded', () => {
+  if (document.getElementById('integrationsModal')) {
+    loadIntegration();
+  }
+});
+
+async function exportToStore() {
+  if (typeof currentProd === 'undefined' || currentProd === null) return;
+  const p = PRODUCTS[currentProd];
+  
+  const platform = localStorage.getItem('trendbase_store_platform');
+  const url = localStorage.getItem('trendbase_store_url');
+  const token = localStorage.getItem('trendbase_store_token');
+
+  if (!platform || !url || !token) {
+    document.getElementById('integrationsModal').classList.remove('hidden');
+    if (typeof showToast === 'function') showToast('Debes conectar tu tienda primero', 'error');
+    else if (typeof toast === 'function') toast('Debes conectar tu tienda primero', 'error', 3000);
+    return;
+  }
+
+  const btn = event.target.closest('button');
+  const originalText = btn.innerHTML;
+  btn.innerHTML = '<i class="w-3.5 h-3.5 animate-spin data-lucide=\'loader\'"></i> Exportando...';
+  btn.disabled = true;
+  if(typeof lucide !== 'undefined') lucide.createIcons();
+
+  try {
+    // Get product price from UI or DB
+    const priceEl = document.getElementById('calcPrice');
+    const priceVal = priceEl ? priceEl.value : p.priceMin || p.price_min;
+
+    const res = await fetch('/api/export', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        platform, url, token,
+        product: {
+          name: p.name,
+          cat: p.cat,
+          price: priceVal,
+          description: "Producto exportado con IA desde TrendBase.",
+          img: typeof productImg === 'function' ? productImg(p) : (p.imgKw || p.img_kw || p.img)
+        }
+      })
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      if (typeof showToast === 'function') showToast('🚀 Producto creado en tu tienda', 'success');
+      else if (typeof toast === 'function') toast('🚀 Producto creado en tu tienda', 'success', 3000);
+      else alert('¡Producto exportado con éxito!');
+    } else {
+      throw new Error(data.error || 'Error desconocido');
+    }
+  } catch (err) {
+    if (typeof showToast === 'function') showToast('Error al exportar: ' + err.message, 'error');
+    else if (typeof toast === 'function') toast('Error al exportar: ' + err.message, 'error', 4000);
+    else alert('Error: ' + err.message);
+  } finally {
+    btn.innerHTML = originalText;
+    btn.disabled = false;
+    if(typeof lucide !== 'undefined') lucide.createIcons();
+  }
+}

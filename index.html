@@ -330,6 +330,7 @@
     <div class="bg-obsidian border border-white/10 rounded-[2.5rem] w-full max-w-2xl overflow-y-auto max-h-[90vh] shadow-2xl flex flex-col">
       <div class="flex items-center justify-between px-8 py-6 border-b border-white/10 sticky top-0 bg-obsidian/90 backdrop-blur-md z-10">
         <h3 id="pmTitle" class="text-lg font-bold text-white">Producto</h3>
+        <button onclick="exportToStore()" class="ml-auto mr-4 px-4 py-1.5 bg-champagne text-obsidian rounded-xl text-xs font-bold hover:bg-white transition flex items-center gap-1.5"><i data-lucide="zap" class="w-3.5 h-3.5"></i> Exportar a Tienda</button>
         <button onclick="closeProdModalDirect()" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/60 hover:text-white transition">✕</button>
       </div>
       
@@ -1193,6 +1194,7 @@
           <button onclick="goSection('alertas')" id="sb-alertas" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-white/70 hover:text-white hover:bg-white/5 transition"><span class="flex items-center gap-3"><i data-lucide="bell" class="w-4 h-4"></i> Alertas</span> <span id="alertBadge" class="hidden bg-red-500 text-white text-[9px] font-mono px-2 py-0.5 rounded-full">3</span></button>
           <button onclick="goSection('guardados')" id="sb-guardados" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-white/70 hover:text-white hover:bg-white/5 transition"><span class="flex items-center gap-3"><i data-lucide="bookmark" class="w-4 h-4"></i> Guardados</span> <span id="savedCountSidebar" class="bg-white/10 text-white/60 text-[9px] font-mono px-2 py-0.5 rounded-full">0</span></button>
           <button onclick="goSection('perfil')" id="sb-perfil" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-white/70 hover:text-white hover:bg-white/5 transition"><i data-lucide="user" class="w-4 h-4"></i> Mi perfil</button>
+          <button onclick="document.getElementById(\'integrationsModal\').classList.remove(\'hidden\'); closeSidebar();" id="sb-integrations" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-white/70 hover:text-white hover:bg-white/5 transition"><i data-lucide="shopping-bag" class="w-4 h-4"></i> Integraciones</button>
           <button onclick="goSection('negocio')" id="sb-negocio" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-white/70 hover:text-white hover:bg-white/5 transition"><i data-lucide="briefcase" class="w-4 h-4"></i> Mi negocio</button>
         </div>
 
@@ -3414,6 +3416,38 @@
     // Run app engine init
     init();
   </script>
+
+
+  <!-- MODAL: INTEGRACIONES -->
+  <div id="integrationsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onclick="if(event.target===this) this.classList.add('hidden')">
+    <div class="bg-obsidian border border-white/10 rounded-3xl w-full max-w-md shadow-2xl p-8 relative">
+      <button onclick="document.getElementById('integrationsModal').classList.add('hidden')" class="absolute top-6 right-6 text-white/40 hover:text-white">✕</button>
+      <h3 class="text-xl font-extrabold text-white mb-2">Conectar Tienda</h3>
+      <p class="text-xs text-white/60 mb-6">Conecta tu tienda para exportar productos en 1 clic.</p>
+      
+      <div class="space-y-4">
+        <div>
+          <label class="block text-[10px] font-bold text-white/40 uppercase mb-2">Plataforma</label>
+          <select id="int-platform" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-champagne">
+            <option value="shopify">Shopify</option>
+            <option value="tiendanube">TiendaNube</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-white/40 uppercase mb-2">URL de la Tienda</label>
+          <input id="int-url" type="text" placeholder="ej: mitienda.myshopify.com" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-champagne placeholder:text-white/20">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-white/40 uppercase mb-2">Access Token (Admin API)</label>
+          <input id="int-token" type="password" placeholder="shpat_..." class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-champagne placeholder:text-white/20">
+          <p class="text-[9px] text-white/40 mt-2">Crea una App Privada en tu tienda y genera un Admin API Access Token con permisos de lectura y escritura de productos.</p>
+        </div>
+        <button onclick="saveIntegration()" class="w-full py-3 bg-champagne text-obsidian rounded-xl text-sm font-bold hover:bg-white transition flex justify-center items-center gap-2 mt-4">
+          <i data-lucide="link" class="w-4 h-4"></i> Guardar Conexión
+        </button>
+      </div>
+    </div>
+  </div>
 
 </body>
 </html>
