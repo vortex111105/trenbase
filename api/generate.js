@@ -167,8 +167,10 @@ export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
 
   // Auth check
-  const secret = req.query?.secret || req.headers?.['x-cron-secret'];
-  if (secret !== CRON_SECRET) {
+  const authHeader = req.headers?.['authorization'] || '';
+  const bearerToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
+  const secret = req.query?.secret || req.headers?.['x-cron-secret'] || bearerToken;
+  if (!CRON_SECRET || secret !== CRON_SECRET) {
     return res.status(401).json({ error: 'No autorizado' });
   }
 

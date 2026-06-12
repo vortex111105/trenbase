@@ -20,7 +20,7 @@
     const PLANS = {
       free:    { maxProducts: 20,    ai: false, advFilters: false, history: 7,  analysis: false, comparator: false, aiMessages: 0  },
       starter: { maxProducts: 150,   ai: true,  advFilters: true,  history: 90, analysis: true,  comparator: false, aiMessages: 10 },
-      pro:     { maxProducts: 99999, ai: true,  advFilters: true,  history: 90, analysis: true,  comparator: true,  aimessages: 15 },
+      pro:     { maxProducts: 99999, ai: true,  advFilters: true,  history: 90, analysis: true,  comparator: true,  aiMessages: 15 },
     };
     function currentPlan(){ return PLANS[plan] || PLANS.free; }
 
@@ -1556,7 +1556,7 @@
         const res = await fetch('/api/chat', {
           method:'POST',
           headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ messages: aiHistory, system: AI_SYS })
+          body:JSON.stringify({messages:aiHistory,system:AI_SYS,plan: (typeof planData !== 'undefined' ? planData.id : 'free')})
         });
         const data = await res.json();
         if(!res.ok) throw new Error(data.error || 'Error del servidor de IA');
@@ -1760,7 +1760,7 @@
       msgs.innerHTML+='<div class="typing" id="typing"><span class="text-white/40">Generando respuesta...</span></div>';
       msgs.scrollTop=msgs.scrollHeight;aiHistory.push({role:'user',content:text});
       try{
-        const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:aiHistory,system:AI_SYS})});
+        const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:aiHistory,system:AI_SYS,plan: (typeof planData !== 'undefined' ? planData.id : 'free')})});
         let data;try{data=await res.json();}catch(je){throw new Error('Error del servidor ('+res.status+')');}
         if(!res.ok)throw new Error(data.error||'Error: '+res.status);
         const reply=data.text||'Sin respuesta.';aiHistory.push({role:'assistant',content:reply});
