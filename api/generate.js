@@ -18,22 +18,9 @@ const BATCH_PROMPTS = [
 ];
 
 function makePrompt(label, count) {
-  return `Sos un sistema de inteligencia de mercado que monitorea 47.000+ productos en TikTok, Instagram, YouTube, Pinterest, Facebook, Amazon, Mercado Libre, Google Trends y AliExpress para LATAM.
-
-Generá ${count} productos virales de "${label}" para dropshipping en Argentina, Uruguay y Chile.
-Respondé SOLO con JSON array, sin markdown, sin texto extra.
-
-Formato:
-{"name":"Nombre","cat":"Tecnología","score":95,"change":"+18%","changeNum":18,"plts":["TT","IG"],"margin":52,"marginStr":"45-60%","hot":true,"regions":["AR","UY","CL"],"comp":"Media","priceMin":20,"priceStr":"$20-$50","history":[60,63,67,65,70,74,72,77,80,78,83,86,84,89,92,95]}
-
-- cat: Tecnología, Belleza, Hogar, Moda, o Deportes
-- score 35-99, ordenados mayor a menor
-- history: exactamente 16 números 0-100
-- plts: subconjunto de TT,IG,YT,PT,FB,AM,ML,GT,AE
-- regions: subconjunto de AR,UY,CL
-- comp: Baja, Media, o Alta
-- Productos variados, actuales, sin repetir
-- Solo el JSON array`;
+  return `Generá ${count} productos virales de "${label}" para dropshipping LATAM (AR/UY/CL). Solo JSON array, sin markdown.
+Formato: {"name":"Nombre","cat":"Tecnología","score":95,"change":"+18%","changeNum":18,"plts":["TT","IG"],"margin":52,"marginStr":"45-60%","hot":true,"regions":["AR","UY"],"comp":"Media","priceMin":20,"priceStr":"$20-$50","history":[60,63,67,65,70,74,72,77,80,78,83,86,84,89,92,95],"img_kw":"keyword1 keyword2 keyword3"}
+Reglas: cat∈[Tecnología,Belleza,Hogar,Moda,Deportes] | score 35-99 desc | history=16 nums | plts⊂[TT,IG,YT,PT,FB,AM,ML,GT,AE] | regions⊂[AR,UY,CL] | comp∈[Baja,Media,Alta] | img_kw=3 palabras en inglés para buscar foto del producto en Unsplash`;
 }
 
 const SUPPLIERS = [
@@ -126,6 +113,7 @@ async function saveToSupabase(products) {
     price_min: p.priceMin,
     price_str: p.priceStr,
     history: p.history,
+    img_kw: p.img_kw || '',
     rank: idx + 1,
     suppliers: SUPPLIERS.map((s, si) => ({ ...s, url: searchUrl(s.name, p.name), price: `USD ${(p.priceMin * (0.18 + si * 0.03 + (idx % 4) * 0.02)).toFixed(2)}` })),
     updated_at: new Date().toISOString(),
@@ -166,7 +154,7 @@ async function saveToSupabase(products) {
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
 
-  // Auth check
+  // Auth check — acepta: query ?secret=, header x-cron-secret, o Authorization Bearer (Vercel Cron)
   const authHeader = req.headers?.['authorization'] || '';
   const bearerToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
   const secret = req.query?.secret || req.headers?.['x-cron-secret'] || bearerToken;

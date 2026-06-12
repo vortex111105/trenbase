@@ -24,6 +24,19 @@
     };
     function currentPlan(){ return PLANS[plan] || PLANS.free; }
 
+    // ── IMÁGENES (Unsplash Source — gratis, sin API key) ─────────────────────
+    const CAT_IMG_KW = {
+      'Tecnología': 'technology gadget device',
+      'Belleza':    'beauty cosmetics skincare',
+      'Hogar':      'home decor interior',
+      'Moda':       'fashion clothing accessories',
+      'Deportes':   'fitness sport exercise',
+    };
+    function productImg(p, size='600x400') {
+      const kw = (p.imgKw || CAT_IMG_KW[p.cat] || 'product').trim().replace(/\s+/g, ',');
+      return `https://source.unsplash.com/featured/${size}/?${encodeURIComponent(kw)}`;
+    }
+
     const PLT={
       TT:{label:'TikTok',bg:'#000000',fg:'#fff'},
       IG:{label:'Instagram',bg:'#E1306C',fg:'#fff'},
@@ -336,6 +349,7 @@
         comp: p.comp, priceMin: p.price_min || p.priceMin,
         priceStr: p.price_str || p.priceStr,
         history: p.history || [], rank: p.rank || 0,
+        imgKw: p.img_kw || p.imgKw || '',
         suppliers: p.suppliers || [],
       }));
 
@@ -377,11 +391,11 @@
       
       const list = (PRODUCTS || []).slice(0, 8);
       container.innerHTML = list.map((p, i) => {
-        const image = p.img || `https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=600`;
+        const image = p.img || productImg(p);
         return `
           <div onclick="openProduct(${i})" class="bg-white/5 border border-white/10 rounded-[2rem] overflow-hidden hover-lift shadow-sm cursor-pointer p-4 space-y-4">
             <div class="aspect-video w-full rounded-2xl overflow-hidden bg-black/20 relative">
-              <img src="${image}" class="w-full h-full object-cover" loading="lazy" decoding="async">
+              <img src="${image}" class="w-full h-full object-cover" loading="lazy" decoding="async" onerror="this.src='https://source.unsplash.com/featured/600x400/?product'">
               <span class="absolute top-3 left-3 text-[9px] font-mono font-bold uppercase bg-champagne text-obsidian px-2 py-0.5 rounded">${p.cat}</span>
             </div>
             <div class="space-y-2">
@@ -1297,6 +1311,8 @@
 
     async function subscribe(planName) {
       if(!user) { openAuth('signup'); return; }
+      const btn = event?.target;
+      if(btn) { btn.disabled = true; btn.textContent = 'Redirigiendo...'; }
       try {
         const res = await fetch('/api/subscribe', {
           method:'POST',
@@ -1304,9 +1320,14 @@
           body: JSON.stringify({ plan: planName, email: user.email })
         });
         const data = await res.json();
-        if(data.url) location.href = data.url;
+        if(data.url) {
+          location.href = data.url;
+        } else {
+          throw new Error(data.error || 'No se pudo generar el link de pago');
+        }
       } catch(e) {
-        alert('Error: ' + e.message);
+        toast('Error al procesar el pago: ' + e.message, 'error', 5000);
+        if(btn) { btn.disabled = false; btn.textContent = planName === 'pro' ? 'Comenzar con Pro' : 'Probar 7 días gratis'; }
       }
     }
 
@@ -1343,6 +1364,7 @@
       document.getElementById('pmSaveBtn').innerHTML = saved.includes(idx) ? '<i data-lucide="bookmark-check" class="w-4 h-4 inline-block mr-1"></i> Guardado' : '<i data-lucide="bookmark" class="w-4 h-4 inline-block mr-1"></i> Guardar';
       
       switchModalTab('info', document.querySelector('.modal-tab'));
+      _resetMktTab();
       document.getElementById('prodModal').classList.remove('hidden');
       lucide.createIcons();
     }
@@ -1534,6 +1556,141 @@
       }, 300);
     }
 
+    // ── MARKETING IA ────────────────────────────────────────────────────────
+    let _mktCache = {};
+
+    function _mktCacheKey(name) { return 'mkt_' + name.toLowerCase().replace(/\s+/g,'_'); }
+
+    function generateMarketingCopy() {
+      if (currentProd === null) return;
+      const p = PRODUCTS[currentProd];
+      const plan = currentPlan();
+
+      // Plan gate
+      if (!plan || plan.id === 'free') {
+        document.getElementById('mkt-gate').classList.remove('hidden');
+        document.getElementById('mkt-generate-wrap').classList.add('hidden');
+        return;
+      }
+
+      // Check localStorage cache (24h)
+      const cacheKey = _mktCacheKey(p.name);
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        try {
+          const { data, ts } = JSON.parse(cached);
+          if (Date.now() - ts < 86400000) { _renderMkt(data, true); return; }
+        } catch(e) {}
+      }
+
+      _setMktState('loading');
+      const btn = document.getElementById('mktGenerateBtn');
+      if (btn) { btn.disabled = true; }
+
+      const user = supabase.auth.getUser ? supabase.auth.getUser() : Promise.resolve({ data: { user: null } });
+      (user.then ? user : Promise.resolve(user)).then(({ data: { user: u } }) => {
+        const token = u?.access_token || '';
+        return fetch('/api/describe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ product: p, plan: plan.id, token })
+        });
+      }).then(r => r.json()).then(res => {
+        if (btn) btn.disabled = false;
+        if (res.error) { _setMktState('error', res.error); return; }
+        const copy = res.copy;
+        // Save to cache
+        localStorage.setItem(cacheKey, JSON.stringify({ data: { copy, model: res.model }, ts: Date.now() }));
+        _renderMkt({ copy, model: res.model }, false);
+      }).catch(err => {
+        if (btn) btn.disabled = false;
+        _setMktState('error', err.message || 'Error de red');
+      });
+    }
+
+    function _setMktState(state, msg) {
+      ['mkt-loading','mkt-content','mkt-error','mkt-generate-wrap','mkt-gate'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('hidden');
+      });
+      if (state === 'loading') {
+        document.getElementById('mkt-loading')?.classList.remove('hidden');
+      } else if (state === 'error') {
+        const wrap = document.getElementById('mkt-error');
+        const msgEl = document.getElementById('mkt-error-msg');
+        if (msgEl) msgEl.textContent = msg || 'Error al generar';
+        wrap?.classList.remove('hidden');
+        document.getElementById('mkt-generate-wrap')?.classList.remove('hidden');
+      } else if (state === 'idle') {
+        document.getElementById('mkt-generate-wrap')?.classList.remove('hidden');
+      }
+    }
+
+    function _renderMkt({ copy, model }, fromCache) {
+      _setMktState('');
+      document.getElementById('mkt-content')?.classList.remove('hidden');
+
+      const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val || ''; };
+      set('mkt-ml-titulo', copy.ml_titulo);
+      set('mkt-ml-desc', copy.ml_descripcion);
+      set('mkt-tiktok', copy.tiktok_script);
+      set('mkt-instagram', copy.instagram_caption);
+      set('mkt-precio', copy.precio_sugerido_ars);
+      set('mkt-diferencial', copy.punto_diferencial);
+      set('mkt-model-name', (model || 'Claude Haiku').replace('claude-','').replace('-',' '));
+
+      // Keywords as chips
+      const kwWrap = document.getElementById('mkt-keywords');
+      if (kwWrap && Array.isArray(copy.keywords_seo)) {
+        kwWrap.innerHTML = copy.keywords_seo.map(k =>
+          `<span class="text-xs bg-blue-500/15 border border-blue-500/25 text-blue-300 px-2.5 py-1 rounded-full">${k}</span>`
+        ).join('');
+      }
+
+      // Add cache badge if from cache
+      const badge = document.getElementById('mkt-model-badge');
+      if (badge && fromCache) {
+        badge.innerHTML += ' <span class="ml-1 text-white/25">(caché)</span>';
+      }
+
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
+    function clearMarketingCache() {
+      if (currentProd === null) return;
+      const p = PRODUCTS[currentProd];
+      localStorage.removeItem(_mktCacheKey(p.name));
+      _setMktState('idle');
+      document.getElementById('mkt-content')?.classList.add('hidden');
+    }
+
+    function copyMktField(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const text = id === 'mkt-keywords'
+        ? Array.from(el.querySelectorAll('span')).map(s => s.textContent).join(', ')
+        : el.textContent;
+      navigator.clipboard.writeText(text).then(() => toast('¡Copiado al portapapeles!', 'success', 2000));
+    }
+
+    function copyMktSection(id1, id2) {
+      const t1 = document.getElementById('mkt-ml-titulo')?.textContent || '';
+      const t2 = document.getElementById('mkt-ml-desc')?.textContent || '';
+      navigator.clipboard.writeText(t1 + '\n\n' + t2).then(() => toast('Título y descripción copiados', 'success', 2000));
+    }
+
+    // Patch openProductModal to reset marketing tab state
+    const _origOpenProdModal = typeof openProductModal === 'function' ? openProductModal : null;
+
+    function _resetMktTab() {
+      ['mkt-loading','mkt-content','mkt-error','mkt-gate'].forEach(id => {
+        document.getElementById(id)?.classList.add('hidden');
+      });
+      document.getElementById('mkt-generate-wrap')?.classList.remove('hidden');
+      const btn = document.getElementById('mktGenerateBtn');
+      if (btn) btn.disabled = false;
+    }
+
     // ── ANTHROPIC CLAUDE CHAT IA ─────────────────────────────────────────────
     const AI_SYS = 'Sos el asistente IA de TrendBase, plataforma de tendencias para dropshippers de Argentina, Uruguay y Chile. Ayudás con: productos virales, márgenes estimados, proveedores, estrategias de venta. Respondé en español, conciso y útil. Máximo 3 párrafos.';
     
@@ -1556,7 +1713,7 @@
         const res = await fetch('/api/chat', {
           method:'POST',
           headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({messages:aiHistory,system:AI_SYS,plan: (typeof planData !== 'undefined' ? planData.id : 'free')})
+          body: JSON.stringify({ messages: aiHistory, system: AI_SYS, plan: plan || 'free' })
         });
         const data = await res.json();
         if(!res.ok) throw new Error(data.error || 'Error del servidor de IA');
@@ -1760,7 +1917,7 @@
       msgs.innerHTML+='<div class="typing" id="typing"><span class="text-white/40">Generando respuesta...</span></div>';
       msgs.scrollTop=msgs.scrollHeight;aiHistory.push({role:'user',content:text});
       try{
-        const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:aiHistory,system:AI_SYS,plan: (typeof planData !== 'undefined' ? planData.id : 'free')})});
+        const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:aiHistory,system:AI_SYS})});
         let data;try{data=await res.json();}catch(je){throw new Error('Error del servidor ('+res.status+')');}
         if(!res.ok)throw new Error(data.error||'Error: '+res.status);
         const reply=data.text||'Sin respuesta.';aiHistory.push({role:'assistant',content:reply});

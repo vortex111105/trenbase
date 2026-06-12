@@ -346,6 +346,9 @@
           <button onclick="switchModalTab('info',this)" class="modal-tab py-2 text-xs font-bold text-champagne border-b-2 border-champagne">Información</button>
           <button onclick="switchModalTab('history',this)" class="modal-tab py-2 text-xs font-bold text-white/50 hover:text-white">Historial 90 días</button>
           <button onclick="switchModalTab('suppliers',this)" class="modal-tab py-2 text-xs font-bold text-white/50 hover:text-white">Proveedores</button>
+          <button onclick="switchModalTab('marketing',this)" class="modal-tab py-2 text-xs font-bold text-white/50 hover:text-white flex items-center gap-1.5">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Marketing IA
+          </button>
         </div>
 
         <!-- Info Tab -->
@@ -414,6 +417,117 @@
         <!-- Suppliers Tab -->
         <div id="tab-suppliers" class="modal-tab-content hidden space-y-6">
           <div id="pmSuppliers" class="space-y-6"></div>
+        </div>
+
+        <!-- Marketing Tab -->
+        <div id="tab-marketing" class="modal-tab-content hidden space-y-5">
+          <!-- Free plan gate -->
+          <div id="mkt-gate" class="hidden text-center py-8 px-4">
+            <div class="w-12 h-12 mx-auto mb-4 rounded-2xl bg-champagne/10 border border-champagne/20 flex items-center justify-center">
+              <i data-lucide="lock" class="w-6 h-6 text-champagne"></i>
+            </div>
+            <p class="text-white font-bold text-sm mb-1">Requiere plan Starter o Pro</p>
+            <p class="text-white/50 text-xs mb-4">Generá copy de MercadoLibre, scripts TikTok, captions y keywords SEO con IA</p>
+            <button onclick="showUpgrade()" class="px-6 py-2.5 bg-champagne text-obsidian text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-champagne/90 transition">
+              Ver planes <i data-lucide="arrow-right" class="w-3.5 h-3.5 inline-block ml-1"></i>
+            </button>
+          </div>
+
+          <!-- Generate button (shown before generation) -->
+          <div id="mkt-generate-wrap" class="text-center py-4">
+            <button id="mktGenerateBtn" onclick="generateMarketingCopy()" class="inline-flex items-center gap-2 px-6 py-3 bg-champagne text-obsidian text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-champagne/90 transition disabled:opacity-50 disabled:cursor-not-allowed">
+              <i data-lucide="sparkles" class="w-4 h-4"></i>
+              Generar Copy con IA
+            </button>
+            <p class="text-white/30 text-xs mt-2">~3 segundos · Claude Haiku · Cache 24h</p>
+          </div>
+
+          <!-- Copy content (hidden until generated) -->
+          <div id="mkt-content" class="hidden space-y-4">
+            <!-- Model badge -->
+            <div class="flex items-center justify-between mb-1">
+              <span id="mkt-model-badge" class="inline-flex items-center gap-1.5 text-xs text-white/40 bg-white/5 px-2.5 py-1 rounded-full border border-white/10">
+                <i data-lucide="cpu" class="w-3 h-3"></i> <span id="mkt-model-name">Claude Haiku</span>
+              </span>
+              <button onclick="clearMarketingCache()" class="text-xs text-white/30 hover:text-white/60 transition flex items-center gap-1">
+                <i data-lucide="refresh-cw" class="w-3 h-3"></i> Regenerar
+              </button>
+            </div>
+
+            <!-- MercadoLibre -->
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+                  <span class="w-5 h-5 bg-yellow-400 rounded-md flex items-center justify-center text-[10px] font-black text-black">ML</span>
+                  MercadoLibre
+                </span>
+                <button onclick="copyMktSection('ml_titulo','ml_descripcion')" class="text-xs text-white/40 hover:text-champagne transition flex items-center gap-1">
+                  <i data-lucide="copy" class="w-3 h-3"></i> Copiar
+                </button>
+              </div>
+              <p id="mkt-ml-titulo" class="text-white font-semibold text-sm leading-snug"></p>
+              <p id="mkt-ml-desc" class="text-white/60 text-xs leading-relaxed"></p>
+              <div class="flex items-center gap-3 pt-1">
+                <span class="text-xs text-white/40">Precio sugerido:</span>
+                <span id="mkt-precio" class="text-xs text-green-400 font-bold"></span>
+                <span class="mx-1 text-white/20">·</span>
+                <span id="mkt-diferencial" class="text-xs text-champagne/80 italic"></span>
+              </div>
+            </div>
+
+            <!-- TikTok -->
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+                  <span class="w-5 h-5 bg-black rounded-md flex items-center justify-center text-[10px] font-black text-white">TT</span>
+                  Script TikTok 30s
+                </span>
+                <button onclick="copyMktField('mkt-tiktok')" class="text-xs text-white/40 hover:text-champagne transition flex items-center gap-1">
+                  <i data-lucide="copy" class="w-3 h-3"></i> Copiar
+                </button>
+              </div>
+              <p id="mkt-tiktok" class="text-white/70 text-xs leading-relaxed whitespace-pre-line"></p>
+            </div>
+
+            <!-- Instagram -->
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+                  <span class="w-5 h-5 bg-gradient-to-br from-purple-500 to-pink-500 rounded-md flex items-center justify-center text-[10px] font-black text-white">IG</span>
+                  Caption Instagram
+                </span>
+                <button onclick="copyMktField('mkt-instagram')" class="text-xs text-white/40 hover:text-champagne transition flex items-center gap-1">
+                  <i data-lucide="copy" class="w-3 h-3"></i> Copiar
+                </button>
+              </div>
+              <p id="mkt-instagram" class="text-white/70 text-xs leading-relaxed"></p>
+            </div>
+
+            <!-- SEO Keywords -->
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+                  <i data-lucide="search" class="w-3.5 h-3.5 text-blue-400"></i>
+                  Keywords SEO
+                </span>
+                <button onclick="copyMktField('mkt-keywords')" class="text-xs text-white/40 hover:text-champagne transition flex items-center gap-1">
+                  <i data-lucide="copy" class="w-3 h-3"></i> Copiar
+                </button>
+              </div>
+              <div id="mkt-keywords" class="flex flex-wrap gap-2"></div>
+            </div>
+          </div>
+
+          <!-- Loading state -->
+          <div id="mkt-loading" class="hidden text-center py-10">
+            <div class="w-10 h-10 mx-auto mb-3 border-2 border-champagne/30 border-t-champagne rounded-full animate-spin"></div>
+            <p class="text-white/50 text-xs">Generando copy con Claude Haiku...</p>
+          </div>
+
+          <!-- Error state -->
+          <div id="mkt-error" class="hidden bg-red-500/10 border border-red-500/20 rounded-2xl p-4 text-center">
+            <p id="mkt-error-msg" class="text-red-400 text-xs"></p>
+          </div>
         </div>
 
         <!-- Modal Footer Actions -->
@@ -1125,7 +1239,9 @@
                 <option value="UY">🇺🇾 Uruguay</option>
                 <option value="CL">🇨🇱 Chile</option>
               </select>
-
+              <button onclick="exportCSV()" class="flex items-center gap-1.5 bg-white/5 border border-white/10 hover:border-champagne/40 hover:bg-white/10 rounded-xl px-3 py-2 text-xs font-semibold text-white/70 hover:text-white transition">
+                <i data-lucide="download" class="w-3.5 h-3.5"></i> CSV
+              </button>
               <select onchange="filterSort(this.value)" class="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-xs font-semibold text-white/80 outline-none focus:border-champagne">
                 <option value="score">Ordenar por TrendScore</option>
                 <option value="change">Ordenar por Crecimiento</option>
@@ -1375,7 +1491,7 @@
     const PLANS = {
       free:    { maxProducts: 20,    ai: false, advFilters: false, history: 7,  analysis: false, comparator: false, aiMessages: 0  },
       starter: { maxProducts: 150,   ai: true,  advFilters: true,  history: 90, analysis: true,  comparator: false, aiMessages: 10 },
-      pro:     { maxProducts: 99999, ai: true,  advFilters: true,  history: 90, analysis: true,  comparator: true,  aiMessages: 15 },
+      pro:     { maxProducts: 99999, ai: true,  advFilters: true,  history: 90, analysis: true,  comparator: true,  aimessages: 15 },
     };
     function currentPlan(){ return PLANS[plan] || PLANS.free; }
 
@@ -1606,7 +1722,7 @@
 
     async function triggerGeneration(batchIndex) {
       try {
-        const res = await fetch('/api/refresh?batch=' + batchIndex);
+        const res = await fetch('/api/generate?secret=trendbase2025&batch=' + batchIndex);
         const data = await res.json();
         if(data.nextBatch !== null && data.nextBatch !== undefined) {
           setTimeout(() => triggerGeneration(data.nextBatch), 1000);
@@ -2959,7 +3075,7 @@
         const res = await fetch('/api/chat', {
           method:'POST',
           headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({messages:aiHistory,system:AI_SYS,plan: (typeof planData !== 'undefined' ? planData.id : 'free')})
+          body: JSON.stringify({ messages: aiHistory, system: AI_SYS })
         });
         const data = await res.json();
         if(!res.ok) throw new Error(data.error || 'Error del servidor de IA');
@@ -3163,7 +3279,7 @@
       msgs.innerHTML+='<div class="typing" id="typing"><span class="text-white/40">Generando respuesta...</span></div>';
       msgs.scrollTop=msgs.scrollHeight;aiHistory.push({role:'user',content:text});
       try{
-        const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:aiHistory,system:AI_SYS,plan: (typeof planData !== 'undefined' ? planData.id : 'free')})});
+        const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:aiHistory,system:AI_SYS})});
         let data;try{data=await res.json();}catch(je){throw new Error('Error del servidor ('+res.status+')');}
         if(!res.ok)throw new Error(data.error||'Error: '+res.status);
         const reply=data.text||'Sin respuesta.';aiHistory.push({role:'assistant',content:reply});
