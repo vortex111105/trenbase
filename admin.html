@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>TrendBase Admin</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css"/>
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
     :root{
-      --bg:#050505; --bg2:#0a0a0a; --bg-glass:rgba(18,20,25,0.6);
+      --bg:#050505; --sidebar:#0a0a0a; --bg-glass:rgba(18,20,25,0.6);
       --border:rgba(255,255,255,0.08); --border-light:rgba(255,255,255,0.15);
       --text:#ffffff; --text2:#8a93a0; --text3:#4a505e;
       --green:#00e676; --red:#ff3b30; --accent:#ffffff; --accent-dark:#111;
@@ -19,14 +19,14 @@
     }
     
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes pulseGlow { 0% { box-shadow: 0 0 20px rgba(255,255,255,0.05); } 50% { box-shadow: 0 0 30px rgba(255,255,255,0.15); } 100% { box-shadow: 0 0 20px rgba(255,255,255,0.05); } }
+    @keyframes pulseGlow { 0% { box-shadow: 0 0 20px rgba(255,255,255,0.05); } 50% { box-shadow: 0 0 40px rgba(255,255,255,0.15); } 100% { box-shadow: 0 0 20px rgba(255,255,255,0.05); } }
 
     body {
       font-family:'DM Sans',sans-serif;
-      background: radial-gradient(circle at top, var(--bg2) 0%, var(--bg) 100%);
+      background: radial-gradient(circle at top right, #1a1a24 0%, var(--bg) 100%);
       color:var(--text);
       min-height:100vh;
-      background-attachment: fixed;
+      overflow-x: hidden;
     }
     
     /* LOGIN */
@@ -37,7 +37,7 @@
       border-radius:24px; padding:3rem; width:100%; max-width:400px;
       animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .login-logo{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;margin-bottom:2.5rem;text-align:center; letter-spacing: -1px;}
+    .login-logo{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;margin-bottom:2.5rem;text-align:center; letter-spacing: -1px;}
     .login-logo span{color:var(--text2); font-weight: 400;}
     .login-label{font-size:.75rem;color:var(--text2);margin-bottom:.5rem;display:block; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;}
     .login-input{width:100%;background:rgba(0,0,0,0.5);border:1px solid var(--border-light);color:var(--text);border-radius:12px;padding:.8rem 1.2rem;font-size:.9rem;outline:none;margin-bottom:1.5rem; transition: all 0.3s;}
@@ -46,95 +46,104 @@
     .login-btn:hover{transform: translateY(-2px); box-shadow: 0 10px 25px rgba(255,255,255,0.2);}
     .login-err{font-size:.8rem;color:var(--red);text-align:center;margin-top:.75rem;display:none; font-weight: 600;}
 
-    /* DASHBOARD */
-    .dashboard{display:none; animation: fadeIn 0.8s ease-out;}
-    header{display:flex;align-items:center;justify-content:space-between;padding:1.5rem 3rem;border-bottom:1px solid var(--border);background:rgba(5,5,5,0.8); backdrop-filter: blur(15px); position: sticky; top: 0; z-index: 100;}
-    .header-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem; letter-spacing: -0.5px;}
-    .header-logo span{color:var(--text2); font-weight: 400;}
-    .header-right{display:flex;align-items:center;gap:1.5rem}
-    .last-update{font-size:.75rem;color:var(--text2); font-weight: 500;}
-    .refresh-btn{background:transparent; border:1px solid var(--border-light); color:var(--text); padding:.5rem 1rem; border-radius:10px; font-size:.8rem; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:.5rem; transition:all .3s ease;}
-    .refresh-btn:hover{background:var(--accent); color:var(--accent-dark); border-color:var(--accent); transform: translateY(-1px); box-shadow: 0 5px 15px rgba(255,255,255,0.15);}
-    .main{padding:3rem;max-width:1200px;margin:0 auto}
-    .page-title{font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;margin-bottom:2.5rem; letter-spacing: -1px; text-shadow: 0 2px 10px rgba(255,255,255,0.1);}
-
-    /* QUICK LINKS */
-    .quick-links{display:flex;gap:1rem;margin-bottom:3rem;flex-wrap:wrap}
-    .ql-btn{background:var(--bg-glass); backdrop-filter:blur(10px); border:1px solid var(--border); color:var(--text); padding:.8rem 1.2rem; border-radius:14px; font-size:.85rem; text-decoration:none; display:flex; align-items:center; gap:.6rem; transition:all .3s cubic-bezier(0.16, 1, 0.3, 1); font-weight:600; box-shadow: var(--shadow-inner);}
-    .ql-btn:hover{border-color:var(--border-light); background:rgba(255,255,255,0.05); transform: translateY(-4px); box-shadow: 0 15px 30px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.2);}
-    .ql-btn i{color:var(--text2);font-size:1.2rem; transition: color 0.3s;}
+    /* LAYOUT 4D */
+    .dashboard{display:none; animation: fadeIn 0.8s ease-out; display:none; height: 100vh;}
+    .layout-grid { display: flex; height: 100vh; }
+    
+    /* SIDEBAR */
+    .sidebar { width: 280px; background: var(--sidebar); border-right: 1px solid var(--border); padding: 2rem; display: flex; flex-direction: column; z-index: 10; box-shadow: 5px 0 30px rgba(0,0,0,0.5); }
+    .sb-logo { font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800; letter-spacing: -1px; margin-bottom: 3rem;}
+    .sb-logo span{color:var(--text2); font-weight: 400;}
+    .sb-title { font-size: .65rem; color: var(--text3); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1rem; font-weight: 800;}
+    .quick-links { display: flex; flex-direction: column; gap: 0.5rem; flex: 1; }
+    .ql-btn{background:transparent; border:1px solid transparent; color:var(--text2); padding:1rem; border-radius:14px; font-size:.85rem; text-decoration:none; display:flex; align-items:center; gap:.8rem; transition:all .3s cubic-bezier(0.16, 1, 0.3, 1); font-weight:600;}
+    .ql-btn:hover{border-color:var(--border-light); background:rgba(255,255,255,0.03); color: var(--text); transform: translateX(5px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);}
+    .ql-btn i{font-size:1.3rem; transition: color 0.3s;}
     .ql-btn:hover i{color:var(--accent);}
     
+    /* MAIN CONTENT */
+    .main-area { flex: 1; overflow-y: auto; padding: 3rem; position: relative; }
+    
+    /* TOP HEADER */
+    .top-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3rem; }
+    .page-title { font-family:'Syne',sans-serif;font-size:2.5rem;font-weight:800; letter-spacing: -1.5px; text-shadow: 0 2px 20px rgba(255,255,255,0.1); line-height: 1;}
+    .page-subtitle { color: var(--text2); font-size: .9rem; margin-top: .5rem;}
+    .header-right{display:flex;align-items:center;gap:1.5rem}
+    .last-update{font-size:.75rem;color:var(--text2); font-weight: 500;}
+    .refresh-btn{background:var(--bg-glass); backdrop-filter:blur(10px); border:1px solid var(--border-light); color:var(--text); padding:.6rem 1.2rem; border-radius:12px; font-size:.8rem; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:.5rem; transition:all .3s ease; box-shadow: var(--shadow-inner);}
+    .refresh-btn:hover{background:var(--accent); color:var(--accent-dark); border-color:var(--accent); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255,255,255,0.15);}
+
     /* KPIs */
     .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.5rem;margin-bottom:3rem}
-    .kpi-card{background:var(--bg-glass); backdrop-filter:blur(20px); border:1px solid var(--border); border-radius:20px; padding:1.75rem; box-shadow: var(--shadow-3d), var(--shadow-inner); transition: transform 0.3s ease; position: relative; overflow: hidden;}
-    .kpi-card:hover{transform: translateY(-5px);}
-    .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); opacity: 0.5; }
+    .kpi-card{background:var(--bg-glass); backdrop-filter:blur(20px); border:1px solid var(--border); border-radius:24px; padding:2rem; box-shadow: var(--shadow-3d), var(--shadow-inner); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); position: relative; overflow: hidden;}
+    .kpi-card:hover{transform: translateY(-8px) scale(1.02); z-index: 10;}
+    .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); opacity: 0.5; }
     
-    /* White Contrast Card for MRR */
-    .kpi-card.highlight { background: #ffffff; color: #000000; border: none; box-shadow: 0 20px 40px rgba(255,255,255,0.1); animation: pulseGlow 4s infinite;}
-    .kpi-card.highlight .kpi-label { color: #555; }
+    /* HIGHLIGHT CONTRAST CARD */
+    .kpi-card.highlight { background: #ffffff; color: #000000; border: none; box-shadow: 0 20px 50px rgba(255,255,255,0.15); animation: pulseGlow 4s infinite;}
+    .kpi-card.highlight::before { display: none; }
+    .kpi-card.highlight .kpi-label { color: #666; }
     .kpi-card.highlight .kpi-val { color: #000; }
-    .kpi-card.highlight .kpi-sub { color: #666; }
+    .kpi-card.highlight .kpi-sub { color: #888; }
     .kpi-card.highlight i { color: #000; }
 
-    .kpi-label{font-size:.75rem;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem; font-weight: 700;}
-    .kpi-label i {font-size: 1.1rem;}
-    .kpi-val{font-family:'Syne',sans-serif;font-size:2.8rem;font-weight:800;line-height:1; letter-spacing: -1.5px;}
-    .kpi-sub{font-size:.8rem;margin-top:.6rem; font-weight: 500;}
+    .kpi-label{font-size:.75rem;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:1rem;display:flex;align-items:center;gap:.6rem; font-weight: 700;}
+    .kpi-label i {font-size: 1.3rem;}
+    .kpi-val{font-family:'Syne',sans-serif;font-size:3.5rem;font-weight:800;line-height:1; letter-spacing: -2px; margin-bottom: .5rem;}
+    .kpi-sub{font-size:.85rem; font-weight: 500;}
     .up{color:var(--green)} .dn{color:var(--red)} .neu{color:var(--text2)}
 
     /* GRID & PANELS */
     .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-bottom:2rem}
-    @media(max-width:800px){.grid-2{grid-template-columns:1fr}}
+    @media(max-width:900px){.grid-2{grid-template-columns:1fr}}
     .panel{background:var(--bg-glass); backdrop-filter:blur(20px); border:1px solid var(--border); border-radius:24px; overflow:hidden; box-shadow: var(--shadow-3d), var(--shadow-inner); position: relative;}
     .panel::after { content:''; position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; border-radius:24px; box-shadow: inset 0 1px 1px rgba(255,255,255,0.05); }
-    .panel-head{padding:1.5rem 2rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; background: rgba(0,0,0,0.2);}
+    .panel-head{padding:1.5rem 2rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; background: rgba(0,0,0,0.3);}
     .panel-head h3{font-size:.95rem;font-weight:700;display:flex;align-items:center;gap:.6rem; text-transform: uppercase; letter-spacing: 1px;}
     .panel-head h3 i {font-size: 1.2rem; color: var(--text2);}
     .panel-body{padding:2rem}
 
     /* ONBOARDING BARS */
-    .ob-item{margin-bottom:1.25rem}
-    .ob-label{display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:.5rem; font-weight: 600;}
-    .ob-bar{height:10px;background:rgba(255,255,255,0.05);border-radius:5px;overflow:hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);}
-    .ob-fill{height:100%;border-radius:5px;transition:width 1s cubic-bezier(0.16, 1, 0.3, 1); position: relative; overflow: hidden;}
-    .ob-fill::after { content:''; position:absolute; top:0; left:0; right:0; bottom:0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); animation: shimmer 2s infinite;}
+    .ob-item{margin-bottom:1.5rem}
+    .ob-label{display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:.6rem; font-weight: 600;}
+    .ob-bar{height:12px;background:rgba(255,255,255,0.05);border-radius:6px;overflow:hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);}
+    .ob-fill{height:100%;border-radius:6px;transition:width 1s cubic-bezier(0.16, 1, 0.3, 1); position: relative; overflow: hidden;}
+    .ob-fill::after { content:''; position:absolute; top:0; left:0; right:0; bottom:0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); animation: shimmer 2s infinite;}
     @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 
     /* TOP PRODUCTS TABLE */
     .top-table{width:100%;border-collapse:collapse}
     .top-table tr{border-bottom:1px solid var(--border); transition: background 0.2s;}
-    .top-table tr:hover{background: rgba(255,255,255,0.02);}
+    .top-table tr:hover{background: rgba(255,255,255,0.03);}
     .top-table tr:last-child{border-bottom:none}
-    .top-table td{padding:1rem .5rem;font-size:.85rem;vertical-align:middle}
-    .rank{font-family:'Syne',sans-serif;font-weight:800;color:var(--text3);width:30px; font-size: 1.1rem;}
-    .medal{font-size:1.2rem;width:30px;text-align:center; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));}
-    .prod-name{font-weight:600; font-size: .95rem;}
-    .prod-cat{font-size:.75rem;color:var(--text2); margin-top: .2rem;}
-    .count-badge{background:rgba(255,255,255,0.1);color:var(--text);font-size:.75rem;font-weight:700;padding:.3rem .75rem;border-radius:100px; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1);}
+    .top-table td{padding:1.2rem .5rem;font-size:.9rem;vertical-align:middle}
+    .rank{font-family:'Syne',sans-serif;font-weight:800;color:var(--text3);width:30px; font-size: 1.2rem;}
+    .medal{font-size:1.4rem;width:30px;text-align:center; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));}
+    .prod-name{font-weight:600; font-size: 1rem;}
+    .prod-cat{font-size:.75rem;color:var(--text2); margin-top: .3rem;}
+    .count-badge{background:var(--accent);color:var(--accent-dark);font-size:.75rem;font-weight:800;padding:.4rem 1rem;border-radius:100px; box-shadow: 0 4px 10px rgba(255,255,255,0.2);}
 
     /* RECENT SALES */
-    .sale-item{display:flex;align-items:center;gap:1rem;padding:1rem 0;border-bottom:1px solid var(--border); transition: transform 0.2s;}
-    .sale-item:hover{transform: translateX(5px);}
+    .sale-item{display:flex;align-items:center;gap:1.2rem;padding:1.2rem 0;border-bottom:1px solid var(--border); transition: transform 0.3s;}
+    .sale-item:hover{transform: translateX(8px);}
     .sale-item:last-child{border-bottom:none}
-    .sale-dot{width:10px;height:10px;border-radius:50%;background:var(--green);flex-shrink:0; box-shadow: 0 0 10px var(--green);}
-    .sale-name{font-size:.9rem;font-weight:600;flex:1}
-    .sale-cat{font-size:.75rem;color:var(--text2); margin-top: .2rem;}
-    .sale-time{font-size:.75rem;color:var(--text3); font-weight: 500;}
+    .sale-dot{width:12px;height:12px;border-radius:50%;background:var(--green);flex-shrink:0; box-shadow: 0 0 15px var(--green);}
+    .sale-name{font-size:.95rem;font-weight:600;flex:1}
+    .sale-cat{font-size:.75rem;color:var(--text2); margin-top: .3rem;}
+    .sale-time{font-size:.8rem;color:var(--text3); font-weight: 500;}
     
     /* USERS TABLE */
     .users-table{width:100%;border-collapse:collapse;}
-    .users-table th{text-align:left;padding:1.25rem 2rem;font-size:.75rem;color:var(--text2);text-transform:uppercase;border-bottom:1px solid var(--border);letter-spacing:1px; background: rgba(0,0,0,0.3);}
+    .users-table th{text-align:left;padding:1.25rem 2rem;font-size:.75rem;color:var(--text2);text-transform:uppercase;border-bottom:1px solid var(--border);letter-spacing:1px; background: rgba(0,0,0,0.4);}
     .users-table td{padding:1.25rem 2rem;font-size:.9rem;border-bottom:1px solid var(--border);vertical-align:middle; transition: background 0.2s;}
-    .users-table tr:hover td{background: rgba(255,255,255,0.02);}
+    .users-table tr:hover td{background: rgba(255,255,255,0.03);}
     .users-table tr:last-child td{border-bottom:none}
-    .badge-pro{background:#fff;color:#000;padding:.3rem .8rem;border-radius:100px;font-size:.75rem;font-weight:800; box-shadow: 0 4px 10px rgba(255,255,255,0.2);}
-    .badge-free{background:rgba(255,255,255,.05);color:var(--text2);padding:.3rem .8rem;border-radius:100px;font-size:.75rem;font-weight:600; border: 1px solid var(--border-light);}
+    .badge-pro{background:var(--accent);color:var(--accent-dark);padding:.3rem 1rem;border-radius:100px;font-size:.75rem;font-weight:800; box-shadow: 0 4px 15px rgba(255,255,255,0.2);}
+    .badge-free{background:rgba(255,255,255,.05);color:var(--text2);padding:.3rem 1rem;border-radius:100px;font-size:.75rem;font-weight:600; border: 1px solid var(--border-light);}
 
     /* EMPTY & LOADING */
-    .empty{text-align:center;padding:3rem;color:var(--text3);font-size:.9rem; font-weight: 500;}
-    .spinner{width:24px;height:24px;border:2px solid var(--border-light);border-top-color:var(--text);border-radius:50%;animation:spin .8s linear infinite;margin:3rem auto}
+    .empty{text-align:center;padding:4rem;color:var(--text3);font-size:.9rem; font-weight: 600;}
+    .spinner{width:30px;height:30px;border:3px solid var(--border-light);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:4rem auto}
     @keyframes spin{to{transform:rotate(360deg)}}
   </style>
 </head>
@@ -146,64 +155,77 @@
     <div class="login-logo">Trend<span>Base</span> Admin</div>
     <label class="login-label">Contraseña de acceso</label>
     <input class="login-input" type="password" id="secretInput" placeholder="••••••••••••" onkeydown="if(event.key==='Enter')doLogin()"/>
-    <button class="login-btn" onclick="doLogin()">Ingresar</button>
+    <button class="login-btn" onclick="doLogin()">Ingresar Seguro</button>
     <div class="login-err" id="loginErr">Contraseña incorrecta</div>
   </div>
 </div>
 
-<!-- DASHBOARD -->
+<!-- DASHBOARD 4D LAYOUT -->
 <div class="dashboard" id="dashboard">
-  <header>
-    <div class="header-logo">Trend<span>Base</span> <span style="font-weight:300;color:var(--text2);font-size:.85rem">Admin</span></div>
-    <div class="header-right">
-      <span class="last-update" id="lastUpdate">—</span>
-      <button class="refresh-btn" onclick="loadData()"><i class="ti ti-refresh"></i> Actualizar</button>
-    </div>
-  </header>
-
-  <div class="main">
-    <div class="page-title">Panel de control Maestro</div>
-
-    <div class="quick-links">
-      <a href="https://app.lemonsqueezy.com/payouts" target="_blank" class="ql-btn"><i class="ti ti-cash"></i> Lemon Squeezy (Pagos y Retiros)</a>
-      <a href="https://console.anthropic.com/settings/billing" target="_blank" class="ql-btn"><i class="ti ti-brain"></i> Anthropic (Tokens IA)</a>
-      <a href="https://supabase.com/dashboard/project/rbrundkswmlbgkicdnty/editor" target="_blank" class="ql-btn"><i class="ti ti-database"></i> Supabase (Base de datos)</a>
-      <a href="https://vercel.com/dashboard" target="_blank" class="ql-btn"><i class="ti ti-server"></i> Vercel (Servidores)</a>
-      <a href="https://github.com" target="_blank" class="ql-btn"><i class="ti ti-brand-github"></i> GitHub (Código)</a>
-    </div>
-
-    <div class="kpi-grid" id="kpiGrid">
-      <div class="kpi-card highlight"><div class="kpi-label"><i class="ti ti-currency-dollar"></i> Ingresos (MRR)</div><div class="kpi-val" id="kMRR">—</div><div class="kpi-sub neu">Recurrente Mensual Estimado</div></div>
-      <div class="kpi-card"><div class="kpi-label"><i class="ti ti-users"></i> Encuestas</div><div class="kpi-val" id="kOnboarding">—</div><div class="kpi-sub neu" id="kOnboardingSub">cargando...</div></div>
-      <div class="kpi-card"><div class="kpi-label"><i class="ti ti-trending-up"></i> Tasa de éxito</div><div class="kpi-val up" id="kSuccess">—</div><div class="kpi-sub neu">respondieron "Sí vendí"</div></div>
-      <div class="kpi-card"><div class="kpi-label"><i class="ti ti-star"></i> Producto top</div><div class="kpi-val" id="kTopProduct" style="font-size:1rem;letter-spacing:0;line-height:1.3">—</div><div class="kpi-sub up" id="kTopSales">—</div></div>
-    </div>
-
-    <div class="grid-2">
-      <!-- Onboarding -->
-      <div class="panel">
-        <div class="panel-head"><h3><i class="ti ti-chart-bar"></i> Respuestas onboarding</h3><span id="obTotal" style="font-size:.75rem;color:var(--text2)"></span></div>
-        <div class="panel-body" id="obPanel"><div class="spinner"></div></div>
-      </div>
-
-      <!-- Recent sales -->
-      <div class="panel">
-        <div class="panel-head"><h3><i class="ti ti-clock"></i> Ventas recientes</h3></div>
-        <div class="panel-body" id="recentPanel"><div class="spinner"></div></div>
+  <div class="layout-grid">
+    
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sb-logo">Trend<span>Base</span></div>
+      <div class="sb-title">Panel de Control</div>
+      
+      <div class="quick-links">
+        <a href="https://app.lemonsqueezy.com/payouts" target="_blank" class="ql-btn"><i class="ti ti-cash"></i> Retiros (Lemon)</a>
+        <a href="https://console.anthropic.com/settings/billing" target="_blank" class="ql-btn"><i class="ti ti-brain"></i> IA (Anthropic)</a>
+        <a href="https://supabase.com/dashboard/project/rbrundkswmlbgkicdnty/editor" target="_blank" class="ql-btn"><i class="ti ti-database"></i> Base de Datos</a>
+        <a href="https://vercel.com/dashboard" target="_blank" class="ql-btn"><i class="ti ti-server"></i> Servidores</a>
+        <a href="https://github.com" target="_blank" class="ql-btn"><i class="ti ti-brand-github"></i> Código Fuente</a>
       </div>
     </div>
+    
+    <!-- MAIN CONTENT -->
+    <div class="main-area">
+      
+      <div class="top-header">
+        <div>
+          <h1 class="page-title">Vista General</h1>
+          <p class="page-subtitle">Monitoreo en vivo de métricas y usuarios.</p>
+        </div>
+        <div class="header-right">
+          <span class="last-update" id="lastUpdate">—</span>
+          <button class="refresh-btn" onclick="loadData()"><i class="ti ti-refresh"></i> Actualizar</button>
+        </div>
+      </div>
 
-    <!-- Top products -->
-    <div class="panel">
-      <div class="panel-head"><h3><i class="ti ti-trophy"></i> Productos más vendidos por usuarios</h3></div>
-      <div class="panel-body" id="topPanel"><div class="spinner"></div></div>
-    </div>
+      <div class="kpi-grid" id="kpiGrid">
+        <div class="kpi-card highlight"><div class="kpi-label"><i class="ti ti-currency-dollar"></i> Ingresos (MRR)</div><div class="kpi-val" id="kMRR">—</div><div class="kpi-sub neu">Recurrente Mensual Estimado</div></div>
+        <div class="kpi-card"><div class="kpi-label"><i class="ti ti-users"></i> Encuestas</div><div class="kpi-val" id="kOnboarding">—</div><div class="kpi-sub neu" id="kOnboardingSub">cargando...</div></div>
+        <div class="kpi-card"><div class="kpi-label"><i class="ti ti-trending-up"></i> Tasa de Éxito</div><div class="kpi-val up" id="kSuccess">—</div><div class="kpi-sub neu">respondieron "Sí vendí"</div></div>
+        <div class="kpi-card"><div class="kpi-label"><i class="ti ti-star"></i> Producto Top</div><div class="kpi-val" id="kTopProduct" style="font-size:1.4rem;letter-spacing:0;line-height:1.2">—</div><div class="kpi-sub up" id="kTopSales">—</div></div>
+      </div>
 
-    <!-- Active Users Table -->
-    <div class="panel" style="margin-top:1.25rem">
-      <div class="panel-head"><h3><i class="ti ti-users"></i> Base de Usuarios Activos</h3><span id="uTotal" style="font-size:.75rem;color:var(--text2)"></span></div>
-      <div class="panel-body" style="padding:0;overflow-x:auto" id="usersPanel"><div class="spinner"></div></div>
-    </div>
+      <div class="grid-2">
+        <!-- Onboarding -->
+        <div class="panel">
+          <div class="panel-head"><h3><i class="ti ti-chart-bar"></i> Respuestas onboarding</h3><span id="obTotal" style="font-size:.75rem;color:var(--text2)"></span></div>
+          <div class="panel-body" id="obPanel"><div class="spinner"></div></div>
+        </div>
+
+        <!-- Recent sales -->
+        <div class="panel">
+          <div class="panel-head"><h3><i class="ti ti-clock"></i> Ventas recientes</h3></div>
+          <div class="panel-body" id="recentPanel"><div class="spinner"></div></div>
+        </div>
+      </div>
+
+      <!-- Top products -->
+      <div class="panel" style="margin-bottom: 2rem;">
+        <div class="panel-head"><h3><i class="ti ti-trophy"></i> Productos más vendidos por usuarios</h3></div>
+        <div class="panel-body" id="topPanel"><div class="spinner"></div></div>
+      </div>
+
+      <!-- Active Users Table -->
+      <div class="panel">
+        <div class="panel-head"><h3><i class="ti ti-users"></i> Base de Usuarios Activos</h3><span id="uTotal" style="font-size:.75rem;color:var(--text2)"></span></div>
+        <div class="panel-body" style="padding:0;overflow-x:auto" id="usersPanel"><div class="spinner"></div></div>
+      </div>
+
+    </div> <!-- /main-area -->
   </div>
 </div>
 
@@ -227,6 +249,7 @@ async function loadData() {
     const data = await res.json();
     document.getElementById('loginWrap').style.display='none';
     document.getElementById('dashboard').style.display='block';
+    document.getElementById('dashboard').style.display='flex'; // override for grid
     renderDashboard(data);
   } catch(e) {
     document.getElementById('loginErr').style.display='block';
@@ -264,7 +287,7 @@ function renderDashboard(data) {
     users.map(u => {
       const date = new Date(u.created_at).toLocaleDateString('es-AR', { year:'numeric', month:'short', day:'numeric' });
       const badge = u.plan.includes('Pro') || u.plan.includes('$') ? '<span class="badge-pro">'+u.plan+'</span>' : '<span class="badge-free">'+u.plan+'</span>';
-      return `<tr><td style="font-weight:500">${u.email}</td><td style="color:var(--text2)">${date}</td><td>${badge}</td></tr>`;
+      return `<tr><td style="font-weight:600">${u.email}</td><td style="color:var(--text2)">${date}</td><td>${badge}</td></tr>`;
     }).join('') + '</tbody></table>'
     : '<div class="empty">No hay usuarios registrados</div>';
 
