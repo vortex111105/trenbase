@@ -1,0 +1,43 @@
+{
+  "name": "TrendBase",
+  "short_name": "TrendBase",
+  "description": "Productos virales para dropshipping en LATAM. Monitoreo en tiempo real.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0D0D12",
+  "theme_color": "#0D0D12",
+  "orientation": "portrait-primary",
+  "lang": "es",
+  "categories": ["business", "productivity"],
+  "icons": [
+    {
+      "src": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=192&h=192&fit=crop",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=512&h=512&fit=crop",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "label": "Dashboard de TrendBase"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Tendencias",
+      "short_name": "Tendencias",
+      "description": "Ver productos en tendencia",
+      "url": "/?section=tendencias",
+      "icons": [{ "src": "/icon-96x96.png", "sizes": "96x96" }]
+    }
+  ]
+}

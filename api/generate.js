@@ -2,7 +2,7 @@
 // Se llama cada 6 horas desde un cron job o manualmente
 const SUPABASE_URL = 'https://rbrundkswmlbgkicdnty.supabase.co';
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
-const CRON_SECRET = process.env.CRON_SECRET || 'trendbase2025';
+const CRON_SECRET = process.env.CRON_SECRET;
 
 const BATCH_PROMPTS = [
   { label: 'Tecnología y Gadgets', cat: 'Tecnología', count: 50 },
