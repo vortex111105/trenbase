@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TrendBase Demo</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root {
+    --champagne: #C9A84C;
+    --obsidian: #0D0D12;
+    --green: #4ade80;
+    --red: #f87171;
+  }
+  body { background: var(--obsidian); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; overflow: hidden; }
+
+  /* ── PLAYER ─────────────────────── */
+  #player {
+    position: relative; width: 100%; height: 100vh;
+    background: #000; overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+
+  /* Scenes */
+  .scene {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.6s ease;
+    padding: 40px;
+    background: var(--obsidian);
+  }
+  .scene.active { opacity: 1; }
+
+  /* ── PROGRESS BAR ───────────────── */
+  #progress-bar {
+    position: absolute; bottom: 0; left: 0;
+    height: 3px; background: var(--champagne);
+    width: 0%; transition: none; z-index: 100;
+  }
+
+  /* ── CONTROLS ───────────────────── */
+  #controls {
+    position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 16px; z-index: 100;
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 100px; padding: 8px 20px;
+  }
+  #controls button {
+    background: none; border: none; cursor: pointer;
+    color: rgba(255,255,255,0.7); font-size: 18px;
+    transition: color 0.2s; line-height: 1;
+    padding: 2px;
+  }
+  #controls button:hover { color: var(--champagne); }
+  #timer {
+    font-size: 11px; font-family: monospace;
+    color: rgba(255,255,255,0.4); min-width: 60px; text-align: center;
+  }
+  #scene-dots {
+    display: flex; gap: 6px;
+  }
+  .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(255,255,255,0.2); transition: background 0.3s;
+    cursor: pointer;
+  }
+  .dot.active { background: var(--champagne); }
+
+  /* ── SUBTITLE ───────────────────── */
+  #subtitle {
+    position: absolute; bottom: 56px; left: 50%; transform: translateX(-50%);
+    max-width: 80%; text-align: center; z-index: 90;
+    background: rgba(0,0,0,0.75); backdrop-filter: blur(8px);
+    border-radius: 12px; padding: 10px 20px;
+    font-size: 15px; color: rgba(255,255,255,0.95); line-height: 1.5;
+    border: 1px solid rgba(255,255,255,0.08);
+    opacity: 0; transition: opacity 0.4s;
+    pointer-events: none;
+  }
+  #subtitle.visible { opacity: 1; }
+
+  /* ── SCENE 0 — INTRO ────────────── */
+  #s0 { background: linear-gradient(135deg, #0D0D12 0%, #14141f 100%); }
+  .logo-text {
+    font-size: clamp(48px, 8vw, 96px);
+    font-weight: 900; letter-spacing: -2px;
+    color: white;
+    animation: fadeUp 0.8s ease forwards;
+    opacity: 0;
+  }
+  .logo-text .accent {
+    color: var(--champagne);
+    font-style: italic; font-weight: 300;
+  }
+  .tagline {
+    font-size: clamp(14px, 2vw, 20px);
+    color: rgba(255,255,255,0.5);
+    margin-top: 12px; letter-spacing: 4px;
+    text-transform: uppercase; font-family: monospace;
+    animation: fadeUp 0.8s 0.3s ease forwards; opacity: 0;
+  }
+  .latam-badges {
+    display: flex; gap: 12px; margin-top: 24px;
+    animation: fadeUp 0.8s 0.6s ease forwards; opacity: 0;
+  }
+  .latam-badge {
+    padding: 6px 16px; border-radius: 100px;
+    background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.2);
+    font-size: 13px; color: var(--champagne); font-family: monospace;
+  }
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(20px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+
+  /* ── SCENE 1 — PROBLEMA ─────────── */
+  #s1 { background: radial-gradient(ellipse at center, #1a0a0a 0%, #0D0D12 80%); }
+  .problem-words {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    text-align: center;
+  }
+  .problem-line {
+    font-size: clamp(20px, 3.5vw, 42px);
+    font-weight: 800; color: white;
+    opacity: 0; transform: translateX(-30px);
+    transition: all 0.5s ease;
+  }
+  .problem-line.show { opacity: 1; transform: translateX(0); }
+  .problem-line.strike {
+    text-decoration: line-through; color: rgba(255,255,255,0.3);
+  }
+  .problem-solution {
+    margin-top: 24px; font-size: clamp(18px, 3vw, 36px);
+    color: var(--champagne); font-weight: 900;
+    opacity: 0; transition: opacity 0.6s 0.3s;
+  }
+  .problem-solution.show { opacity: 1; }
+
+  /* ── SCENE 2 — DASHBOARD ────────── */
+  #s2 { padding: 24px; }
+  .mock-dashboard {
+    width: 100%; max-width: 900px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 24px; overflow: hidden;
+    animation: scaleIn 0.6s ease forwards; opacity: 0;
+  }
+  @keyframes scaleIn {
+    from { opacity:0; transform:scale(0.93); }
+    to { opacity:1; transform:scale(1); }
+  }
+  .mock-topbar {
+    background: rgba(0,0,0,0.4); border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding: 12px 20px; display: flex; align-items: center; gap: 12px;
+  }
+  .mock-dot { width:8px; height:8px; border-radius:50%; }
+  .mock-topbar-title {
+    font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.8);
+    margin-left: 8px;
+  }
+  .mock-body { display: flex; gap: 0; }
+  .mock-sidebar {
+    width: 80px; background: rgba(0,0,0,0.3);
+    border-right: 1px solid rgba(255,255,255,0.05);
+    padding: 16px 12px; display: flex; flex-direction: column; gap: 8px;
+  }
+  .mock-sb-item {
+    width: 100%; aspect-ratio: 1; border-radius: 12px;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+  .mock-sb-item.active {
+    background: rgba(201,168,76,0.15); border-color: rgba(201,168,76,0.3);
+  }
+  .mock-content { flex: 1; padding: 16px; }
+  .mock-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 12px; }
+  .mock-kpi {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px; padding: 12px;
+  }
+  .mock-kpi-label { font-size: 9px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 1px; font-family: monospace; }
+  .mock-kpi-val { font-size: 22px; font-weight: 900; color: white; margin-top: 4px; }
+  .mock-kpi-val.green { color: var(--green); }
+  .mock-kpi-val.gold { color: var(--champagne); }
+  .mock-products { display: flex; flex-direction: column; gap: 6px; }
+  .mock-product {
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px; padding: 10px 12px;
+    opacity: 0; transform: translateX(20px);
+    transition: all 0.4s ease;
+  }
+  .mock-product.show { opacity: 1; transform: translateX(0); }
+  .mock-product-img { width: 32px; height: 32px; border-radius: 8px; object-fit: cover; }
+  .mock-product-name { font-size: 11px; font-weight: 700; color: white; flex: 1; }
+  .mock-score {
+    font-size: 13px; font-weight: 900; font-family: monospace;
+    color: var(--champagne);
+    background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.2);
+    padding: 2px 8px; border-radius: 6px;
+  }
+  .mock-change { font-size: 10px; font-weight: 700; color: var(--green); font-family: monospace; }
+  .mock-hot {
+    font-size: 9px; font-weight: 900; background: var(--champagne);
+    color: #0D0D12; padding: 2px 6px; border-radius: 4px; letter-spacing: 1px;
+  }
+
+  /* ── SCENE 3 — TRENDSCORE ───────── */
+  #s3 { padding: 24px; }
+  .score-explainer {
+    display: flex; flex-direction: column; align-items: center; gap: 24px;
+    width: 100%; max-width: 800px;
+  }
+  .score-title { font-size: clamp(24px, 4vw, 48px); font-weight: 900; color: white; text-align: center; }
+  .score-title span { color: var(--champagne); }
+  .score-bars { display: flex; gap: 16px; width: 100%; }
+  .score-bar-wrap { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+  .score-bar-label { font-size: 11px; color: rgba(255,255,255,0.6); font-family: monospace; display: flex; justify-content: space-between; }
+  .score-bar-track { height: 8px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden; }
+  .score-bar-fill {
+    height: 100%; border-radius: 4px; width: 0%;
+    transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+  }
+  .score-features {
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; width: 100%;
+  }
+  .score-feature {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px; padding: 16px; text-align: center;
+    opacity: 0; transform: translateY(16px); transition: all 0.4s ease;
+  }
+  .score-feature.show { opacity: 1; transform: translateY(0); }
+  .score-feature-icon { font-size: 24px; margin-bottom: 8px; }
+  .score-feature-label { font-size: 11px; color: rgba(255,255,255,0.7); font-weight: 600; }
+
+  /* ── SCENE 4 — AI CHAT ──────────── */
+  #s4 { padding: 24px; }
+  .chat-mock {
+    width: 100%; max-width: 700px;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 24px; overflow: hidden; opacity: 0; animation: scaleIn 0.5s 0.2s ease forwards;
+  }
+  .chat-header {
+    background: rgba(0,0,0,0.4); border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding: 14px 20px; display: flex; align-items: center; gap: 10px;
+  }
+  .chat-avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--champagne), #8b6914);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 900; color: #000;
+  }
+  .chat-name { font-size: 12px; font-weight: 700; color: white; }
+  .chat-model { font-size: 10px; color: var(--champagne); font-family: monospace; }
+  .chat-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+  .msg {
+    max-width: 80%; padding: 12px 16px; border-radius: 16px;
+    font-size: 13px; line-height: 1.5;
+    opacity: 0; transform: translateY(10px); transition: all 0.4s ease;
+  }
+  .msg.show { opacity: 1; transform: translateY(0); }
+  .msg.user {
+    align-self: flex-end; background: rgba(201,168,76,0.15);
+    border: 1px solid rgba(201,168,76,0.25); color: white;
+    border-bottom-right-radius: 4px;
+  }
+  .msg.bot {
+    align-self: flex-start; background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.9);
+    border-bottom-left-radius: 4px;
+  }
+  .msg.bot strong { color: var(--champagne); }
+  .typing {
+    align-self: flex-start; padding: 12px 16px;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px; border-bottom-left-radius: 4px;
+    display: flex; gap: 4px; align-items: center;
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .typing.show { opacity: 1; }
+  .typing span {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(255,255,255,0.4);
+    animation: blink 1.2s infinite;
+  }
+  .typing span:nth-child(2) { animation-delay: 0.2s; }
+  .typing span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes blink {
+    0%,80%,100% { opacity: 0.3; transform: scale(0.8); }
+    40% { opacity: 1; transform: scale(1); }
+  }
+
+  /* ── SCENE 5 — MARKETING ────────── */
+  #s5 { padding: 24px; }
+  .mkt-mock {
+    width: 100%; max-width: 800px;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 24px; padding: 24px; opacity: 0; animation: scaleIn 0.5s 0.1s ease forwards;
+  }
+  .mkt-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+  .mkt-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+  .mkt-title { font-size: 14px; font-weight: 900; color: white; }
+  .mkt-sub { font-size: 11px; color: rgba(255,255,255,0.4); font-family: monospace; margin-top: 2px; }
+  .mkt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .mkt-card {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px; padding: 14px;
+    opacity: 0; transform: translateY(12px); transition: all 0.4s ease;
+  }
+  .mkt-card.show { opacity: 1; transform: translateY(0); }
+  .mkt-card-label {
+    font-size: 9px; color: rgba(255,255,255,0.4); text-transform: uppercase;
+    letter-spacing: 1.5px; font-family: monospace; margin-bottom: 8px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .mkt-card-label .plat {
+    padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 900;
+  }
+  .mkt-card-text { font-size: 11px; color: rgba(255,255,255,0.75); line-height: 1.6; }
+  .mkt-keywords { display: flex; flex-wrap: wrap; gap: 6px; }
+  .mkt-kw {
+    font-size: 10px; padding: 3px 10px; border-radius: 100px;
+    background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.2);
+    color: #93c5fd; font-family: monospace;
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .mkt-kw.show { opacity: 1; }
+
+  /* ── SCENE 6 — MI NEGOCIO ───────── */
+  #s6 { padding: 24px; }
+  .negocio-mock {
+    width: 100%; max-width: 900px; display: flex; flex-direction: column; gap: 12px;
+    opacity: 0; animation: scaleIn 0.5s 0.1s ease forwards;
+  }
+  .neg-kpis { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+  .neg-kpi {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px; padding: 14px;
+  }
+  .neg-kpi-label { font-size: 9px; color: rgba(255,255,255,0.4); text-transform: uppercase; font-family: monospace; letter-spacing: 1px; }
+  .neg-kpi-val { font-size: 20px; font-weight: 900; margin-top: 6px; }
+  .neg-table {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px; overflow: hidden;
+  }
+  .neg-table-head {
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+    padding: 10px 16px; background: rgba(0,0,0,0.3);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 9px; color: rgba(255,255,255,0.4); text-transform: uppercase;
+    font-family: monospace; letter-spacing: 1px;
+  }
+  .neg-row {
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+    padding: 10px 16px; border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 11px; color: rgba(255,255,255,0.8);
+    opacity: 0; transform: translateX(-12px); transition: all 0.4s ease;
+  }
+  .neg-row.show { opacity: 1; transform: translateX(0); }
+  .neg-row-name { font-weight: 700; color: white; }
+  .neg-notif {
+    background: rgba(74,222,128,0.08); border: 1px solid rgba(74,222,128,0.2);
+    border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; gap: 10px;
+    opacity: 0; transition: opacity 0.4s;
+    font-size: 12px; color: rgba(74,222,128,0.9);
+  }
+  .neg-notif.show { opacity: 1; }
+
+  /* ── SCENE 7 — CTA ──────────────── */
+  #s7 { background: linear-gradient(135deg, #0D0D12 0%, #1a1208 100%); }
+  .cta-wrap { text-align: center; }
+  .cta-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 16px; border-radius: 100px;
+    background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.25);
+    font-size: 11px; font-family: monospace; color: var(--champagne);
+    margin-bottom: 20px; animation: fadeUp 0.5s ease forwards; opacity: 0;
+  }
+  .cta-title {
+    font-size: clamp(32px, 6vw, 72px); font-weight: 900;
+    color: white; line-height: 1.1; letter-spacing: -1px;
+    animation: fadeUp 0.5s 0.2s ease forwards; opacity: 0;
+  }
+  .cta-title .accent { color: var(--champagne); font-style: italic; font-weight: 300; }
+  .cta-subtitle {
+    font-size: clamp(14px, 2vw, 20px); color: rgba(255,255,255,0.5);
+    margin: 16px auto; max-width: 500px;
+    animation: fadeUp 0.5s 0.4s ease forwards; opacity: 0;
+  }
+  .cta-buttons {
+    display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 32px;
+    animation: fadeUp 0.5s 0.6s ease forwards; opacity: 0;
+  }
+  .cta-btn-primary {
+    padding: 14px 36px; background: var(--champagne);
+    color: #0D0D12; border: none; border-radius: 100px;
+    font-size: 14px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase;
+    cursor: pointer; box-shadow: 0 0 40px rgba(201,168,76,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .cta-btn-primary:hover { transform: scale(1.04); box-shadow: 0 0 60px rgba(201,168,76,0.6); }
+  .cta-btn-secondary {
+    padding: 14px 36px; background: transparent;
+    color: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 100px; font-size: 14px; font-weight: 700; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .cta-btn-secondary:hover { border-color: rgba(255,255,255,0.5); color: white; }
+  .cta-plans { display: flex; gap: 32px; justify-content: center; margin-top: 24px; }
+  .cta-plan { text-align: center; opacity: 0; transition: opacity 0.4s; }
+  .cta-plan.show { opacity: 1; }
+  .cta-plan-name { font-size: 10px; color: rgba(255,255,255,0.4); text-transform: uppercase; font-family: monospace; letter-spacing: 2px; }
+  .cta-plan-price { font-size: 24px; font-weight: 900; color: white; margin: 4px 0; }
+  .cta-plan-price .plan-currency { font-size: 14px; color: rgba(255,255,255,0.5); }
+  .cta-plan-price.gold { color: var(--champagne); }
+
+  /* ── NOISE OVERLAY ──────────────── */
+  .noise {
+    position: absolute; inset: 0; pointer-events: none;
+    opacity: 0.025;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9"/></filter><rect width="200" height="200" filter="url(%23n)" opacity="1"/></svg>');
+    background-size: 200px;
+  }
+
+  /* ── PAUSED OVERLAY ─────────────── */
+  #paused-overlay {
+    position: absolute; inset: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+    opacity: 0; pointer-events: none; transition: opacity 0.3s;
+  }
+  #paused-overlay.show { opacity: 1; pointer-events: all; }
+  #paused-overlay .play-btn {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: var(--champagne); border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 40px rgba(201,168,76,0.5);
+    transition: transform 0.2s;
+  }
+  #paused-overlay .play-btn:hover { transform: scale(1.1); }
+  #paused-overlay .play-btn svg { width: 32px; height: 32px; color: #000; margin-left: 4px; }
+</style>
+</head>
+<body>
+
+<div id="player">
+  <div class="noise"></div>
+  <div id="progress-bar"></div>
+
+  <!-- ══ SCENE 0 — INTRO ══════════════════════════════════════════════════════ -->
+  <div class="scene active" id="s0">
+    <div class="logo-text"><span class="accent">Trend</span>Base</div>
+    <div class="tagline">Inteligencia de mercado para LATAM</div>
+    <div class="latam-badges">
+      <span class="latam-badge">🇦🇷 Argentina</span>
+      <span class="latam-badge">🇺🇾 Uruguay</span>
+      <span class="latam-badge">🇨🇱 Chile</span>
+    </div>
+  </div>
+
+  <!-- ══ SCENE 1 — PROBLEMA ════════════════════════════════════════════════════ -->
+  <div class="scene" id="s1">
+    <div class="problem-words">
+      <div class="problem-line" id="p1">¿Cuánto tiempo perdiste</div>
+      <div class="problem-line" id="p2">buscando el producto ideal</div>
+      <div class="problem-line" id="p3">para vender en tu tienda?</div>
+      <div class="problem-line strike" id="p4">Horas. Días. Y cuando lo encontrás...</div>
+      <div class="problem-line strike" id="p5">ya está saturado.</div>
+      <div class="problem-solution" id="ps">TrendBase lo resuelve.</div>
+    </div>
+  </div>
+
+  <!-- ══ SCENE 2 — DASHBOARD ═══════════════════════════════════════════════════ -->
+  <div class="scene" id="s2">
+    <div class="mock-dashboard" id="s2-dash">
+      <div class="mock-topbar">
+        <div class="mock-dot" style="background:#ff5f57"></div>
+        <div class="mock-dot" style="background:#febc2e"></div>
+        <div class="mock-dot" style="background:#28c840"></div>
+        <div class="mock-topbar-title">TrendBase — Dashboard</div>
+      </div>
+      <div class="mock-body">
+        <div class="mock-sidebar">
+          <div class="mock-sb-item active">📊</div>
+          <div class="mock-sb-item">🔖</div>
+          <div class="mock-sb-item">💬</div>
+          <div class="mock-sb-item">💼</div>
+        </div>
+        <div class="mock-content">
+          <div class="mock-cards">
+            <div class="mock-kpi"><div class="mock-kpi-label">Trending hoy</div><div class="mock-kpi-val gold">524</div></div>
+            <div class="mock-kpi"><div class="mock-kpi-label">Score promedio</div><div class="mock-kpi-val">72.4</div></div>
+            <div class="mock-kpi"><div class="mock-kpi-label">Actualizados</div><div class="mock-kpi-val green">hace 2h</div></div>
+          </div>
+          <div class="mock-products" id="mockProds">
+            <div class="mock-product" id="mp0">
+              <img class="mock-product-img" src="https://source.unsplash.com/featured/32x32/?led,lamp" alt="">
+              <span class="mock-product-name">Lámpara LED Magnética</span>
+              <span class="mock-score">95</span>
+              <span class="mock-change">+18%</span>
+              <span class="mock-hot">HOT</span>
+            </div>
+            <div class="mock-product" id="mp1">
+              <img class="mock-product-img" src="https://source.unsplash.com/featured/32x32/?skincare" alt="">
+              <span class="mock-product-name">Suero Vitamina C</span>
+              <span class="mock-score">89</span>
+              <span class="mock-change">+12%</span>
+            </div>
+            <div class="mock-product" id="mp2">
+              <img class="mock-product-img" src="https://source.unsplash.com/featured/32x32/?fitness" alt="">
+              <span class="mock-product-name">Banda de Resistencia Pro</span>
+              <span class="mock-score">83</span>
+              <span class="mock-change">+9%</span>
+            </div>
+            <div class="mock-product" id="mp3">
+              <img class="mock-product-img" src="https://source.unsplash.com/featured/32x32/?phone,holder" alt="">
+              <span class="mock-product-name">Soporte Magnético Auto</span>
+              <span class="mock-score">79</span>
+              <span class="mock-change">+7%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SCENE 3 — TRENDSCORE ══════════════════════════════════════════════════ -->
+  <div class="scene" id="s3">
+    <div class="score-explainer">
+      <div class="score-title" style="opacity:0;animation:fadeUp 0.6s ease forwards">El <span>TrendScore</span>: tu ventaja injusta</div>
+      <div class="score-bars" style="opacity:0;animation:fadeUp 0.6s 0.3s ease forwards">
+        <div class="score-bar-wrap">
+          <div class="score-bar-label"><span>Viral en TikTok</span><span>92</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill" id="bar1" style="background:linear-gradient(90deg,#f97316,var(--champagne))"></div></div>
+        </div>
+        <div class="score-bar-wrap">
+          <div class="score-bar-label"><span>Tendencia IG</span><span>78</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill" id="bar2" style="background:linear-gradient(90deg,#a855f7,#ec4899)"></div></div>
+        </div>
+        <div class="score-bar-wrap">
+          <div class="score-bar-label"><span>Volumen LATAM</span><span>85</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill" id="bar3" style="background:linear-gradient(90deg,#22d3ee,var(--green))"></div></div>
+        </div>
+      </div>
+      <div class="score-features">
+        <div class="score-feature" id="sf0"><div class="score-feature-icon">📈</div><div class="score-feature-label">Historial 90 días</div></div>
+        <div class="score-feature" id="sf1"><div class="score-feature-icon">🌎</div><div class="score-feature-label">Datos por país</div></div>
+        <div class="score-feature" id="sf2"><div class="score-feature-icon">⚡</div><div class="score-feature-label">Actualizado cada 6h</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SCENE 4 — AI CHAT ══════════════════════════════════════════════════════ -->
+  <div class="scene" id="s4">
+    <div class="chat-mock">
+      <div class="chat-header">
+        <div class="chat-avatar">T</div>
+        <div>
+          <div class="chat-name">Asistente IA TrendBase</div>
+          <div class="chat-model">claude-sonnet · Pro</div>
+        </div>
+      </div>
+      <div class="chat-body">
+        <div class="msg user" id="cm0">¿Conviene vender la Lámpara LED Magnética? ¿Cuál es la mejor estrategia para Argentina?</div>
+        <div class="typing" id="ct"><span></span><span></span><span></span></div>
+        <div class="msg bot" id="cm1">
+          <strong>¡Sí, altamente recomendado!</strong> TrendScore 95 con margen 45-60%.<br><br>
+          Estrategia para AR: apuntá a segmento 18-35 vía TikTok. Precio ideal <strong>$8.500-12.000 ARS</strong>.
+          Tu diferencial: entrega en 48hs + garantía. Competencia media, ventana de 3-4 semanas antes de saturarse.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SCENE 5 — MARKETING IA ════════════════════════════════════════════════ -->
+  <div class="scene" id="s5">
+    <div class="mkt-mock">
+      <div class="mkt-header">
+        <div class="mkt-icon" style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.2)">✨</div>
+        <div>
+          <div class="mkt-title">Marketing IA — Lámpara LED Magnética</div>
+          <div class="mkt-sub">Generado con Claude Haiku · caché 24h</div>
+        </div>
+      </div>
+      <div class="mkt-grid">
+        <div class="mkt-card" id="mc0">
+          <div class="mkt-card-label"><span class="plat" style="background:#ffe70020;color:#ffe700">ML</span> Título MercadoLibre</div>
+          <div class="mkt-card-text">Lámpara LED Magnética Recargable USB | Luz Flexible Escritorio Sin Cables</div>
+        </div>
+        <div class="mkt-card" id="mc1">
+          <div class="mkt-card-label"><span class="plat" style="background:#ff006020;color:#ff0060">TT</span> Script TikTok 30s</div>
+          <div class="mkt-card-text">[0s] ¿Cansado de cables? [8s] Esta lámpara se pega a cualquier superficie... [24s] Link en bio 🔥</div>
+        </div>
+        <div class="mkt-card" id="mc2">
+          <div class="mkt-card-label"><span class="plat" style="background:#e1306c20;color:#e1306c">IG</span> Caption Instagram</div>
+          <div class="mkt-card-text">✨ La lámpara que está rompiendo internet llegó a Argentina... #dropshipping #gadgets #tendencia</div>
+        </div>
+        <div class="mkt-card" id="mc3">
+          <div class="mkt-card-label">🔍 Keywords SEO</div>
+          <div class="mkt-keywords" id="kwWrap">
+            <span class="mkt-kw" id="kw0">lámpara led recargable</span>
+            <span class="mkt-kw" id="kw1">luz escritorio sin cable</span>
+            <span class="mkt-kw" id="kw2">lámpara magnética usb</span>
+            <span class="mkt-kw" id="kw3">gadget hogar tendencia</span>
+            <span class="mkt-kw" id="kw4">luz led portátil argentina</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SCENE 6 — MI NEGOCIO ═══════════════════════════════════════════════════ -->
+  <div class="scene" id="s6">
+    <div class="negocio-mock">
+      <div class="neg-kpis">
+        <div class="neg-kpi"><div class="neg-kpi-label">Ingresos totales</div><div class="neg-kpi-val" style="color:var(--green)">$847.200</div></div>
+        <div class="neg-kpi"><div class="neg-kpi-label">Ganancia neta</div><div class="neg-kpi-val" style="color:var(--champagne)">$312.800</div></div>
+        <div class="neg-kpi"><div class="neg-kpi-label">ROI</div><div class="neg-kpi-val" style="color:white">58%</div></div>
+        <div class="neg-kpi"><div class="neg-kpi-label">Tienda</div><div class="neg-kpi-val" style="font-size:14px;color:var(--green)">● Shopify</div></div>
+      </div>
+      <div class="neg-table">
+        <div class="neg-table-head">
+          <span>Producto</span><span>Vendido</span><span>Stock</span><span>Precio</span><span>Ganancia</span>
+        </div>
+        <div class="neg-row" id="nr0"><span class="neg-row-name">Lámpara LED</span><span style="color:var(--green)">47</span><span>8</span><span>$9.500</span><span style="color:var(--green)">$178.600</span></div>
+        <div class="neg-row" id="nr1"><span class="neg-row-name">Suero Vit C</span><span style="color:var(--green)">31</span><span>14</span><span>$6.200</span><span style="color:var(--green)">$89.100</span></div>
+        <div class="neg-row" id="nr2"><span class="neg-row-name">Banda Fitness</span><span style="color:var(--green)">23</span><span style="color:var(--red);font-weight:700">3 ⚠</span><span>$4.800</span><span style="color:var(--green)">$45.100</span></div>
+      </div>
+      <div class="neg-notif" id="negNotif">
+        🔔 <strong>Alerta de stock:</strong> "Banda Fitness" tiene solo 3 unidades — reponé antes de que se agote.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SCENE 7 — CTA ══════════════════════════════════════════════════════════ -->
+  <div class="scene" id="s7">
+    <div class="cta-wrap">
+      <div class="cta-badge">🚀 Mirá los productos trending ahora</div>
+      <div class="cta-title">Tu próximo<br><span class="accent">producto viral</span><br>te está esperando.</div>
+      <div class="cta-subtitle">Más de 500 productos trending en AR, UY y CL. Actualizados cada 6 horas.</div>
+      <div class="cta-buttons">
+        <button class="cta-btn-primary" onclick="window.parent.postMessage('signup','*')">Empezar gratis</button>
+        <button class="cta-btn-secondary" onclick="window.parent.postMessage('dashboard','*')">Ver productos →</button>
+      </div>
+      <div class="cta-plans">
+        <div class="cta-plan" id="cp0">
+          <div class="cta-plan-name">Free</div>
+          <div class="cta-plan-price"><span class="plan-currency">$</span>0</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.3);font-family:monospace">para siempre</div>
+        </div>
+        <div class="cta-plan" id="cp1">
+          <div class="cta-plan-name">Starter</div>
+          <div class="cta-plan-price gold"><span class="plan-currency">$</span>9<span class="plan-currency">/mes</span></div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.3);font-family:monospace">+ IA avanzada</div>
+        </div>
+        <div class="cta-plan" id="cp2">
+          <div class="cta-plan-name">Pro</div>
+          <div class="cta-plan-price gold"><span class="plan-currency">$</span>19<span class="plan-currency">/mes</span></div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.3);font-family:monospace">todo incluido</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Paused overlay -->
+  <div id="paused-overlay">
+    <button class="play-btn" onclick="resumeDemo()">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+    </button>
+  </div>
+
+  <!-- Subtitle -->
+  <div id="subtitle"></div>
+
+  <!-- Controls -->
+  <div id="controls">
+    <button onclick="togglePlay()" id="playBtn" title="Play/Pause">⏸</button>
+    <button onclick="prevScene()" title="Anterior">⏮</button>
+    <button onclick="nextScene()" title="Siguiente">⏭</button>
+    <span id="timer">0:00 / 1:30</span>
+    <div id="scene-dots"></div>
+  </div>
+</div>
+
+<script>
+// ── DEMO ENGINE ──────────────────────────────────────────────────────────────
+
+const SCENES = [
+  {
+    dur: 5000,
+    sub: "Bienvenido a TrendBase — inteligencia de mercado para dropshippers de Argentina, Uruguay y Chile.",
+    onEnter: () => {},
+  },
+  {
+    dur: 9000,
+    sub: "¿Cuánto tiempo perdiste buscando el producto ideal? Cuando lo encontrás... ya está saturado. TrendBase lo resuelve.",
+    onEnter: () => {
+      const ids = ['p1','p2','p3','p4','p5','ps'];
+      const delays = [0, 400, 800, 2000, 2500, 4500];
+      ids.forEach((id, i) => {
+        setTimeout(() => document.getElementById(id)?.classList.add('show'), delays[i]);
+      });
+    },
+  },
+  {
+    dur: 10000,
+    sub: "En el Dashboard encontrás los productos más virales en tiempo real — con TrendScore, variación de tendencia e imagen.",
+    onEnter: () => {
+      [0,1,2,3].forEach(i => {
+        setTimeout(() => document.getElementById('mp'+i)?.classList.add('show'), i * 300 + 400);
+      });
+    },
+  },
+  {
+    dur: 10000,
+    sub: "El TrendScore combina viralidad en TikTok, Instagram y volumen de búsquedas en LATAM para darte el ranking más preciso.",
+    onEnter: () => {
+      setTimeout(() => {
+        document.getElementById('bar1').style.width = '92%';
+        document.getElementById('bar2').style.width = '78%';
+        document.getElementById('bar3').style.width = '85%';
+      }, 600);
+      [0,1,2].forEach(i => {
+        setTimeout(() => document.getElementById('sf'+i)?.classList.add('show'), i * 400 + 1200);
+      });
+    },
+  },
+  {
+    dur: 10000,
+    sub: "El asistente IA analiza cada producto y te da la estrategia exacta: precio ideal, plataforma, ventana de tiempo y diferencial.",
+    onEnter: () => {
+      setTimeout(() => document.getElementById('cm0')?.classList.add('show'), 400);
+      setTimeout(() => document.getElementById('ct')?.classList.add('show'), 1200);
+      setTimeout(() => {
+        document.getElementById('ct')?.classList.remove('show');
+        document.getElementById('cm1')?.classList.add('show');
+      }, 3500);
+    },
+  },
+  {
+    dur: 10000,
+    sub: "Marketing IA genera en segundos: título para MercadoLibre, script TikTok, caption Instagram y keywords SEO listos para copiar.",
+    onEnter: () => {
+      [0,1,2,3].forEach(i => {
+        setTimeout(() => document.getElementById('mc'+i)?.classList.add('show'), i * 350 + 300);
+      });
+      [0,1,2,3,4].forEach(i => {
+        setTimeout(() => document.getElementById('kw'+i)?.classList.add('show'), i * 200 + 1800);
+      });
+    },
+  },
+  {
+    dur: 10000,
+    sub: "Mi Negocio sincroniza tu tienda Shopify o TiendaNube automáticamente — ventas, stock y alertas en tiempo real.",
+    onEnter: () => {
+      [0,1,2].forEach(i => {
+        setTimeout(() => document.getElementById('nr'+i)?.classList.add('show'), i * 300 + 500);
+      });
+      setTimeout(() => document.getElementById('negNotif')?.classList.add('show'), 2500);
+    },
+  },
+  {
+    dur: 8000,
+    sub: "Empezá gratis hoy. Sin tarjeta de crédito. Sin excusas. Tu próximo producto viral te está esperando.",
+    onEnter: () => {
+      [0,1,2].forEach(i => {
+        setTimeout(() => document.getElementById('cp'+i)?.classList.add('show'), i * 300 + 1500);
+      });
+    },
+  },
+];
+
+let currentScene = 0;
+let isPlaying = true;
+let sceneTimer = null;
+let progressTimer = null;
+let elapsed = 0;
+let totalDuration = SCENES.reduce((s, sc) => s + sc.dur, 0);
+let sceneStartTime = Date.now();
+let globalElapsed = 0;
+
+const scenes = document.querySelectorAll('.scene');
+const subtitle = document.getElementById('subtitle');
+const progressBar = document.getElementById('progress-bar');
+const playBtn = document.getElementById('playBtn');
+const timerEl = document.getElementById('timer');
+const pausedOverlay = document.getElementById('paused-overlay');
+
+// Build dots
+const dotsWrap = document.getElementById('scene-dots');
+SCENES.forEach((_, i) => {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' active' : '');
+  d.onclick = () => goToScene(i);
+  dotsWrap.appendChild(d);
+});
+
+function fmt(ms) {
+  const s = Math.floor(ms / 1000);
+  return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+}
+
+function updateDots() {
+  document.querySelectorAll('.dot').forEach((d, i) => {
+    d.classList.toggle('active', i === currentScene);
+  });
+}
+
+function showSubtitle(text) {
+  subtitle.textContent = text;
+  subtitle.classList.add('visible');
+}
+function hideSubtitle() {
+  subtitle.classList.remove('visible');
+}
+
+function enterScene(idx) {
+  scenes.forEach(s => s.classList.remove('active'));
+  scenes[idx]?.classList.add('active');
+  SCENES[idx]?.onEnter?.();
+  showSubtitle(SCENES[idx]?.sub || '');
+  updateDots();
+  sceneStartTime = Date.now();
+}
+
+function startSceneTimer() {
+  clearTimeout(sceneTimer);
+  const remaining = SCENES[currentScene].dur - elapsed;
+  sceneTimer = setTimeout(() => {
+    if (!isPlaying) return;
+    elapsed = 0;
+    if (currentScene < SCENES.length - 1) {
+      currentScene++;
+      enterScene(currentScene);
+      startSceneTimer();
+    } else {
+      isPlaying = false;
+      playBtn.textContent = '▶';
+      pausedOverlay.classList.add('show');
+      hideSubtitle();
+    }
+  }, remaining);
+}
+
+// Progress bar
+let progStart = Date.now();
+let progOffset = 0; // ms already elapsed when paused
+
+function startProgress() {
+  progStart = Date.now();
+  requestAnimationFrame(tickProgress);
+}
+
+function tickProgress() {
+  if (!isPlaying) return;
+  const now = Date.now();
+  const total = progOffset + (now - progStart);
+  const pct = Math.min(100, (total / totalDuration) * 100);
+  progressBar.style.width = pct + '%';
+  timerEl.textContent = `${fmt(total)} / ${fmt(totalDuration)}`;
+  if (pct < 100) requestAnimationFrame(tickProgress);
+}
+
+function togglePlay() {
+  if (isPlaying) {
+    pauseDemo();
+  } else {
+    resumeDemo();
+  }
+}
+
+function pauseDemo() {
+  isPlaying = false;
+  clearTimeout(sceneTimer);
+  elapsed += Date.now() - sceneStartTime;
+  progOffset += Date.now() - progStart;
+  playBtn.textContent = '▶';
+  pausedOverlay.classList.add('show');
+  hideSubtitle();
+}
+
+function resumeDemo() {
+  isPlaying = true;
+  playBtn.textContent = '⏸';
+  pausedOverlay.classList.remove('show');
+  showSubtitle(SCENES[currentScene]?.sub || '');
+  sceneStartTime = Date.now();
+  progStart = Date.now();
+  startSceneTimer();
+  requestAnimationFrame(tickProgress);
+}
+
+function goToScene(idx) {
+  clearTimeout(sceneTimer);
+  elapsed = 0;
+  // recalculate progress offset
+  progOffset = SCENES.slice(0, idx).reduce((s, sc) => s + sc.dur, 0);
+  currentScene = idx;
+  enterScene(idx);
+  if (isPlaying) {
+    progStart = Date.now();
+    startSceneTimer();
+    requestAnimationFrame(tickProgress);
+  }
+}
+
+function nextScene() {
+  if (currentScene < SCENES.length - 1) goToScene(currentScene + 1);
+}
+function prevScene() {
+  if (currentScene > 0) goToScene(currentScene - 1);
+}
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (e.key === ' ') { e.preventDefault(); togglePlay(); }
+  if (e.key === 'ArrowRight') nextScene();
+  if (e.key === 'ArrowLeft') prevScene();
+});
+
+// Init
+enterScene(0);
+startSceneTimer();
+startProgress();
+</script>
+</body>
+</html>

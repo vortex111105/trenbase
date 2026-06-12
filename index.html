@@ -634,29 +634,96 @@
       </div>
     </section>
 
-    <!-- Demo Video Section -->
-    <section id="demo-video" class="py-16 bg-obsidian relative z-20 border-b border-white/5">
-      <div class="max-w-5xl mx-auto px-6 md:px-12 text-center">
-        <span class="text-xs font-mono text-champagne uppercase tracking-widest block mb-3">¿Cómo funciona?</span>
-        <h2 class="text-3xl md:text-5xl font-extrabold text-white tracking-tight mb-12">Conoce TrendBase por dentro</h2>
-        
-        <!-- Video Player Container (Glassmorphism) -->
-        <div class="relative w-full aspect-video rounded-3xl overflow-hidden border border-white/10 bg-white/5 backdrop-blur-xl shadow-[0_20px_60px_-10px_rgba(0,0,0,0.8)] group">
-          
-          <!-- Estado vacío (Placeholder) -->
-          <!-- Instrucción: Cuando grabes tu video, súbelo a YouTube, borra este <div> de placeholder, y descomenta el iframe de abajo. -->
-          <div class="absolute inset-0 flex flex-col items-center justify-center bg-black/60 z-10 transition-opacity duration-300">
-            <div class="w-24 h-24 bg-champagne text-obsidian rounded-full flex items-center justify-center shadow-[0_0_40px_rgba(255,215,0,0.4)] transform group-hover:scale-110 group-hover:shadow-[0_0_60px_rgba(255,215,0,0.6)] transition-all duration-300 cursor-pointer mb-6">
-              <i data-lucide="play" class="w-10 h-10 ml-2"></i>
-            </div>
-            <p class="text-white/80 text-lg font-medium">El video de demostración irá aquí</p>
-            <p class="text-white/50 text-sm mt-2 max-w-md mx-auto">Sigue el guión, graba tu pantalla y reemplaza este bloque con el enlace de YouTube.</p>
-          </div>
-          
-          <!-- Iframe de YouTube (Descomentar para usar) -->
-          <!-- <iframe class="w-full h-full relative z-0" src="https://www.youtube.com/embed/TU_ID_AQUI?rel=0&modestbranding=1" title="Demostración de TrendBase" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe> -->
-          
+    <!-- ═══ DEMO VIDEO ════════════════════════════════════════════════════════ -->
+    <section id="demo-video" class="py-24 px-6 md:px-12 bg-gradient-to-b from-obsidian via-black/60 to-obsidian">
+      <div class="max-w-5xl mx-auto">
+
+        <!-- Heading -->
+        <div class="text-center mb-12">
+          <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-champagne/30 bg-champagne/5 text-xs font-mono text-champagne uppercase tracking-widest mb-4">
+            <i data-lucide="play-circle" class="w-3.5 h-3.5"></i> Demo en vivo
+          </span>
+          <h2 class="text-3xl md:text-5xl font-extrabold text-white tracking-tight">
+            Todo lo que necesitás saber<br>
+            <span class="text-champagne font-drama italic font-normal">en 90 segundos.</span>
+          </h2>
+          <p class="text-white/50 text-base md:text-lg mt-4 max-w-xl mx-auto">
+            Mirá cómo TrendBase detecta productos virales antes que la competencia y los convierte en ventas reales.
+          </p>
         </div>
+
+        <!-- Video Player -->
+        <div class="relative rounded-[2rem] overflow-hidden border border-white/10 shadow-[0_0_80px_rgba(201,168,76,0.08)] bg-black group" id="videoWrap">
+
+          <!-- Poster / Overlay (visible antes de hacer play) -->
+          <div id="videoPoster" class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-gradient-to-br from-obsidian via-black to-obsidian/90 cursor-pointer" onclick="playDemoVideo()">
+            <!-- Noise texture -->
+            <div class="absolute inset-0 opacity-[0.03]" style="background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22/></filter><rect width=%22200%22 height=%22200%22 filter=%22url(%23n)%22 opacity=%221%22/></svg>');background-size:200px"></div>
+
+            <!-- Floating feature pills -->
+            <div class="absolute top-6 left-6 hidden md:flex flex-col gap-2">
+              <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-white/5 backdrop-blur-md border border-white/10 rounded-full text-[10px] font-mono text-white/70 animate-pulse">🔥 TrendScore en tiempo real</div>
+              <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-white/5 backdrop-blur-md border border-white/10 rounded-full text-[10px] font-mono text-white/70">🤖 Copy de Marketing con IA</div>
+              <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-white/5 backdrop-blur-md border border-white/10 rounded-full text-[10px] font-mono text-white/70">🛒 Integración con tu tienda</div>
+            </div>
+            <div class="absolute top-6 right-6 hidden md:flex flex-col gap-2 items-end">
+              <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-white/5 backdrop-blur-md border border-white/10 rounded-full text-[10px] font-mono text-white/70">📈 500+ productos trending</div>
+              <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-white/5 backdrop-blur-md border border-white/10 rounded-full text-[10px] font-mono text-white/70">🇦🇷 🇺🇾 🇨🇱 Solo para LATAM</div>
+              <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-white/5 backdrop-blur-md border border-white/10 rounded-full text-[10px] font-mono text-white/70">⚡ Actualizado cada 6 horas</div>
+            </div>
+
+            <!-- Center play button -->
+            <div class="relative z-10 flex flex-col items-center gap-4">
+              <div class="relative">
+                <!-- Outer rings animation -->
+                <div class="absolute inset-0 rounded-full bg-champagne/20 scale-150 animate-ping"></div>
+                <div class="absolute inset-0 rounded-full bg-champagne/10 scale-125"></div>
+                <!-- Play button -->
+                <div class="w-20 h-20 md:w-24 md:h-24 rounded-full bg-champagne flex items-center justify-center shadow-[0_0_40px_rgba(201,168,76,0.5)] hover:scale-110 transition duration-300 group-hover:shadow-[0_0_60px_rgba(201,168,76,0.7)]">
+                  <svg class="w-8 h-8 text-obsidian ml-1" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+              </div>
+              <div class="text-center">
+                <p class="text-white font-bold text-sm">Ver la demo</p>
+                <p class="text-white/40 text-xs font-mono">1 min 30 seg</p>
+              </div>
+            </div>
+
+            <!-- Duration badge -->
+            <div class="absolute bottom-6 right-6 px-3 py-1.5 bg-black/60 backdrop-blur-md border border-white/10 rounded-full text-[10px] font-mono text-white/60">
+              ▶ 01:30
+            </div>
+          </div>
+
+          <!-- Demo player iframe (hidden until play) -->
+          <iframe
+            id="demoVideo"
+            src="/demo-player.html"
+            class="w-full aspect-video border-0"
+            style="display:none"
+            allow="autoplay"
+            title="TrendBase Demo"
+          ></iframe>
+
+          <!-- Placeholder image behind poster -->
+          <img
+            src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop"
+            alt="TrendBase Demo Preview"
+            class="w-full aspect-video object-cover opacity-20"
+            loading="lazy"
+          >
+        </div>
+
+        <!-- Below video: CTA row -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10">
+          <button onclick="openAuth('signup')" class="btn-magnetic bg-champagne text-obsidian px-8 py-3.5 rounded-full text-sm font-bold uppercase tracking-wider shadow-[0_0_20px_rgba(201,168,76,0.3)] hover:shadow-[0_0_30px_rgba(201,168,76,0.5)]">
+            Empezar gratis ahora
+          </button>
+          <button onclick="enterDash()" class="px-8 py-3.5 rounded-full text-sm font-bold uppercase tracking-wider border border-white/20 text-white/70 hover:text-white hover:border-white/40 transition">
+            Ver los productos →
+          </button>
+        </div>
+
       </div>
     </section>
 
@@ -3549,6 +3616,25 @@
         });
       }
     }
+
+    // ── DEMO VIDEO ───────────────────────────────────────────────────────────
+    function playDemoVideo() {
+      const poster = document.getElementById('videoPoster');
+      const video = document.getElementById('demoVideo');
+      if (!poster || !video) return;
+      poster.style.transition = 'opacity 0.5s';
+      poster.style.opacity = '0';
+      setTimeout(() => {
+        poster.style.display = 'none';
+        video.style.display = 'block';
+      }, 500);
+    }
+
+    // Listen for CTA messages from the demo player iframe
+    window.addEventListener('message', e => {
+      if (e.data === 'signup') openAuth('signup');
+      if (e.data === 'dashboard') enterDash();
+    });
 
     // ── STORE SYNC ───────────────────────────────────────────────────────────
 
