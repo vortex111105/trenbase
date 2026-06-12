@@ -1,0 +1,8 @@
+{
+  "name": "trendbase",
+  "version": "1.0.0",
+  "description": "TrendBase App",
+  "dependencies": {
+    "@vercel/edge": "^1.1.1"
+  }
+}
