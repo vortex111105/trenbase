@@ -2,6 +2,7 @@
   "name": "trendbase",
   "version": "1.0.0",
   "description": "TrendBase App",
+  "type": "module",
   "dependencies": {
     "@vercel/edge": "^1.1.1"
   }
