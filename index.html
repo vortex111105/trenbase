@@ -2949,17 +2949,16 @@
 
     async function subscribe(planName) {
       if(!user) { openAuth('signup'); return; }
-      try {
-        const res = await fetch('/api/subscribe', {
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ plan: planName, email: user.email })
-        });
-        const data = await res.json();
-        if(data.url) location.href = data.url;
-      } catch(e) {
-        alert('Error: ' + e.message);
-      }
+      
+      const checkoutLink = "https://trendbase.lemonsqueezy.com/checkout/buy/a011b894-15b6-4913-918d-34676d498cba";
+      const finalUrl = checkoutLink + "?checkout[email]=" + encodeURIComponent(user.email);
+      
+      // Mostrar un mensaje mientras redirige para mejor UX
+      showToast('Redirigiendo a la pasarela de pago seguro...', 'success');
+      
+      setTimeout(() => {
+        location.href = finalUrl;
+      }, 1000);
     }
 
     // ── PRODUCTS DETAIL POPUP & SUPPLIERS ────────────────────────────────────
