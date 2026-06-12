@@ -77,6 +77,19 @@
     .sale-cat{font-size:.7rem;color:var(--text2)}
     .sale-time{font-size:.7rem;color:var(--text3)}
 
+    /* NEW ADMIN FEATURES */
+    .quick-links{display:flex;gap:.75rem;margin-bottom:2rem;flex-wrap:wrap}
+    .ql-btn{background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:.65rem 1rem;border-radius:8px;font-size:.82rem;text-decoration:none;display:flex;align-items:center;gap:.5rem;transition:all .2s;font-weight:500}
+    .ql-btn:hover{border-color:var(--accent);background:rgba(108,99,255,.1)}
+    .ql-btn i{color:var(--accent);font-size:1.1rem}
+    
+    .users-table{width:100%;border-collapse:collapse}
+    .users-table th{text-align:left;padding:1rem 1.25rem;font-size:.72rem;color:var(--text2);text-transform:uppercase;border-bottom:1px solid var(--border);letter-spacing:.5px}
+    .users-table td{padding:1rem 1.25rem;font-size:.85rem;border-bottom:1px solid var(--border);vertical-align:middle}
+    .users-table tr:last-child td{border-bottom:none}
+    .badge-pro{background:rgba(0,217,126,.15);color:var(--green);padding:.25rem .6rem;border-radius:100px;font-size:.7rem;font-weight:700}
+    .badge-free{background:rgba(255,255,255,.05);color:var(--text2);padding:.25rem .6rem;border-radius:100px;font-size:.7rem;font-weight:600}
+
     /* EMPTY */
     .empty{text-align:center;padding:2rem;color:var(--text2);font-size:.82rem}
 
@@ -109,10 +122,18 @@
   </header>
 
   <div class="main">
-    <div class="page-title">Panel de control</div>
+    <div class="page-title">Panel de control Maestro</div>
+
+    <div class="quick-links">
+      <a href="https://app.lemonsqueezy.com/payouts" target="_blank" class="ql-btn"><i class="ti ti-cash"></i> Lemon Squeezy (Pagos y Retiros)</a>
+      <a href="https://console.anthropic.com/settings/billing" target="_blank" class="ql-btn"><i class="ti ti-brain"></i> Anthropic (Tokens IA)</a>
+      <a href="https://supabase.com/dashboard/project/rbrundkswmlbgkicdnty/editor" target="_blank" class="ql-btn"><i class="ti ti-database"></i> Supabase (Base de datos)</a>
+      <a href="https://vercel.com/dashboard" target="_blank" class="ql-btn"><i class="ti ti-server"></i> Vercel (Servidores)</a>
+      <a href="https://github.com" target="_blank" class="ql-btn"><i class="ti ti-brand-github"></i> GitHub (Código)</a>
+    </div>
 
     <div class="kpi-grid" id="kpiGrid">
-      <div class="kpi-card"><div class="kpi-label"><i class="ti ti-check"></i> Ventas totales</div><div class="kpi-val" id="kTotalSales">—</div><div class="kpi-sub up" id="kSalesSub">cargando...</div></div>
+      <div class="kpi-card" style="border-color:var(--green);background:rgba(0,217,126,0.05)"><div class="kpi-label"><i class="ti ti-currency-dollar"></i> Ingresos (MRR)</div><div class="kpi-val" style="color:var(--green)" id="kMRR">—</div><div class="kpi-sub neu">Recurrente Mensual Estimado</div></div>
       <div class="kpi-card"><div class="kpi-label"><i class="ti ti-users"></i> Encuestas</div><div class="kpi-val" id="kOnboarding">—</div><div class="kpi-sub neu" id="kOnboardingSub">cargando...</div></div>
       <div class="kpi-card"><div class="kpi-label"><i class="ti ti-trending-up"></i> Tasa de éxito</div><div class="kpi-val up" id="kSuccess">—</div><div class="kpi-sub neu">respondieron "Sí vendí"</div></div>
       <div class="kpi-card"><div class="kpi-label"><i class="ti ti-star"></i> Producto top</div><div class="kpi-val" id="kTopProduct" style="font-size:1rem;letter-spacing:0;line-height:1.3">—</div><div class="kpi-sub up" id="kTopSales">—</div></div>
@@ -136,6 +157,12 @@
     <div class="panel">
       <div class="panel-head"><h3><i class="ti ti-trophy"></i> Productos más vendidos por usuarios</h3></div>
       <div class="panel-body" id="topPanel"><div class="spinner"></div></div>
+    </div>
+
+    <!-- Active Users Table -->
+    <div class="panel" style="margin-top:1.25rem">
+      <div class="panel-head"><h3><i class="ti ti-users"></i> Base de Usuarios Activos</h3><span id="uTotal" style="font-size:.75rem;color:var(--text2)"></span></div>
+      <div class="panel-body" style="padding:0;overflow-x:auto" id="usersPanel"><div class="spinner"></div></div>
     </div>
   </div>
 </div>
@@ -180,8 +207,7 @@ function renderDashboard(data) {
   document.getElementById('lastUpdate').textContent = 'Actualizado ' + new Date().toLocaleTimeString('es-AR');
 
   // KPIs
-  document.getElementById('kTotalSales').textContent = data.total_sales;
-  document.getElementById('kSalesSub').textContent = data.total_sales === 1 ? '1 producto vendido' : data.total_sales+' productos vendidos';
+  document.getElementById('kMRR').textContent = '$' + (data.mrr || 0);
   document.getElementById('kOnboarding').textContent = data.onboarding_total;
   const yesCount = data.onboarding_answers?.yes || 0;
   const successRate = data.onboarding_total > 0 ? Math.round(yesCount/data.onboarding_total*100) : 0;
@@ -189,6 +215,18 @@ function renderDashboard(data) {
   const top = data.top_products?.[0];
   document.getElementById('kTopProduct').textContent = top ? top.name : '—';
   document.getElementById('kTopSales').textContent = top ? top.count+' venta'+(top.count>1?'s':'') : 'sin datos aún';
+
+  // Users Table
+  const users = data.users || [];
+  document.getElementById('uTotal').textContent = users.length + ' registrados';
+  document.getElementById('usersPanel').innerHTML = users.length ?
+    '<table class="users-table"><thead><tr><th>Usuario / Email</th><th>Fecha de Registro</th><th>Plan / Estado</th></tr></thead><tbody>' +
+    users.map(u => {
+      const date = new Date(u.created_at).toLocaleDateString('es-AR', { year:'numeric', month:'short', day:'numeric' });
+      const badge = u.plan.includes('Pro') || u.plan.includes('$') ? '<span class="badge-pro">'+u.plan+'</span>' : '<span class="badge-free">'+u.plan+'</span>';
+      return `<tr><td style="font-weight:500">${u.email}</td><td style="color:var(--text2)">${date}</td><td>${badge}</td></tr>`;
+    }).join('') + '</tbody></table>'
+    : '<div class="empty">No hay usuarios registrados</div>';
 
   // Onboarding bars
   const ob = data.onboarding_answers || {yes:0,no:0,exploring:0};
