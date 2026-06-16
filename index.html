@@ -1569,18 +1569,18 @@
               <h3 class="text-xs font-mono text-champagne uppercase tracking-widest border-b border-white/5 pb-2 flex items-center gap-2"><i data-lucide="users" class="w-4 h-4"></i> Audiencia Objetivo (Ads)</h3>
               <div class="space-y-4 pt-2">
                 <div>
-                  <div class="flex justify-between text-[10px] text-white/50 mb-1">
+                  <div id="audGenderLabels" class="flex justify-between text-[10px] text-white/50 mb-1">
                     <span>Mujeres (75%)</span>
                     <span>Hombres (25%)</span>
                   </div>
-                  <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden flex">
+                  <div id="audGenderBars" class="w-full h-2 bg-white/10 rounded-full overflow-hidden flex">
                     <div class="h-full bg-pink-500 w-[75%]"></div>
                     <div class="h-full bg-blue-500 w-[25%]"></div>
                   </div>
                 </div>
                 <div>
                   <div class="text-xs text-white/70 mb-1 font-bold">Edades de mayor conversión:</div>
-                  <div class="flex gap-2">
+                  <div id="audAges" class="flex gap-2">
                     <span class="px-2 py-1 bg-white/10 rounded text-[10px] font-mono text-white">18-24</span>
                     <span class="px-2 py-1 bg-champagne/20 border border-champagne/50 rounded text-[10px] font-mono text-champagne font-bold">25-34 (Top)</span>
                     <span class="px-2 py-1 bg-white/10 rounded text-[10px] font-mono text-white">35-44</span>
@@ -2412,16 +2412,45 @@
 
       // Audiencia
       const interestsMatrix = [
-        ["Cuidado de la piel", "Spa en casa", "Belleza coreana"],
-        ["Fitness", "Gym en casa", "Deportes"],
-        ["Mascotas", "Perros felices", "Juguetes"],
-        ["Tecnología", "Gadgets", "Productividad"],
-        ["Cocina", "Chef en casa", "Recetas fáciles"]
+        ["Mascarillas LED", "Skincare Rutina", "Dermaplaning", "Estética"],
+        ["Calistenia", "Suplementos Pre-workout", "Crossfit", "Recuperación Muscular"],
+        ["Adiestramiento Canino", "Mascotas Ansiosas", "Juguetes Interactivos"],
+        ["Smart Home", "Setup Gamer", "Domótica", "Productividad Apple"],
+        ["Air Fryer Recetas", "Meal Prep", "Utensilios Profesionales"]
       ];
       const interests = interestsMatrix[idx % interestsMatrix.length];
       const elAudInterests = document.getElementById('audInterests');
       if(elAudInterests) {
         elAudInterests.innerHTML = interests.map(i => `<span class="px-2 py-1 text-[9px] uppercase bg-black/40 border border-white/5 rounded-full text-white/60">${i}</span>`).join('');
+      }
+
+      const genderFemalePct = [85, 20, 60, 15, 70][idx % 5];
+      const genderMalePct = 100 - genderFemalePct;
+      const elGenderLabels = document.getElementById('audGenderLabels');
+      if(elGenderLabels) {
+        elGenderLabels.innerHTML = `<span>Mujeres (${genderFemalePct}%)</span><span>Hombres (${genderMalePct}%)</span>`;
+      }
+      const elGenderBars = document.getElementById('audGenderBars');
+      if(elGenderBars) {
+        elGenderBars.innerHTML = `<div class="h-full bg-pink-500" style="width:${genderFemalePct}%"></div><div class="h-full bg-blue-500" style="width:${genderMalePct}%"></div>`;
+      }
+
+      const agesMatrix = [
+        ["18-24", "25-34 (Top)", "35-44"],
+        ["25-34", "35-44 (Top)", "45-54"],
+        ["18-24 (Top)", "25-34", "35-44"],
+        ["25-34", "35-44", "45-54 (Top)"],
+        ["18-24", "25-34", "35-44 (Top)"]
+      ];
+      const ages = agesMatrix[idx % agesMatrix.length];
+      const elAges = document.getElementById('audAges');
+      if(elAges) {
+        elAges.innerHTML = ages.map(a => {
+          if (a.includes('(Top)')) {
+            return `<span class="px-2 py-1 bg-champagne/20 border border-champagne/50 rounded text-[10px] font-mono text-champagne font-bold">${a}</span>`;
+          }
+          return `<span class="px-2 py-1 bg-white/10 rounded text-[10px] font-mono text-white">${a}</span>`;
+        }).join('');
       }
 
       // Videos
