@@ -642,14 +642,20 @@
         <!-- Video Player Container (Glassmorphism) -->
         <div class="relative w-full aspect-video rounded-3xl overflow-hidden border border-white/10 bg-white/5 backdrop-blur-xl shadow-[0_20px_60px_-10px_rgba(0,0,0,0.8)] group">
           
-          <!-- Estado vacío (Placeholder) -->
-          <div class="absolute inset-0 flex flex-col items-center justify-center bg-black/60 z-10 transition-opacity duration-300">
+          <!-- Custom Play Button Overlay -->
+          <div id="videoPoster" onclick="playDemoVideo()" class="absolute inset-0 flex flex-col items-center justify-center bg-black/60 z-10 transition-opacity duration-300">
             <div class="w-24 h-24 bg-champagne text-obsidian rounded-full flex items-center justify-center shadow-[0_0_40px_rgba(255,215,0,0.4)] transform group-hover:scale-110 group-hover:shadow-[0_0_60px_rgba(255,215,0,0.6)] transition-all duration-300 cursor-pointer mb-6">
               <i data-lucide="play" class="w-10 h-10 ml-2"></i>
             </div>
-            <p class="text-white/80 text-lg font-medium">El video de demostración irá aquí</p>
-            <p class="text-white/50 text-sm mt-2 max-w-md mx-auto">Sigue el guión que te dejé en tu escritorio, graba tu pantalla y envíame el video o el link de YouTube.</p>
+            <p class="text-white/80 text-lg font-medium">Reproducir Demostración</p>
+            <p class="text-white/50 text-sm mt-2 max-w-md mx-auto">Conoce cómo TrendBase te ayuda a encontrar productos ganadores.</p>
           </div>
+
+          <!-- Native HTML5 Video -->
+          <video id="demoVideo" class="w-full h-full object-cover hidden bg-black" controls preload="metadata">
+            <source src="/demo.mp4" type="video/mp4">
+            Tu navegador no soporta la reproducción de video nativo.
+          </video>
         </div> <!-- Ends Video Player Container -->
         
         <!-- Below video: CTA row -->
@@ -3580,6 +3586,7 @@
       setTimeout(() => {
         poster.style.display = 'none';
         video.style.display = 'block';
+        if(typeof video.play === 'function') video.play();
       }, 500);
     }
 
