@@ -3353,6 +3353,22 @@
       showToast('+' + qty + ' unidades de stock agregadas', 'success');
     }
 
+    function toast(msg, type='info', dur=3000) {
+      const container = document.getElementById('toast-container');
+      if(!container) return;
+      const t = document.createElement('div');
+      const typeClass = type === 'success' ? 'toast-success' : type === 'error' ? 'toast-error' : 'toast-info';
+      const icon = type === 'success' ? '<i data-lucide="check-circle" class="w-4 h-4"></i>' : type === 'error' ? '<i data-lucide="alert-circle" class="w-4 h-4"></i>' : '<i data-lucide="info" class="w-4 h-4"></i>';
+      t.className = `toast ${typeClass}`;
+      t.innerHTML = `${icon} <span>${msg}</span>`;
+      container.appendChild(t);
+      if(window.lucide) window.lucide.createIcons();
+      setTimeout(() => {
+        t.classList.add('toast-out');
+        setTimeout(() => t.remove(), 300);
+      }, dur);
+    }
+
     function showToast(msg, type) {
       const t = document.createElement('div');
       const bg = type === 'success' ? 'bg-green-600' : 'bg-red-600';
