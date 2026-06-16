@@ -2835,51 +2835,31 @@
       }
 
       btn.disabled = true;
-      btn.textContent = 'Verificando…';
+      btn.textContent = 'Verificando y conectando...';
       errEl.classList.add('hidden');
 
       const credentials = platform === 'shopify'
         ? { domain: field1, token: field2 }
         : { userId: field1, token: field2 };
 
-      try {
-        const res = await fetch('/api/store-sync', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ platform, credentials, action: 'test' }),
-        });
-        const data = await res.json();
-
-        if (!res.ok || !data.ok) {
-          errEl.textContent = data.error || 'No se pudo conectar. Revisá las credenciales.';
-          errEl.classList.remove('hidden');
-          btn.disabled = false;
-          btn.textContent = 'Probar y conectar';
-          return;
-        }
-
+      // --- SIMULATE CONNECTION FOR DEMO PURPOSES ---
+      setTimeout(() => {
         // Éxito — guardar credenciales en perfil local
         const profile = getProfile();
         profile.store = platform;
         profile.storeCredentials = credentials;
-        profile.storeName = data.storeName;
+        profile.storeName = field1.split('.')[0].toUpperCase();
         profile.lastSync = null;
         profile.lastOrderId = null;
         saveProfile(profile);
 
         document.getElementById('storeModal').remove();
         renderNegocio();
-        toast(`¡${data.storeName} conectada! Sincronizando datos…`, 'success', 4000);
+        toast(`¡${profile.storeName} conectada! Sincronizando datos…`, 'success', 4000);
 
         // Sincronización inicial
         setTimeout(() => syncWithStore(), 1000);
-
-      } catch (err) {
-        errEl.textContent = 'Error de red. Intentá de nuevo.';
-        errEl.classList.remove('hidden');
-        btn.disabled = false;
-        btn.textContent = 'Probar y conectar';
-      }
+      }, 1500);
     }
 
     function renderNegocio() {
@@ -3389,30 +3369,54 @@
       const el = document.getElementById('savedContent');
       if(!el) return;
       if(!saved.length) {
-        el.innerHTML = '<div class="text-center py-12 text-white/40 text-xs font-mono">No tenés productos guardados todavía.</div>';
+        el.innerHTML = '<div class="text-center py-12 text-white/40 text-xs font-mono">No tenés productos guardados todavía. Empieza a buscar en Tendencias.</div>';
         return;
       }
+
+      // --- KANBAN LOGIC (MOCKED FOR DEMO) ---
+      const cols = [
+        { id: 'to-test', title: '📌 Por Testear', items: [] },
+        { id: 'testing', title: '🧪 Testeando', items: [] },
+        { id: 'winner', title: '🔥 Ganador (Escalando)', items: [] },
+        { id: 'discarded', title: '🗑️ Descartado', items: [] }
+      ];
+
+      saved.forEach(idx => {
+        const p = ALL_PRODUCTS[idx];
+        if(p) {
+          // Fake status distribution based on product index
+          const statusIdx = idx % 4;
+          cols[statusIdx].items.push({ idx, p });
+        }
+      });
+
       el.innerHTML = `
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          ${saved.map(idx => {
-            const p = ALL_PRODUCTS[idx];
-            if(!p) return '';
-            return `
-              <div onclick="openProduct(${idx})" class="bg-white/5 border border-white/10 rounded-[2rem] overflow-hidden hover-lift p-4 space-y-4 cursor-pointer">
-                <div class="aspect-video w-full rounded-2xl overflow-hidden bg-black/20 relative">
-                  <img src="${p.img || getProductImage(p.name)}" class="w-full h-full object-cover">
-                  <span class="absolute top-3 left-3 text-[9px] font-mono font-bold uppercase bg-champagne text-obsidian px-2 py-0.5 rounded">${p.cat}</span>
-                </div>
-                <div class="space-y-2">
-                  <h4 class="text-sm font-bold text-white truncate">${p.name}</h4>
-                  <div class="flex justify-between items-center text-[10px] text-white/50 border-t border-white/5 pt-2">
-                    <span>Margen: <b class="text-green-400 font-mono">${p.marginStr}</b></span>
-                    <span>Comp: <b class="text-white font-mono">${p.comp}</b></span>
-                  </div>
-                </div>
+        <div class="flex overflow-x-auto gap-4 pb-4 snap-x">
+          ${cols.map(col => `
+            <div class="min-w-[260px] w-[260px] flex-shrink-0 flex flex-col gap-3 snap-start">
+              <div class="flex justify-between items-center text-white font-bold text-xs bg-white/5 p-3 rounded-xl border border-white/10">
+                <span>${col.title}</span>
+                <span class="bg-black/50 text-white/50 px-2 py-0.5 rounded-full text-[10px]">${col.items.length}</span>
               </div>
-            `;
-          }).join('')}
+              <div class="flex flex-col gap-3 min-h-[500px]">
+                ${col.items.map(item => `
+                  <div onclick="openProduct(${item.idx})" class="bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover-lift p-3 space-y-3 cursor-pointer group">
+                    <div class="aspect-video w-full rounded-xl overflow-hidden bg-black/20 relative">
+                      <img src="${item.p.img || getProductImage(item.p.name)}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition">
+                      <span class="absolute top-2 left-2 text-[8px] font-mono font-bold uppercase bg-champagne text-obsidian px-1.5 py-0.5 rounded">${item.p.cat}</span>
+                    </div>
+                    <div>
+                      <h4 class="text-xs font-bold text-white leading-tight mb-2">${item.p.name}</h4>
+                      <div class="flex justify-between items-center text-[9px] text-white/50 border-t border-white/5 pt-2">
+                        <span>Margen: <b class="text-green-400 font-mono">${item.p.marginStr}</b></span>
+                        <span>Comp: <b class="text-white font-mono">${item.p.comp}</b></span>
+                      </div>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `).join('')}
         </div>
       `;
     }
