@@ -1577,26 +1577,31 @@
 
             <!-- Calculadora ROI -->
             <div class="bg-white/5 border border-white/10 rounded-[2.5rem] p-6 space-y-4">
-              <h3 class="text-xs font-mono text-champagne uppercase tracking-widest border-b border-white/5 pb-2">Calculadora de Margen</h3>
-              <div class="space-y-3">
+              <h3 class="text-xs font-mono text-champagne uppercase tracking-widest border-b border-white/5 pb-2">Calculadora de Rentabilidad Interactiva</h3>
+              <div class="space-y-4">
                 <div>
-                  <label class="text-[9px] font-mono text-white/40 uppercase block mb-1">Costo unitario ($)</label>
-                  <input type="number" id="calcCost" oninput="calcROI()" value="5.5" class="w-full bg-obsidian border border-white/10 rounded-xl px-4 py-2 text-xs text-white outline-none focus:border-champagne">
+                  <div class="flex justify-between text-[9px] font-mono text-white/40 uppercase mb-1">
+                    <label>Costo de Envío ($)</label>
+                    <span id="calcCostVal" class="text-white font-bold">$5.50</span>
+                  </div>
+                  <input type="range" id="calcCost" oninput="calcROI()" min="0" max="40" step="0.5" value="5.5" class="w-full accent-champagne cursor-pointer">
                 </div>
                 <div>
-                  <label class="text-[9px] font-mono text-white/40 uppercase block mb-1">Precio de venta ($)</label>
-                  <input type="number" id="calcPrice" oninput="calcROI()" value="25" class="w-full bg-obsidian border border-white/10 rounded-xl px-4 py-2 text-xs text-white outline-none focus:border-champagne">
+                  <div class="flex justify-between text-[9px] font-mono text-white/40 uppercase mb-1">
+                    <label>CPA / Publicidad ($)</label>
+                    <span id="calcAdsVal" class="text-white font-bold">$5.00</span>
+                  </div>
+                  <input type="range" id="calcAds" oninput="calcROI()" min="1" max="100" step="0.5" value="5" class="w-full accent-champagne cursor-pointer">
                 </div>
                 <div>
-                  <label class="text-[9px] font-mono text-white/40 uppercase block mb-1">Publicidad por venta ($)</label>
-                  <input type="number" id="calcAds" oninput="calcROI()" value="2" class="w-full bg-obsidian border border-white/10 rounded-xl px-4 py-2 text-xs text-white outline-none focus:border-champagne">
-                </div>
-                <div>
-                  <label class="text-[9px] font-mono text-white/40 uppercase block mb-1">Ventas estimadas mensuales</label>
-                  <input type="number" id="calcSales" oninput="calcROI()" value="100" class="w-full bg-obsidian border border-white/10 rounded-xl px-4 py-2 text-xs text-white outline-none focus:border-champagne">
+                  <div class="flex justify-between text-[9px] font-mono text-white/40 uppercase mb-1">
+                    <label>Precio de Venta ($)</label>
+                    <span id="calcPriceVal" class="text-white font-bold">$25.00</span>
+                  </div>
+                  <input type="range" id="calcPrice" oninput="calcROI()" min="5" max="250" step="1" value="25" class="w-full accent-champagne cursor-pointer">
                 </div>
               </div>
-              <div id="calcResult" class="border-t border-white/5 pt-4 mb-6"></div>
+              <div id="calcResult" class="border-t border-white/5 pt-4 mb-2"></div>
               
               <!-- Sugerencias de Proveedores -->
               <div class="border-t border-white/5 pt-6">
@@ -1644,23 +1649,23 @@
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- Índice de Saturación -->
             <div class="bg-white/5 border border-white/10 rounded-[2rem] p-6 space-y-4 relative overflow-hidden">
-              <div class="absolute -right-6 -top-6 w-32 h-32 bg-green-500/10 blur-3xl rounded-full"></div>
+              <div id="satGlow" class="absolute -right-6 -top-6 w-32 h-32 bg-green-500/10 blur-3xl rounded-full transition-colors duration-500"></div>
               <h3 class="text-xs font-mono text-champagne uppercase tracking-widest border-b border-white/5 pb-2 flex items-center gap-2"><i data-lucide="thermometer" class="w-4 h-4"></i> Índice de Saturación</h3>
               
               <div class="flex flex-col items-center justify-center pt-4 pb-2">
                 <!-- Gauge Visual representation -->
                 <div class="relative w-40 h-20 overflow-hidden mb-2">
-                  <div class="absolute top-0 left-0 w-40 h-40 rounded-full border-[15px] border-white/5 border-t-green-500 border-l-yellow-500 border-b-white/5 border-r-white/5 transform rotate-[45deg]"></div>
-                  <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-4 h-16 origin-bottom rotate-[-20deg]">
-                    <div class="w-1 h-full bg-champagne mx-auto rounded-t-full shadow-[0_0_10px_rgba(201,168,76,0.8)]"></div>
+                  <div class="absolute top-0 left-0 w-40 h-40 rounded-full border-[15px] border-white/5 border-t-green-500 border-l-yellow-500 border-b-red-500 border-r-white/5 transform rotate-[45deg]"></div>
+                  <div id="satNeedle" class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-4 h-16 origin-bottom transition-transform duration-1000 ease-out rotate-[-60deg]">
+                    <div class="w-1 h-full bg-white mx-auto rounded-t-full shadow-[0_0_10px_rgba(255,255,255,0.8)]"></div>
                     <div class="w-4 h-4 rounded-full bg-white absolute bottom-0 left-1/2 transform -translate-x-1/2"></div>
                   </div>
                 </div>
-                <div id="satText" class="text-2xl font-extrabold text-green-400">24%</div>
-                <div class="text-xs text-white/50 font-mono mt-1">Oportunidad Temprana</div>
+                <div id="satText" class="text-3xl font-extrabold text-green-400 transition-colors duration-500">24%</div>
+                <div id="satStatus" class="text-xs font-bold text-green-400 uppercase tracking-widest mt-1 transition-colors duration-500">Océano Azul</div>
               </div>
-              <div id="satStores" class="text-[10px] text-white/40 text-center leading-relaxed">
-                El volumen de búsquedas está subiendo rápido, pero solo hay <strong class="text-white">12 tiendas</strong> escalándolo en LATAM actualmente.
+              <div class="text-[10px] text-white/40 text-center leading-relaxed">
+                El volumen de búsquedas es dinámico, y actualmente hay <strong class="text-white" id="satStoreCount">12 tiendas</strong> escalándolo en LATAM.
               </div>
             </div>
 
@@ -2603,6 +2608,40 @@
       if(!tbody) return;
 
       let historySlice = p.history || [];
+      const currentPeriodLabels = WEEKS.slice(0, currentAnalysisPeriod);
+      renderAnalysisChart(currentPeriodLabels, historySlice.slice(-currentAnalysisPeriod), p.name);
+
+      // Update Saturation Meter
+      const satScore = p.score > 90 ? Math.floor(Math.random() * 20) + 10 : (p.score > 70 ? Math.floor(Math.random() * 40) + 40 : Math.floor(Math.random() * 20) + 80);
+      const satStoresCount = Math.floor(satScore * 1.5);
+      
+      let satColor = 'text-green-400';
+      let satBgColor = 'bg-green-500/10';
+      let satStatusText = 'Océano Azul';
+      let needleAngle = -90 + (180 * (satScore / 100)); // -90 to 90
+      
+      if(satScore > 75) {
+        satColor = 'text-red-400'; satBgColor = 'bg-red-500/10'; satStatusText = 'Saturado';
+      } else if(satScore > 40) {
+        satColor = 'text-yellow-400'; satBgColor = 'bg-yellow-500/10'; satStatusText = 'Tendencia Activa';
+      }
+      
+      const elSatText = document.getElementById('satText');
+      const elSatStatus = document.getElementById('satStatus');
+      const elSatNeedle = document.getElementById('satNeedle');
+      const elSatGlow = document.getElementById('satGlow');
+      const elSatCount = document.getElementById('satStoreCount');
+      
+      if(elSatText && elSatNeedle) {
+        elSatText.innerText = satScore + '%';
+        elSatText.className = `text-3xl font-extrabold ${satColor} transition-colors duration-500`;
+        elSatStatus.innerText = satStatusText;
+        elSatStatus.className = `text-xs font-bold ${satColor} uppercase tracking-widest mt-1 transition-colors duration-500`;
+        elSatNeedle.style.transform = `translateX(-50%) rotate(${needleAngle}deg)`;
+        elSatGlow.className = `absolute -right-6 -top-6 w-32 h-32 ${satBgColor} blur-3xl rounded-full transition-colors duration-500`;
+        if(elSatCount) elSatCount.innerText = satStoresCount + ' tiendas';
+      }
+
       let labelsSlice = WEEKS.slice(0, historySlice.length);
       
       if (currentAnalysisPeriod === 30) {
@@ -2627,8 +2666,6 @@
         `;
       }).join('');
       
-      renderAnalysisChart(labelsSlice, historySlice, p.name);
-
       // --- MOCK DYNAMIC WIDGETS ---
       // Proveedores
       const provCosts = [4.20, 3.50, 6.10, 2.90, 8.40, 5.50];
@@ -2647,7 +2684,7 @@
         document.getElementById('provIcon2').className = "w-8 h-8 rounded bg-purple-600 flex items-center justify-center text-white font-bold text-[9px]";
         document.getElementById('provIcon2').innerText = "WL";
         document.getElementById('provName2').innerText = "Agente White Label";
-        document.getElementById('provDesc2').innerText = "Personalización + Stock Local";
+        document.getElementById('provDesc2').innerText = "Envío Local: 2-4 días";
       } else {
         document.getElementById('provIcon1').className = "w-8 h-8 rounded bg-[#10b981] flex items-center justify-center text-white font-bold text-[9px]";
         document.getElementById('provIcon1').innerText = "DRP";
@@ -2664,20 +2701,6 @@
       if(elCost1) elCost1.innerText = `~$${cost1.toFixed(2)}`;
       const elCost2 = document.getElementById('provCost2');
       if(elCost2) elCost2.innerText = `~$${cost2.toFixed(2)}`;
-
-      // Saturacion
-      const satLevels = [24, 65, 89, 12, 45, 78];
-      const satIdx = idx % satLevels.length;
-      const satVal = satLevels[satIdx];
-      const elSatText = document.getElementById('satText');
-      if(elSatText) {
-        elSatText.innerText = `${satVal}%`;
-        elSatText.className = satVal < 40 ? 'text-2xl font-extrabold text-green-400' : (satVal < 70 ? 'text-2xl font-extrabold text-yellow-400' : 'text-2xl font-extrabold text-red-400');
-      }
-      const elSatStores = document.getElementById('satStores');
-      if(elSatStores) {
-        elSatStores.innerHTML = `El volumen de búsquedas está subiendo rápido, pero solo hay <strong class="text-white">${Math.floor(satVal * 1.5)} tiendas</strong> escalándolo en LATAM actualmente.`;
-      }
 
       // --- SMART WIDGET MAPPING ---
       const nameLower = (p.name || '').toLowerCase();
@@ -2758,6 +2781,14 @@
       if(elView1) elView1.innerText = `${vViews[(idx+2) % vViews.length]} Vistas`;
       const elView2 = document.getElementById('adView2');
       if(elView2) elView2.innerText = `${vViews[(idx+4) % vViews.length]} Vistas`;
+      
+      // Init Calculator Baseline
+      const basePrice = parseFloat(p.priceStr.replace(/[^0-9.]/g, '')) || 25;
+      const elPrice = document.getElementById('calcPrice');
+      if(elPrice) {
+        elPrice.value = basePrice;
+        calcROI();
+      }
     }
     
     function renderAnalysisChart(labels, data, name) {
@@ -2801,38 +2832,45 @@
       const cost = parseFloat(document.getElementById('calcCost').value) || 0;
       const price = parseFloat(document.getElementById('calcPrice').value) || 0;
       const ads = parseFloat(document.getElementById('calcAds').value) || 0;
-      const sales = parseInt(document.getElementById('calcSales').value) || 0;
+      
+      const elCostVal = document.getElementById('calcCostVal');
+      const elPriceVal = document.getElementById('calcPriceVal');
+      const elAdsVal = document.getElementById('calcAdsVal');
+      
+      if(elCostVal) elCostVal.innerText = '$' + cost.toFixed(2);
+      if(elPriceVal) elPriceVal.innerText = '$' + price.toFixed(2);
+      if(elAdsVal) elAdsVal.innerText = '$' + ads.toFixed(2);
+
       const el = document.getElementById('calcResult');
       if(!el) return;
-      if(!cost || !price) { el.innerHTML = '<p class="text-xs text-white/40">Completa los campos.</p>'; return; }
       
-      const netPerSale = price - cost - ads;
-      const monthlyProfit = netPerSale * sales;
-      const margin = Math.round((netPerSale / price) * 100);
-      const roi = cost > 0 ? Math.round((netPerSale / cost) * 100) : 0;
-      const breakeven = netPerSale > 0 ? Math.ceil(cost / netPerSale) : 0;
+      const sel = document.getElementById('analysisProductSel');
+      let baseCost = 0;
+      if(sel && sel.value !== '') {
+        const p = PRODUCTS[parseInt(sel.value)];
+        if(p && p.suppliers && p.suppliers[0]) {
+           baseCost = parseFloat(p.suppliers[0].price.replace(/[^0-9.]/g, '')) || 0;
+        }
+      }
+      
+      const totalCost = baseCost + cost + ads;
+      const netPerSale = price - totalCost;
+      const margin = price > 0 ? Math.round((netPerSale / price) * 100) : 0;
+      
+      const colorClass = netPerSale > 0 ? 'text-green-400' : 'text-red-400';
+      const bgClass = netPerSale > 0 ? 'bg-green-500/10 border-green-500/20' : 'bg-red-500/10 border-red-500/20';
       
       el.innerHTML = `
-        <div class="grid grid-cols-2 gap-2 mt-4 text-xs font-mono">
-          <div class="bg-white/5 rounded-xl p-3 text-center">
-            <div class="text-[9px] text-white/40 uppercase">Ganancia/venta</div>
-            <div class="font-bold mt-1 text-green-400">$${netPerSale.toFixed(2)}</div>
+        <div class="flex justify-between items-center bg-black/40 border border-white/5 rounded-2xl p-4">
+          <div>
+            <div class="text-[9px] text-white/50 uppercase font-mono tracking-wider">Ganancia Neta por Venta</div>
+            <div class="text-3xl font-extrabold ${colorClass} mt-1">$${netPerSale.toFixed(2)}</div>
+            <div class="text-[9px] text-white/40 mt-1">Costo Producto Fábrica: $${baseCost.toFixed(2)}</div>
           </div>
-          <div class="bg-white/5 rounded-xl p-3 text-center">
-            <div class="text-[9px] text-white/40 uppercase">Margen neto</div>
-            <div class="font-bold mt-1 text-white">${margin}%</div>
-          </div>
-          <div class="bg-white/5 rounded-xl p-3 text-center">
-            <div class="text-[9px] text-white/40 uppercase">ROI</div>
-            <div class="font-bold mt-1 text-white">${roi}%</div>
-          </div>
-          <div class="bg-white/5 rounded-xl p-3 text-center">
-            <div class="text-[9px] text-white/40 uppercase">Ganancia/mes</div>
-            <div class="font-bold mt-1 text-green-400">$${monthlyProfit.toFixed(0)}</div>
-          </div>
-          <div class="col-span-2 bg-green-500/10 border border-green-500/20 rounded-xl p-3 text-center">
-            <div class="text-[9px] text-white/40 uppercase">Break-even</div>
-            <div class="font-bold mt-1 text-green-400">${breakeven} ventas</div>
+          <div class="text-right">
+             <div class="px-3 py-1.5 rounded-lg border ${bgClass} ${colorClass} text-xs font-bold font-mono">
+               ${margin}% Margen
+             </div>
           </div>
         </div>
       `;
