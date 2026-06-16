@@ -1884,7 +1884,22 @@
     const LEADERS=['🇦🇷 Argentina','🇺🇾 Uruguay','🇨🇱 Chile','🇦🇷 Argentina','🇨🇱 Chile','🇺🇾 Uruguay','🇦🇷 Argentina','🇨🇱 Chile'];
 
     let PRODUCTS = [];
-    let ALL_PRODUCTS = [];
+    let ALL_PRODUCTS = []; // Dropshipping (From API)
+    
+    // Base de datos realista para Marca Propia (B2B / Private Label)
+    const ECOMMERCE_PRODUCTS = [
+      { name: 'Suplemento Ashwagandha KSM-66 (Marca Blanca)', cat: 'Salud', score: 98, change: '+15%', changeNum: 15, plts: ['IG', 'TK'], margin: 65, marginStr: '65%', hot: true, regions: ['AR', 'CL', 'UY'], comp: 'Media', priceMin: 25, priceStr: '$25.00', history: [80, 85, 90, 95, 98], rank: 1, suppliers: [{ name: 'Alibaba OEM BioTech', price: '$8.50 (MOQ 100)' }] },
+      { name: 'Set Skincare Ácido Hialurónico (Personalizable)', cat: 'Belleza', score: 95, change: '+12%', changeNum: 12, plts: ['IG', 'TK'], margin: 70, marginStr: '70%', hot: true, regions: ['AR', 'UY'], comp: 'Alta', priceMin: 35, priceStr: '$35.00', history: [70, 75, 85, 90, 95], rank: 2, suppliers: [{ name: 'Guangzhou Cosmetology', price: '$10.50 (MOQ 50)' }] },
+      { name: 'Ropa Deportiva Seamless (Etiqueta Propia)', cat: 'Moda', score: 92, change: '+8%', changeNum: 8, plts: ['IG'], margin: 55, marginStr: '55%', hot: false, regions: ['CL'], comp: 'Alta', priceMin: 40, priceStr: '$40.00', history: [80, 82, 85, 88, 92], rank: 3, suppliers: [{ name: 'Yiwu Textile Factory', price: '$18.00 (MOQ 200)' }] },
+      { name: 'Gomitas de Magnesio para Dormir (OEM)', cat: 'Salud', score: 90, change: '+20%', changeNum: 20, plts: ['TK'], margin: 60, marginStr: '60%', hot: true, regions: ['AR', 'CL'], comp: 'Baja', priceMin: 22, priceStr: '$22.00', history: [50, 60, 70, 80, 90], rank: 4, suppliers: [{ name: 'NutriGummy B2B', price: '$8.80 (MOQ 150)' }] },
+      { name: 'Manta Pesada Terapéutica (Premium)', cat: 'Hogar', score: 88, change: '+5%', changeNum: 5, plts: ['IG', 'TK'], margin: 50, marginStr: '50%', hot: false, regions: ['UY', 'CL'], comp: 'Media', priceMin: 80, priceStr: '$80.00', history: [85, 86, 87, 88, 88], rank: 5, suppliers: [{ name: 'Shenzhen HomeGoods', price: '$40.00 (MOQ 20)' }] },
+      { name: 'Botella de Agua Acero Inoxidable (Logo Custom)', cat: 'Deporte', score: 85, change: '+2%', changeNum: 2, plts: ['IG'], margin: 75, marginStr: '75%', hot: false, regions: ['AR', 'CL', 'UY'], comp: 'Alta', priceMin: 20, priceStr: '$20.00', history: [80, 81, 83, 84, 85], rank: 6, suppliers: [{ name: 'Zhejiang Drinkware', price: '$5.00 (MOQ 300)' }] },
+      { name: 'Kit de Blanqueamiento Dental (Marca Blanca)', cat: 'Belleza', score: 82, change: '-3%', changeNum: -3, plts: ['TK'], margin: 80, marginStr: '80%', hot: false, regions: ['CL'], comp: 'Alta', priceMin: 45, priceStr: '$45.00', history: [90, 88, 85, 84, 82], rank: 7, suppliers: [{ name: 'SmileTech OEM', price: '$9.00 (MOQ 100)' }] },
+      { name: 'Cinturón de Levantamiento de Pesas (Cuero)', cat: 'Deporte', score: 80, change: '+10%', changeNum: 10, plts: ['IG'], margin: 50, marginStr: '50%', hot: true, regions: ['AR', 'UY'], comp: 'Baja', priceMin: 50, priceStr: '$50.00', history: [60, 65, 70, 75, 80], rank: 8, suppliers: [{ name: 'Sialkot Sports Factory', price: '$25.00 (MOQ 50)' }] },
+      { name: 'Café de Especialidad en Grano (White Label)', cat: 'Alimentos', score: 78, change: '+18%', changeNum: 18, plts: ['IG'], margin: 40, marginStr: '40%', hot: true, regions: ['AR', 'CL'], comp: 'Media', priceMin: 18, priceStr: '$18.00', history: [40, 50, 60, 70, 78], rank: 9, suppliers: [{ name: 'Finca Colombia B2B', price: '$10.80 (MOQ 50kg)' }] },
+      { name: 'Velas de Soja Aromáticas (Packaging Custom)', cat: 'Hogar', score: 75, change: '+0%', changeNum: 0, plts: ['IG', 'TK'], margin: 65, marginStr: '65%', hot: false, regions: ['UY'], comp: 'Alta', priceMin: 15, priceStr: '$15.00', history: [75, 75, 75, 75, 75], rank: 10, suppliers: [{ name: 'Artisan Decor China', price: '$5.25 (MOQ 200)' }] }
+    ];
+
     let productsLoaded = false;
     let user=null,plan='free',currentProd=null,authMode='login',aiHistory=[],aiLoading=false;
     let saved=JSON.parse(localStorage.getItem('tb_saved')||'[]');
@@ -2154,8 +2169,11 @@
       if(!tbody) return;
       if(resetPage) currentPage = 1;
 
+      // Select database based on Business Mode
+      const dbToUse = (typeof businessMode !== 'undefined' && businessMode === 'ecommerce') ? ECOMMERCE_PRODUCTS : ALL_PRODUCTS;
+
       // Filter products
-      let allFiltered = ALL_PRODUCTS.filter(p => {
+      let allFiltered = dbToUse.filter(p => {
         if(filter.plt && !p.plts.includes(filter.plt)) return false;
         if(filter.region && !p.regions.includes(filter.region)) return false;
         if(filter.cat && p.cat !== filter.cat) return false;
@@ -2173,7 +2191,7 @@
       const list = allFiltered.slice(start, start + PAGE_SIZE);
 
       tbody.innerHTML = list.map((p, i) => {
-        const idx = ALL_PRODUCTS.indexOf(p);
+        const idx = dbToUse.indexOf(p);
         const compClass = p.comp === 'Baja' ? 'text-green-400 bg-green-500/10 border-green-500/20' : p.comp === 'Alta' ? 'text-red-400 bg-red-500/10 border-red-500/20' : 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20';
         return `
           <tr onclick="openProduct(${idx})" class="hover:bg-white/5 transition cursor-pointer text-xs">
@@ -2186,12 +2204,12 @@
             </td>
             <td class="p-4 font-mono text-champagne">${p.score}</td>
             <td class="p-4 font-mono text-green-400">${p.change}</td>
-            <td class="p-4 font-mono text-green-400">${typeof businessMode !== 'undefined' && businessMode === 'ecommerce' ? Math.round(parseInt(p.marginStr) + 35) + '%' : p.marginStr}</td>
+            <td class="p-4 font-mono text-green-400">${p.marginStr}</td>
             <td class="p-4">
               <span class="px-2 py-0.5 rounded border text-[9px] font-bold ${compClass}">${p.comp}</span>
             </td>
-            <td class="p-4 font-mono text-white/70">${typeof businessMode !== 'undefined' && businessMode === 'ecommerce' ? '≥50 uds (MOQ)' : p.priceStr}</td>
-            <td class="p-4 font-mono text-white/40">${typeof businessMode !== 'undefined' && businessMode === 'ecommerce' && p.suppliers && p.suppliers[0] ? '$'+(parseFloat(p.suppliers[0].price.replace('$',''))*0.4).toFixed(2) : (p.suppliers && p.suppliers[0] ? p.suppliers[0].price : '—')}</td>
+            <td class="p-4 font-mono text-white/70">${p.priceStr}</td>
+            <td class="p-4 font-mono text-white/40">${p.suppliers && p.suppliers[0] ? p.suppliers[0].price : '—'}</td>
             <td class="p-4 text-right">
               <button onclick="event.stopPropagation(); toggleSave(${idx})" class="text-white/40 hover:text-champagne transition"><i data-lucide="bookmark" class="w-4 h-4"></i></button>
             </td>
@@ -2428,7 +2446,11 @@
     function populateAnalysisSelect() {
       const sel = document.getElementById('analysisProductSel');
       if(!sel) return;
-      sel.innerHTML = '<option value="">— Seleccioná un producto —</option>' + PRODUCTS.slice(0, 100).map((p, i) => `<option value="${i}">${p.name}</option>`).join('');
+      sel.innerHTML = PRODUCTS.slice(0, 100).map((p, i) => `<option value="${i}">${p.name}</option>`).join('');
+      if(PRODUCTS.length > 0) {
+        sel.value = "0";
+        renderAnalysisHistory();
+      }
     }
 
     var currentAnalysisPeriod = 30;
@@ -2477,6 +2499,8 @@
           toast('Modo Marca Propia: Catálogo B2B y MOQs cargados', 'info', 3000);
         }
       }
+      PRODUCTS = mode === 'ecommerce' ? ECOMMERCE_PRODUCTS : ALL_PRODUCTS;
+      populateAnalysisSelect();
       renderProducts(false); // Update products grid
       renderAnalysisKPIs();
       renderAnalysisHistory();
