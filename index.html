@@ -2284,7 +2284,10 @@
       if(!el) return;
       
       const prods = PRODUCTS;
-      const avgMargin = Math.round(prods.reduce((a,p) => a + p.margin, 0) / prods.length) || 0;
+      let avgMargin = Math.round(prods.reduce((a,p) => a + p.margin, 0) / prods.length) || 0;
+      if (typeof businessMode !== 'undefined' && businessMode === 'ecommerce') {
+        avgMargin += 35; // Simulate higher margin for B2B/Wholesale
+      }
       const cats = {}; prods.forEach(p => { cats[p.cat] = (cats[p.cat] || 0) + 1; });
       const topCat = Object.entries(cats).sort((a,b) => b[1] - a[1])[0];
       const lowComp = prods.filter(p => p.comp === 'Baja').length;
@@ -2445,12 +2448,19 @@
         if (mode === 'dropshipping') {
           dropBtn.className = "px-3 py-1.5 rounded-lg text-[10px] font-bold transition bg-champagne text-obsidian";
           ecomBtn.className = "px-3 py-1.5 rounded-lg text-[10px] font-bold transition text-white/50 hover:text-white";
+          toast('Modo Dropshipping: Proveedores y KPIs ajustados', 'info', 3000);
         } else {
           ecomBtn.className = "px-3 py-1.5 rounded-lg text-[10px] font-bold transition bg-champagne text-obsidian";
           dropBtn.className = "px-3 py-1.5 rounded-lg text-[10px] font-bold transition text-white/50 hover:text-white";
+          toast('Modo Marca Propia: Márgenes B2B calculados', 'info', 3000);
         }
       }
+      renderAnalysisKPIs();
       renderAnalysisHistory();
+      
+      // Auto-scroll so the user notices the supplier change
+      const elCost1 = document.getElementById('provCost1');
+      if(elCost1) elCost1.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
     function renderAnalysisHistory() {
