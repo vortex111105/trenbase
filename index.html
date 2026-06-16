@@ -2410,6 +2410,17 @@
         elSatStores.innerHTML = `El volumen de búsquedas está subiendo rápido, pero solo hay <strong class="text-white">${Math.floor(satVal * 1.5)} tiendas</strong> escalándolo en LATAM actualmente.`;
       }
 
+      // --- SMART WIDGET MAPPING ---
+      const nameLower = (p.name || '').toLowerCase();
+      const catLower = (p.cat || '').toLowerCase();
+      
+      let nicheIdx = idx % 5; // fallback
+      if (nameLower.includes('piel') || nameLower.includes('rostro') || nameLower.includes('led') || nameLower.includes('depil') || catLower.includes('belleza')) nicheIdx = 0; // Beauty
+      else if (nameLower.includes('gym') || nameLower.includes('fit') || nameLower.includes('yoga') || nameLower.includes('postura') || catLower.includes('deporte')) nicheIdx = 1; // Fitness
+      else if (nameLower.includes('perro') || nameLower.includes('gato') || nameLower.includes('mascota') || catLower.includes('mascota')) nicheIdx = 2; // Pets
+      else if (nameLower.includes('proyector') || nameLower.includes('luz') || nameLower.includes('smart') || nameLower.includes('tech') || catLower.includes('tecno')) nicheIdx = 3; // Tech
+      else if (nameLower.includes('cocina') || nameLower.includes('licuadora') || nameLower.includes('limpieza') || catLower.includes('hogar')) nicheIdx = 4; // Home/Kitchen
+
       // Audiencia
       const interestsMatrix = [
         ["Mascarillas LED", "Skincare Rutina", "Dermaplaning", "Estética"],
@@ -2418,13 +2429,13 @@
         ["Smart Home", "Setup Gamer", "Domótica", "Productividad Apple"],
         ["Air Fryer Recetas", "Meal Prep", "Utensilios Profesionales"]
       ];
-      const interests = interestsMatrix[idx % interestsMatrix.length];
+      const interests = interestsMatrix[nicheIdx] || interestsMatrix[0];
       const elAudInterests = document.getElementById('audInterests');
       if(elAudInterests) {
         elAudInterests.innerHTML = interests.map(i => `<span class="px-2 py-1 text-[9px] uppercase bg-black/40 border border-white/5 rounded-full text-white/60">${i}</span>`).join('');
       }
 
-      const genderFemalePct = [85, 20, 60, 15, 70][idx % 5];
+      const genderFemalePct = [85, 20, 60, 15, 70][nicheIdx] || 50;
       const genderMalePct = 100 - genderFemalePct;
       const elGenderLabels = document.getElementById('audGenderLabels');
       if(elGenderLabels) {
@@ -2440,9 +2451,9 @@
         ["25-34", "35-44 (Top)", "45-54"],
         ["18-24 (Top)", "25-34", "35-44"],
         ["25-34", "35-44", "45-54 (Top)"],
-        ["18-24", "25-34", "35-44 (Top)"]
+        ["25-34", "35-44 (Top)", "45-54"]
       ];
-      const ages = agesMatrix[idx % agesMatrix.length];
+      const ages = agesMatrix[nicheIdx] || agesMatrix[0];
       const elAges = document.getElementById('audAges');
       if(elAges) {
         elAges.innerHTML = ages.map(a => {
@@ -2455,27 +2466,29 @@
 
       // Videos
       const videoImg1 = [
-        "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=200&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=200&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=200&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1512496015851-a1dc8a477d24?q=80&w=200&auto=format&fit=crop"
+        "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=200&auto=format&fit=crop", // Beauty
+        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=200&auto=format&fit=crop", // Fit
+        "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=200&auto=format&fit=crop", // Pets
+        "https://images.unsplash.com/photo-1512496015851-a1dc8a477d24?q=80&w=200&auto=format&fit=crop", // Tech
+        "https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=200&auto=format&fit=crop"  // Home
       ];
       const videoImg2 = [
         "https://images.unsplash.com/photo-1522337660859-02fbefca4702?q=80&w=200&auto=format&fit=crop",
         "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=200&auto=format&fit=crop",
         "https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=200&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=200&auto=format&fit=crop"
+        "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1588195538326-c5b1e9f80a1b?q=80&w=200&auto=format&fit=crop"
       ];
       const vViews = ["1.2M", "850K", "2.4M", "500K", "3.1M"];
       
       const elImg1 = document.getElementById('adImg1');
-      if(elImg1) elImg1.src = videoImg1[idx % videoImg1.length];
+      if(elImg1) elImg1.src = videoImg1[nicheIdx] || videoImg1[0];
       const elImg2 = document.getElementById('adImg2');
-      if(elImg2) elImg2.src = videoImg2[idx % videoImg2.length];
+      if(elImg2) elImg2.src = videoImg2[nicheIdx] || videoImg2[0];
       const elView1 = document.getElementById('adView1');
-      if(elView1) elView1.innerText = `${vViews[idx % vViews.length]} Vistas`;
+      if(elView1) elView1.innerText = `${vViews[(idx+2) % vViews.length]} Vistas`;
       const elView2 = document.getElementById('adView2');
-      if(elView2) elView2.innerText = `${vViews[(idx+1) % vViews.length]} Vistas`;
+      if(elView2) elView2.innerText = `${vViews[(idx+4) % vViews.length]} Vistas`;
     }
     
     function renderAnalysisChart(labels, data, name) {
