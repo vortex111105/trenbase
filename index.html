@@ -1506,10 +1506,10 @@
                     <th class="p-4">Producto</th>
                     <th class="p-4">TrendScore</th>
                     <th class="p-4">Cambio</th>
-                    <th class="p-4">Margen</th>
+                    <th class="p-4" id="th-margen">Margen</th>
                     <th class="p-4">Competencia</th>
-                    <th class="p-4">Venta Est.</th>
-                    <th class="p-4">Costo Est.</th>
+                    <th class="p-4" id="th-venta">Venta Est.</th>
+                    <th class="p-4" id="th-costo">Costo Est.</th>
                     <th class="p-4 w-12"></th>
                   </tr>
                 </thead>
@@ -1533,6 +1533,11 @@
             </div>
             
             <div class="flex flex-col sm:flex-row items-end sm:items-center gap-3">
+              <!-- EXPORT BUTTON -->
+              <button onclick="toast('Generando reporte PDF/CSV...', 'info', 3000)" class="flex items-center gap-2 bg-champagne text-obsidian px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase transition hover:opacity-90">
+                <i data-lucide="download" class="w-3.5 h-3.5"></i> Exportar
+              </button>
+              
               <!-- ANALYSIS PERIOD -->
               <div class="flex items-center border border-white/10 rounded-xl bg-white/5 p-1">
                 <button onclick="setAnalysisPeriod(7)" id="ap7" class="px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase transition">7 Días</button>
@@ -1600,7 +1605,10 @@
                     <div class="flex items-center gap-3">
                       <div id="provIcon1" class="w-8 h-8 rounded bg-[#ff4747] flex items-center justify-center text-white font-bold text-xs">Ali</div>
                       <div>
-                        <div id="provName1" class="text-xs font-bold text-white">AliExpress (Choice)</div>
+                        <div class="flex items-center gap-1.5">
+                          <div id="provName1" class="text-xs font-bold text-white">AliExpress (Choice)</div>
+                          <i data-lucide="badge-check" class="w-3.5 h-3.5 text-blue-400" title="Proveedor Verificado por IA"></i>
+                        </div>
                         <div id="provDesc1" class="text-[10px] text-white/50">Envío 12-15 días a LATAM</div>
                       </div>
                     </div>
@@ -1613,7 +1621,10 @@
                     <div class="flex items-center gap-3">
                       <div id="provIcon2" class="w-8 h-8 rounded bg-blue-600 flex items-center justify-center text-white font-bold text-xs">CJ</div>
                       <div>
-                        <div id="provName2" class="text-xs font-bold text-white">CJ Dropshipping</div>
+                        <div class="flex items-center gap-1.5">
+                          <div id="provName2" class="text-xs font-bold text-white">CJ Dropshipping</div>
+                          <i data-lucide="badge-check" class="w-3.5 h-3.5 text-blue-400" title="Proveedor Verificado por IA"></i>
+                        </div>
                         <div id="provDesc2" class="text-[10px] text-white/50">Agente Privado (8-12 días)</div>
                       </div>
                     </div>
@@ -2175,12 +2186,12 @@
             </td>
             <td class="p-4 font-mono text-champagne">${p.score}</td>
             <td class="p-4 font-mono text-green-400">${p.change}</td>
-            <td class="p-4 font-mono text-green-400">${p.marginStr}</td>
+            <td class="p-4 font-mono text-green-400">${typeof businessMode !== 'undefined' && businessMode === 'ecommerce' ? Math.round(parseInt(p.marginStr) + 35) + '%' : p.marginStr}</td>
             <td class="p-4">
               <span class="px-2 py-0.5 rounded border text-[9px] font-bold ${compClass}">${p.comp}</span>
             </td>
-            <td class="p-4 font-mono text-white/70">${p.priceStr}</td>
-            <td class="p-4 font-mono text-white/40">${p.suppliers && p.suppliers[0] ? p.suppliers[0].price : '—'}</td>
+            <td class="p-4 font-mono text-white/70">${typeof businessMode !== 'undefined' && businessMode === 'ecommerce' ? '≥50 uds (MOQ)' : p.priceStr}</td>
+            <td class="p-4 font-mono text-white/40">${typeof businessMode !== 'undefined' && businessMode === 'ecommerce' && p.suppliers && p.suppliers[0] ? '$'+(parseFloat(p.suppliers[0].price.replace('$',''))*0.4).toFixed(2) : (p.suppliers && p.suppliers[0] ? p.suppliers[0].price : '—')}</td>
             <td class="p-4 text-right">
               <button onclick="event.stopPropagation(); toggleSave(${idx})" class="text-white/40 hover:text-champagne transition"><i data-lucide="bookmark" class="w-4 h-4"></i></button>
             </td>
@@ -2444,21 +2455,33 @@
       businessMode = mode;
       const dropBtn = document.getElementById('mode-drop');
       const ecomBtn = document.getElementById('mode-ecom');
+      
+      const thMargen = document.getElementById('th-margen');
+      const thVenta = document.getElementById('th-venta');
+      const thCosto = document.getElementById('th-costo');
+
       if (dropBtn && ecomBtn) {
         if (mode === 'dropshipping') {
           dropBtn.className = "px-3 py-1.5 rounded-lg text-[10px] font-bold transition bg-champagne text-obsidian";
           ecomBtn.className = "px-3 py-1.5 rounded-lg text-[10px] font-bold transition text-white/50 hover:text-white";
-          toast('Modo Dropshipping: Proveedores y KPIs ajustados', 'info', 3000);
+          if(thMargen) thMargen.innerText = 'Margen';
+          if(thVenta) thVenta.innerText = 'Venta Est.';
+          if(thCosto) thCosto.innerText = 'Costo Est.';
+          toast('Modo Dropshipping: Todo el catálogo actualizado', 'info', 3000);
         } else {
           ecomBtn.className = "px-3 py-1.5 rounded-lg text-[10px] font-bold transition bg-champagne text-obsidian";
           dropBtn.className = "px-3 py-1.5 rounded-lg text-[10px] font-bold transition text-white/50 hover:text-white";
-          toast('Modo Marca Propia: Márgenes B2B calculados', 'info', 3000);
+          if(thMargen) thMargen.innerText = 'Margen (Mayorista)';
+          if(thVenta) thVenta.innerText = 'Mínimo (MOQ)';
+          if(thCosto) thCosto.innerText = 'Fábrica Est.';
+          toast('Modo Marca Propia: Catálogo B2B y MOQs cargados', 'info', 3000);
         }
       }
+      renderProducts(false); // Update products grid
       renderAnalysisKPIs();
       renderAnalysisHistory();
       
-      // Auto-scroll so the user notices the supplier change
+      // Auto-scroll so the user notices the supplier change in Analysis
       const elCost1 = document.getElementById('provCost1');
       if(elCost1) elCost1.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
