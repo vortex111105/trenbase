@@ -1047,7 +1047,7 @@
     <section id="founder-note" class="py-24 bg-obsidian border-y border-white/5 relative z-20">
       <div class="max-w-4xl mx-auto px-6 text-center">
         <div class="inline-block p-1 rounded-full bg-gradient-to-tr from-champagne/20 to-white/10 mb-8 shadow-[0_0_40px_rgba(201,168,76,0.1)]">
-          <img src="/founder.png" alt="Ignacio - Fundador" class="w-32 h-32 md:w-40 md:h-40 object-cover rounded-full border-4 border-obsidian">
+          <img src="founder.png" alt="Ignacio - Fundador" class="w-32 h-32 md:w-40 md:h-40 object-cover rounded-full border-4 border-obsidian">
         </div>
         
         <h3 class="text-2xl md:text-3xl font-extrabold text-white mb-6">"Construí la herramienta que me hubiese gustado tener"</h3>
@@ -2179,7 +2179,7 @@
 
     // ── RENDER PRODUCTS ──────────────────────────────────────────────────────
     function getProductImage(name) {
-      return `https://tse2.mm.bing.net/th?q=${encodeURIComponent(name + ' producto aliexpress')}&w=300&h=300&c=7&rs=1&p=0`;
+      return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=1a1a1a&color=C9A84C&size=300`;
     }
 
     function renderLandingProducts() {
@@ -4555,7 +4555,100 @@
 
     // Init notifications on load
     setTimeout(renderNotifBell, 1000);
+
+    // --- MISSING UI FUNCTIONS ---
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobileMenuDrawer');
+      if(menu) {
+        if(menu.classList.contains('hidden')) {
+          menu.classList.remove('hidden');
+        } else {
+          menu.classList.hidden = true;
+          menu.classList.add('hidden');
+        }
+      }
+    }
+
+    function scrollToPlans() {
+      const planSection = document.getElementById('pricing');
+      if(planSection) {
+        planSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function showUpgrade() {
+      toast('¡Función Premium! Mejorá tu plan para acceder.', 'warning');
+      scrollToPlans();
+    }
+
+    // --- MARKETING TAB FUNCTIONS ---
+    function generateMarketingCopy() {
+      const elContent = document.getElementById('mkt-content');
+      const elLoading = document.getElementById('mkt-loading');
+      const elBtn = document.getElementById('mktGenerateBtn');
+      if(typeof PRODUCTS === 'undefined' || typeof currentProductIdx === 'undefined') return;
+      const p = PRODUCTS[currentProductIdx];
+      if(!p) return;
+
+      if(elContent) elContent.classList.add('hidden');
+      if(elLoading) elLoading.classList.remove('hidden');
+      if(elBtn) elBtn.disabled = true;
+
+      // Simulamos la llamada a la IA de Anthropic para generar el copy
+      setTimeout(() => {
+        if(elLoading) elLoading.classList.add('hidden');
+        if(elContent) elContent.classList.remove('hidden');
+        if(elBtn) elBtn.disabled = false;
+        
+        const elTitulo = document.getElementById('mkt-ml-titulo');
+        const elDesc = document.getElementById('mkt-ml-desc');
+        const elPrecio = document.getElementById('mkt-precio');
+        const elDif = document.getElementById('mkt-diferencial');
+        const elTiktok = document.getElementById('mkt-tiktok');
+        const elIg = document.getElementById('mkt-instagram');
+        const elKw = document.getElementById('mkt-keywords');
+
+        if(elTitulo) elTitulo.innerText = `${p.name} - Calidad Premium Envío Rápido`;
+        if(elDesc) elDesc.innerText = `Descubre por qué miles de clientes en LATAM eligen nuestro ${p.name}. Diseñado para brindar la máxima satisfacción y durabilidad. ¡Compra ahora con descuento!`;
+        if(elPrecio) elPrecio.innerText = `Precio sugerido: ${p.priceStr || '$20'}`;
+        if(elDif) elDif.innerText = `Margen: ${p.marginStr || (p.margin+'%')}`;
+        
+        if(elTiktok) elTiktok.innerText = `✨ ¿Buscando el mejor ${p.name}? ✨\n\nNo busques más. La solución definitiva ya está aquí.\n\n👉 Click en el link de nuestro perfil y llévatelo HOY mismo. #tendencia #viral`;
+        if(elIg) elIg.innerText = `Eleva tu estilo de vida con nuestro nuevo ${p.name}. Calidad garantizada que se adapta a ti. 🌟\n\nConsíguelo con envío a todo el país.\nLink en bio 🛒`;
+        if(elKw) elKw.innerHTML = `<span class="bg-white/10 px-2 py-1 rounded text-xs">#${p.name.replace(/\s+/g,'').toLowerCase()}</span> <span class="bg-white/10 px-2 py-1 rounded text-xs">#viral</span> <span class="bg-white/10 px-2 py-1 rounded text-xs">#oferta</span>`;
+
+      }, 1500);
+    }
+
+    function clearMarketingCache() {
+      const elContent = document.getElementById('mkt-content');
+      if(elContent) elContent.classList.add('hidden');
+      toast('Caché limpiado. Generá de nuevo.', 'info');
+    }
+
+    function copyMktSection(id1, id2) {
+      const el1 = document.getElementById('mkt-' + id1);
+      const el2 = document.getElementById('mkt-' + id2);
+      if(!el1 || !el2) return;
+      const text = el1.innerText + '\n' + el2.innerText;
+      navigator.clipboard.writeText(text);
+      toast('¡Copiado al portapapeles!', 'success');
+    }
+
+    function copyMktField(id) {
+      const el = document.getElementById(id);
+      if(!el) return;
+      navigator.clipboard.writeText(el.innerText);
+      toast('¡Copiado al portapapeles!', 'success');
+    }
+
+
   </script>
 
+  <script>
+    // Fix founder path: ensure correct image resource reference
+    const founderImg = document.getElementById('founder-img');
+    if(founderImg) founderImg.src = 'img/founder.png';
+  </script>
 </body>
 </html>
