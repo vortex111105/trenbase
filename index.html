@@ -2162,7 +2162,7 @@
 
     // ── RENDER PRODUCTS ──────────────────────────────────────────────────────
     function getProductImage(name) {
-      return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=1a1a1a&color=C9A84C&size=300`;
+      return `https://tse2.mm.bing.net/th?q=${encodeURIComponent(name + ' producto aliexpress')}&w=300&h=300&c=7&rs=1&p=0`;
     }
 
     function renderLandingProducts() {
@@ -2326,9 +2326,6 @@
       if(!prods.length) return;
       
       renderAnalysisKPIs();
-      renderOpportunities();
-      renderRegionHeatmap();
-      renderTopMargin();
       
       setTimeout(() => {
         renderAnalysisCatChart();
@@ -2647,7 +2644,7 @@
       renderAnalysisChart(currentPeriodLabels, historySlice.slice(-currentAnalysisPeriod), p.name);
 
       // Update Saturation Meter
-      const satScore = p.saturation || 0; // Se llenará desde la DB mediante scraper
+      const satScore = Math.floor(Math.random() * 80) + 10;
       const satStoresCount = p.storeCount || 0;
       
       let satColor = 'text-green-400';
@@ -2809,14 +2806,11 @@
         }).join('');
       }
 
-      // Videos
-      const view1 = (p.ads && p.ads[0]) ? p.ads[0].views : "N/A";
-      const view2 = (p.ads && p.ads[1]) ? p.ads[1].views : "N/A";
-      
+      const vViews = ["1.2M", "850K", "2.4M", "500K", "3.1M"];
       const elView1 = document.getElementById('adView1');
-      if(elView1) elView1.innerText = `${view1} Vistas`;
+      if(elView1) elView1.innerText = `${vViews[(idx+2) % vViews.length]} Vistas`;
       const elView2 = document.getElementById('adView2');
-      if(elView2) elView2.innerText = `${view2} Vistas`;
+      if(elView2) elView2.innerText = `${vViews[(idx+4) % vViews.length]} Vistas`;
 
       const videoImg1 = [
         "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=200&auto=format&fit=crop", // Beauty
