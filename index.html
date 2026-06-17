@@ -1620,7 +1620,7 @@
                     </div>
                     <div class="text-right">
                       <div id="provCost1" class="text-xs font-bold text-green-400">~$4.20</div>
-                      <a href="#" class="text-[10px] text-champagne hover:underline">Ver link</a>
+                      <a href="#" id="provLink1" target="_blank" class="text-[10px] text-champagne hover:underline">Ver link</a>
                     </div>
                   </div>
                   <div class="bg-black/30 border border-white/5 rounded-xl p-3 flex justify-between items-center">
@@ -1636,7 +1636,7 @@
                     </div>
                     <div class="text-right">
                       <div id="provCost2" class="text-xs font-bold text-green-400">~$5.10</div>
-                      <a href="#" class="text-[10px] text-champagne hover:underline">Ver link</a>
+                      <a href="#" id="provLink2" target="_blank" class="text-[10px] text-champagne hover:underline">Ver link</a>
                     </div>
                   </div>
                 </div>
@@ -2392,6 +2392,57 @@
           <div class="text-[9px] text-champagne font-mono mt-1">Score top: ${prods[0] ? prods[0].score : 0}</div>
         </div>
       `;
+      
+      const elOpp = document.getElementById('opportunityList');
+      if(elOpp) {
+        const topOpps = [...prods].sort((a,b) => b.score - a.score).slice(0, 4);
+        elOpp.innerHTML = topOpps.map(p => `
+          <div class="py-3 flex justify-between items-center cursor-pointer hover:bg-white/5 px-2 -mx-2 rounded-lg transition" onclick="openProduct(${PRODUCTS.indexOf(p)})">
+            <span class="text-xs text-white truncate w-32">${p.name}</span>
+            <span class="text-[10px] font-bold text-green-400 bg-green-500/10 px-2 py-1 rounded">Score ${p.score}</span>
+          </div>
+        `).join('');
+      }
+      
+      const elMarg = document.getElementById('topMarginList');
+      if(elMarg) {
+        const topMargs = [...prods].sort((a,b) => b.margin - a.margin).slice(0, 4);
+        elMarg.innerHTML = topMargs.map(p => `
+          <div class="py-3 flex justify-between items-center cursor-pointer hover:bg-white/5 px-2 -mx-2 rounded-lg transition" onclick="openProduct(${PRODUCTS.indexOf(p)})">
+            <span class="text-xs text-white truncate w-32">${p.name}</span>
+            <span class="text-[10px] font-bold text-champagne bg-champagne/10 px-2 py-1 rounded">${p.marginStr || (p.margin+'%')}</span>
+          </div>
+        `).join('');
+      }
+      
+      const elReg = document.getElementById('regionHeatmap');
+      if(elReg) {
+        const regions = {};
+        prods.forEach(p => { if(p.regions) p.regions.forEach(r => regions[r] = (regions[r] || 0) + 1) });
+        const sortedRegs = Object.entries(regions).sort((a,b) => b[1] - a[1]).slice(0, 4);
+        const maxR = sortedRegs[0] ? sortedRegs[0][1] : 1;
+        elReg.innerHTML = sortedRegs.map(r => `
+          <div class="mb-2">
+            <div class="flex justify-between text-[10px] text-white/50 mb-1">
+              <span>${r[0]}</span><span>${Math.round(r[1]/prods.length*100)}%</span>
+            </div>
+            <div class="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+              <div class="h-full bg-champagne" style="width: ${(r[1]/maxR)*100}%"></div>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      const elCat = document.getElementById('analysisCatChart');
+      if(elCat) {
+        const sortedCats = Object.entries(cats).sort((a,b) => b[1] - a[1]).slice(0, 4);
+        elCat.innerHTML = sortedCats.map(c => `
+          <div class="flex justify-between items-center bg-black/20 p-2 rounded-lg border border-white/5 mb-2">
+            <span class="text-[10px] text-white/80">${c[0]}</span>
+            <span class="text-[10px] font-mono text-champagne">${c[1]} prod</span>
+          </div>
+        `).join('');
+      }
     }
 
     function opportunityScore(p) {
@@ -2668,14 +2719,23 @@
       
       // --- MOCK DYNAMIC WIDGETS ---
       // Proveedores
-      const provCosts = [4.20, 3.50, 6.10, 2.90, 8.40, 5.50];
-      let cost1 = provCosts[idx % provCosts.length];
-      let cost2 = cost1 * 1.2;
+      let baseCost1 = 4.20; let baseCost2 = 5.10; let link1 = '#'; let link2 = '#';
+      if(p.suppliers && p.suppliers.length > 0) {
+         baseCost1 = parseFloat(String(p.suppliers[0].price).replace(/[^0-9.]/g, '')) || baseCost1;
+         link1 = p.suppliers[0].url || link1;
+         if(p.suppliers.length > 1) {
+             baseCost2 = parseFloat(String(p.suppliers[1].price).replace(/[^0-9.]/g, '')) || baseCost2;
+             link2 = p.suppliers[1].url || link2;
+         } else {
+             baseCost2 = baseCost1 * 1.2;
+             link2 = link1;
+         }
+      }
+      
+      let cost1 = baseCost1;
+      let cost2 = baseCost2;
       
       if (businessMode === 'ecommerce') {
-        // En ecommerce los precios son más baratos (mayorista)
-        cost1 = cost1 * 0.4;
-        cost2 = cost1 * 1.1;
         document.getElementById('provIcon1').className = "w-8 h-8 rounded bg-[#ff6a00] flex items-center justify-center text-white font-bold text-[9px]";
         document.getElementById('provIcon1').innerText = "B2B";
         document.getElementById('provName1').innerText = "Alibaba (Fábrica)";
@@ -2701,6 +2761,15 @@
       if(elCost1) elCost1.innerText = `~$${cost1.toFixed(2)}`;
       const elCost2 = document.getElementById('provCost2');
       if(elCost2) elCost2.innerText = `~$${cost2.toFixed(2)}`;
+      
+      const elLink1 = document.getElementById('provLink1');
+      if(elLink1) {
+        elLink1.href = link1 !== '#' ? link1 : 'https://es.aliexpress.com/wholesale?SearchText=' + encodeURIComponent(p.name);
+      }
+      const elLink2 = document.getElementById('provLink2');
+      if(elLink2) {
+        elLink2.href = link2 !== '#' ? link2 : 'https://cjdropshipping.com/search/' + encodeURIComponent(p.name);
+      }
 
       // --- SMART WIDGET MAPPING ---
       const nameLower = (p.name || '').toLowerCase();
