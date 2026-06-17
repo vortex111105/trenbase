@@ -1188,21 +1188,6 @@
         <div class="text-center mb-16">
           <span class="text-xs font-mono text-champagne uppercase tracking-widest block mb-4">Suscripción</span>
           <h2 class="text-4xl md:text-6xl font-extrabold tracking-tight text-obsidian">Precios sin sorpresas</h2>
-          <p class="text-slate/60 text-base mt-4 max-w-lg mx-auto">
-            Elegí tu país para ver los precios en tu moneda local.
-          </p>
-
-          <div class="flex justify-center gap-3 mt-8">
-            <button onclick="changeCurrency('AR')" id="btn-currency-AR" class="currency-toggle-btn active-toggle bg-obsidian text-white px-5 py-2.5 rounded-full text-xs font-bold font-mono tracking-wider transition-all duration-300">
-              🇦🇷 ARGENTINA
-            </button>
-            <button onclick="changeCurrency('UY')" id="btn-currency-UY" class="currency-toggle-btn bg-slate/10 text-slate hover:bg-slate/20 px-5 py-2.5 rounded-full text-xs font-bold font-mono tracking-wider transition-all duration-300">
-              🇺🇾 Uruguay
-            </button>
-            <button onclick="changeCurrency('CL')" id="btn-currency-CL" class="currency-toggle-btn bg-slate/10 text-slate hover:bg-slate/20 px-5 py-2.5 rounded-full text-xs font-bold font-mono tracking-wider transition-all duration-300">
-              🇨🇱 Chile
-            </button>
-          </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
@@ -1214,7 +1199,7 @@
               <h3 class="text-2xl font-bold text-obsidian mb-4">Free</h3>
               <div class="mb-6">
                 <span id="price-free" class="text-4xl font-extrabold text-obsidian">$0</span>
-                <span id="price-period-free" class="text-xs font-mono text-slate/40 block mt-1">ARS/mes</span>
+                <span id="price-period-free" class="text-xs font-mono text-slate/40 block mt-1">USD/mes</span>
               </div>
               <p class="text-slate/60 text-xs mb-6 border-b border-slate/5 pb-4">
                 Para explorar la plataforma y ver las tendencias principales.
@@ -1239,8 +1224,8 @@
               <span class="text-xs font-mono text-champagne uppercase tracking-widest block mb-2">Recomendado</span>
               <h3 class="text-2xl font-bold text-white mb-4">Starter</h3>
               <div class="mb-6">
-                <span id="price-starter" class="text-5xl font-extrabold text-champagne">$9.999</span>
-                <span id="price-period-starter" class="text-xs font-mono text-white/40 block mt-1">ARS/mes</span>
+                <span id="price-starter" class="text-5xl font-extrabold text-champagne">$19</span>
+                <span id="price-period-starter" class="text-xs font-mono text-white/40 block mt-1">USD/mes</span>
               </div>
               <p class="text-white/60 text-xs mb-6 border-b border-white/5 pb-4">
                 Para emprendedores serios buscando su próximo ganador.
@@ -1263,8 +1248,8 @@
               <span class="text-xs font-mono text-slate/40 uppercase tracking-widest block mb-2">Escalar</span>
               <h3 class="text-2xl font-bold text-obsidian mb-4">Pro</h3>
               <div class="mb-6">
-                <span id="price-pro" class="text-4xl font-extrabold text-obsidian">$19.999</span>
-                <span id="price-period-pro" class="text-xs font-mono text-slate/40 block mt-1">ARS/mes</span>
+                <span id="price-pro" class="text-4xl font-extrabold text-obsidian">$49</span>
+                <span id="price-period-pro" class="text-xs font-mono text-slate/40 block mt-1">USD/mes</span>
               </div>
               <p class="text-slate/60 text-xs mb-6 border-b border-slate/5 pb-4">
                 Para escalar tu negocio con alertas inmediatas.
@@ -1882,9 +1867,7 @@
     };
 
     const PRICES={
-      AR:{starter:'$9.999/mes',pro:'$19.999/mes',period:'ARS'},
-      UY:{starter:'$390/mes',pro:'$790/mes',period:'UYU'},
-      CL:{starter:'$4.990/mes',pro:'$9.990/mes',period:'CLP'}
+      USD:{starter:'$19/mes',pro:'$49/mes',period:'USD'}
     };
 
     const WEEKS=['Sem 1','Sem 2','Sem 3','Sem 4','Sem 5','Sem 6','Sem 7','Sem 8','Sem 9','Sem 10','Sem 11','Sem 12','Sem 13','Sem 14','Sem 15','Hoy'];
