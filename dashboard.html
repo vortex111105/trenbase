@@ -57,7 +57,11 @@
       box-shadow: 0 0 50px rgba(0,0,0,0.12), 0 10px 15px -3px rgba(0,0,0,0.08);
       border-color: rgba(0,0,0,0.08);
     }
-  </style>
+  
+    .dash-section { display: none; }
+    .dash-section.active-section { display: block; animation: fadeIn 0.3s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+</style>
 </head>
 <body class="bg-bgmain text-gray-900 h-screen flex overflow-hidden">
 
@@ -70,19 +74,19 @@
       <h1 class="text-xl font-bold tracking-tight">TrendBase</h1>
     </a>
     
-    <nav class="flex-1 px-4 space-y-2 mt-4">
-      <a href="#" class="flex items-center gap-3 px-4 py-3 bg-white/10 text-white rounded-xl font-medium transition">
+        <nav class="flex-1 px-4 space-y-2 mt-4" id="sidebarNav">
+      <button onclick="showSection('sec-dash', this)" class="w-full flex items-center gap-3 px-4 py-3 bg-white/10 text-white rounded-xl font-medium transition nav-btn active-nav">
         <i data-lucide="layout-dashboard" class="w-5 h-5"></i> Dashboard
-      </a>
-      <a href="#" class="flex items-center gap-3 px-4 py-3 text-white/50 hover:text-white hover:bg-white/5 rounded-xl font-medium transition">
+      </button>
+      <button onclick="showSection('sec-tendencias', this)" class="w-full flex items-center gap-3 px-4 py-3 text-white/50 hover:text-white hover:bg-white/5 rounded-xl font-medium transition nav-btn">
         <i data-lucide="trending-up" class="w-5 h-5"></i> Tendencias
-      </a>
-      <a href="#" class="flex items-center gap-3 px-4 py-3 text-white/50 hover:text-white hover:bg-white/5 rounded-xl font-medium transition">
+      </button>
+      <button onclick="showSection('sec-analisis', this)" class="w-full flex items-center gap-3 px-4 py-3 text-white/50 hover:text-white hover:bg-white/5 rounded-xl font-medium transition nav-btn">
         <i data-lucide="bar-chart-2" class="w-5 h-5"></i> Análisis
-      </a>
-      <a href="#" class="flex items-center gap-3 px-4 py-3 text-white/50 hover:text-white hover:bg-white/5 rounded-xl font-medium transition">
+      </button>
+      <button onclick="showSection('sec-alertas', this)" class="w-full flex items-center gap-3 px-4 py-3 text-white/50 hover:text-white hover:bg-white/5 rounded-xl font-medium transition nav-btn">
         <i data-lucide="bell" class="w-5 h-5"></i> Alertas
-      </a>
+      </button>
       <a href="index.html" class="flex items-center gap-3 px-4 py-3 text-white/50 hover:text-white hover:bg-white/5 rounded-xl font-medium transition mt-4 border-t border-white/10 pt-4">
         <i data-lucide="home" class="w-5 h-5"></i> Volver al Inicio
       </a>
@@ -114,8 +118,9 @@
         </div>
       </div>
     </header>
-
-        <!-- Top Cards Grid (Skillset Style) -->
+    <!-- DASHBOARD SECTION -->
+    <section id="sec-dash" class="dash-section active-section space-y-6">
+      <!-- Top Cards Grid (Skillset Style) -->
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
       
       <!-- Black Card (Hero) -->
@@ -125,6 +130,107 @@
           <div class="text-[13px] text-white/60 font-medium mb-1" id="heroCat">Oportunidad #1</div>
           <div class="text-3xl font-bold text-white tracking-tight leading-tight truncate" id="heroTitle">Cargando...</div>
         </div>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 bg-white rounded-[2rem] p-6 saas-shadow saas-card-hover">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="font-bold text-gray-800">Volumen de Tendencias (Últimos 6 meses)</h3>
+          <select class="bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 text-xs font-medium text-gray-600 outline-none">
+            <option>Todas las categorías</option>
+          </select>
+        </div>
+        <div class="h-64 w-full">
+          <canvas id="mainChart"></canvas>
+        </div>
+      </div>
+        
+      </div>
+    </section>
+
+    <!-- TENDENCIAS SECTION -->
+    <section id="sec-tendencias" class="dash-section space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 flex flex-col">
+          <!-- Products Table -->
+    <div class="bg-white rounded-[2rem] saas-shadow h-[600px] flex flex-col overflow-hidden min-h-[400px]">
+      <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+        <h3 class="font-bold text-gray-800">Top Productos en Tendencia</h3>
+        <div class="flex gap-2">
+          <button class="bg-gray-50 hover:bg-gray-100 text-gray-600 px-4 py-2 rounded-xl text-xs font-bold transition border border-gray-200">Exportar CSV</button>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-gray-50 text-gray-400 text-xs font-medium uppercase tracking-wider">
+              <th class="p-4 pl-6 font-mono font-medium">Producto</th>
+              <th class="p-4 font-mono font-medium">Categoría</th>
+              <th class="p-4 font-mono font-medium">Plataformas</th>
+              <th class="p-4 font-mono font-medium">Precio Venta</th>
+              <th class="p-4 font-mono font-medium">TrendScore</th>
+              <th class="p-4 pr-6"></th>
+            </tr>
+          </thead>
+          <tbody id="tableBody" class="text-sm">
+            <!-- Rows injected by JS -->
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Pagination -->
+      <div class="p-4 border-t border-gray-100 flex justify-between items-center bg-gray-50/50 mt-auto">
+        <span class="text-xs text-gray-500 font-medium" id="pageInfo">Mostrando 1-10 de 500</span>
+        <div class="flex gap-2">
+          <button onclick="prevPage()" class="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition shadow-sm"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+          <button onclick="nextPage()" class="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition shadow-sm"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+        </div>
+      </div>
+    </div> 
+        </div>
+        <div class="lg:col-span-1 flex flex-col">
+          <!-- Oportunidades List -->
+      <div class="bg-white rounded-[2rem] p-6 saas-shadow saas-card-hover flex flex-col">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="font-bold text-gray-800">Top Oportunidades</h3>
+          <span class="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-1 rounded-md uppercase tracking-wider">Alta Rentabilidad</span>
+        </div>
+        <div id="oppList" class="flex flex-col gap-3 flex-1">
+          <!-- Injected via JS -->
+          <div class="text-sm text-gray-400 text-center py-4 font-medium">Cargando oportunidades...</div>
+        </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ANALISIS SECTION -->
+    <section id="sec-analisis" class="dash-section space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <div class="lg:col-span-1 bg-white rounded-[2rem] p-6 saas-shadow saas-card-hover flex flex-col">
+        <h3 class="font-bold text-gray-800 mb-6">Distribución por Categoría</h3>
+        <div class="flex-1 w-full flex items-center justify-center relative">
+          <canvas id="donutChart"></canvas>
+          <div class="absolute inset-0 flex items-center justify-center flex-col pointer-events-none">
+            <span class="text-3xl font-black">500</span>
+            <span class="text-[10px] text-gray-400 font-mono">TOTAL</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ALERTAS SECTION -->
+    <section id="sec-alertas" class="dash-section space-y-6">
+      <div class="bg-white rounded-[2rem] p-12 saas-shadow flex flex-col items-center justify-center text-center h-[400px]">
+        <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4 border border-gray-100">
+          <i data-lucide="bell" class="w-8 h-8 text-gray-300"></i>
+        </div>
+        <h3 class="text-xl font-bold text-gray-800">No tienes alertas activas</h3>
+        <p class="text-gray-500 mt-2 text-sm max-w-sm">Configura notificaciones para enterarte cuando un producto de tu nicho supere los 90 TrendScore.</p>
+        <button class="mt-6 bg-black text-white px-6 py-2.5 rounded-full text-xs font-bold saas-shadow hover:-translate-y-0.5 transition">Crear Nueva Alerta</button>
+      </div>
+    </section>
+
+
+        
         <div class="relative z-10 mt-auto flex items-center text-[11px] font-bold text-green-400">
           <i data-lucide="trending-up" class="w-3 h-3 mr-1"></i> <span id="heroScore">0</span> TrendScore
         </div>
@@ -165,45 +271,10 @@
 
     </div>
 
-    <!-- Charts Section -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div class="lg:col-span-2 bg-white rounded-[2rem] p-6 saas-shadow saas-card-hover">
-        <div class="flex justify-between items-center mb-6">
-          <h3 class="font-bold text-gray-800">Volumen de Tendencias (Últimos 6 meses)</h3>
-          <select class="bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 text-xs font-medium text-gray-600 outline-none">
-            <option>Todas las categorías</option>
-          </select>
-        </div>
-        <div class="h-64 w-full">
-          <canvas id="mainChart"></canvas>
-        </div>
-      </div>
-      <div class="lg:col-span-1 bg-white rounded-[2rem] p-6 saas-shadow saas-card-hover flex flex-col">
-        <h3 class="font-bold text-gray-800 mb-6">Distribución por Categoría</h3>
-        <div class="flex-1 w-full flex items-center justify-center relative">
-          <canvas id="donutChart"></canvas>
-          <div class="absolute inset-0 flex items-center justify-center flex-col pointer-events-none">
-            <span class="text-3xl font-black">500</span>
-            <span class="text-[10px] text-gray-400 font-mono">TOTAL</span>
-          </div>
-        </div>
-      </div>
+    
     </div>
 
-        <!-- Info Section: Oportunidades & Calculadora ROI -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      
-      <!-- Oportunidades List -->
-      <div class="bg-white rounded-[2rem] p-6 saas-shadow saas-card-hover flex flex-col">
-        <div class="flex justify-between items-center mb-6">
-          <h3 class="font-bold text-gray-800">Top Oportunidades</h3>
-          <span class="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-1 rounded-md uppercase tracking-wider">Alta Rentabilidad</span>
-        </div>
-        <div id="oppList" class="flex flex-col gap-3 flex-1">
-          <!-- Injected via JS -->
-          <div class="text-sm text-gray-400 text-center py-4 font-medium">Cargando oportunidades...</div>
-        </div>
-      </div>
+        
 
       <!-- ROI Calculator -->
       <div class="bg-white rounded-[2rem] p-6 saas-shadow saas-card-hover flex flex-col">
@@ -254,41 +325,7 @@
 
     </div>
 
-    <!-- Products Table -->
-    <div class="bg-white rounded-[2rem] saas-shadow flex-1 flex flex-col overflow-hidden min-h-[400px]">
-      <div class="p-6 border-b border-gray-100 flex justify-between items-center">
-        <h3 class="font-bold text-gray-800">Top Productos en Tendencia</h3>
-        <div class="flex gap-2">
-          <button class="bg-gray-50 hover:bg-gray-100 text-gray-600 px-4 py-2 rounded-xl text-xs font-bold transition border border-gray-200">Exportar CSV</button>
-        </div>
-      </div>
-      <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse">
-          <thead>
-            <tr class="bg-gray-50 text-gray-400 text-xs font-medium uppercase tracking-wider">
-              <th class="p-4 pl-6 font-mono font-medium">Producto</th>
-              <th class="p-4 font-mono font-medium">Categoría</th>
-              <th class="p-4 font-mono font-medium">Plataformas</th>
-              <th class="p-4 font-mono font-medium">Precio Venta</th>
-              <th class="p-4 font-mono font-medium">TrendScore</th>
-              <th class="p-4 pr-6"></th>
-            </tr>
-          </thead>
-          <tbody id="tableBody" class="text-sm">
-            <!-- Rows injected by JS -->
-          </tbody>
-        </table>
-      </div>
-      
-      <!-- Pagination -->
-      <div class="p-4 border-t border-gray-100 flex justify-between items-center bg-gray-50/50 mt-auto">
-        <span class="text-xs text-gray-500 font-medium" id="pageInfo">Mostrando 1-10 de 500</span>
-        <div class="flex gap-2">
-          <button onclick="prevPage()" class="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition shadow-sm"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
-          <button onclick="nextPage()" class="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition shadow-sm"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
-        </div>
-      </div>
-    </div>
+    
     
   </main>
 
