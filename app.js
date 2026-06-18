@@ -115,6 +115,39 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
     
+  
+  window.calcROISliders = function() {
+    const cost = parseFloat(document.getElementById('calcCost').value) || 0;
+    const price = parseFloat(document.getElementById('calcPrice').value) || 0;
+    const ads = parseFloat(document.getElementById('calcAds').value) || 0;
+    
+    document.getElementById('calcCostVal').innerText = '$' + cost.toFixed(2);
+    document.getElementById('calcAdsVal').innerText = '$' + ads.toFixed(2);
+    document.getElementById('calcPriceVal').innerText = '$' + price.toFixed(2);
+    
+    const el = document.getElementById('calcResult');
+    if(!el) return;
+    
+    const netPerSale = price - cost - ads;
+    const margin = price > 0 ? Math.round((netPerSale / price) * 100) : 0;
+    const breakeven = netPerSale > 0 ? Math.ceil(cost / netPerSale) : 0;
+    
+    const profitColor = netPerSale > 0 ? 'text-green-600' : 'text-red-500';
+    
+    el.innerHTML = `
+        <div class="bg-white p-2 rounded-lg border border-gray-100 text-center shadow-sm">
+          <div class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Ganancia Neta</div>
+          <div class="text-sm font-extrabold ${profitColor}">$${netPerSale.toFixed(2)}</div>
+        </div>
+        <div class="bg-white p-2 rounded-lg border border-gray-100 text-center shadow-sm">
+          <div class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Margen</div>
+          <div class="text-sm font-extrabold text-gray-900">${margin}%</div>
+        </div>
+    `;
+  }
+  // Initialize slider values on load
+  setTimeout(() => { if(window.calcROISliders) window.calcROISliders(); }, 500);
+
   window.calcROI = function() {
     const cost = parseFloat(document.getElementById('calcCost').value) || 0;
     const price = parseFloat(document.getElementById('calcPrice').value) || 0;
