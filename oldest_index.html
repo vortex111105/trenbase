@@ -1,0 +1,2846 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrendBase — Encontrá los productos virales antes que todos</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            obsidian: '#0D0D12',
+            champagne: '#C9A84C',
+            ivory: '#FAF8F5',
+            slate: '#2A2A35',
+            borderWhite: 'rgba(255,255,255,0.08)'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            drama: ['Playfair Display', 'serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- GSAP & ScrollTrigger CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  
+  <!-- Chart.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    /* Premium Visual Noise Overlay */
+    .noise-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      content: "";
+      opacity: 0.05;
+      z-index: 9999;
+      pointer-events: none;
+    }
+
+    /* Magnetic Button & Premium Hover effects */
+    .btn-magnetic {
+      transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .btn-magnetic:hover {
+      transform: scale(1.03);
+    }
+    
+    .hover-lift {
+      transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .hover-lift:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Floating Island Navbar styling */
+    .navbar-pill {
+      width: calc(100% - 2rem);
+      max-width: 1100px;
+    }
+
+    /* Hide scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0D0D12;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #C9A84C;
+      border-radius: 3px;
+    }
+
+    /* Custom CSS to simulate page views */
+    .app-view {
+      display: none;
+    }
+    .app-view.active-view {
+      display: block;
+    }
+
+    .dash-section {
+      display: none;
+    }
+    .dash-section.active-section {
+      display: block;
+    }
+  </style>
+</head>
+<body class="bg-obsidian text-ivory antialiased selection:bg-champagne selection:text-obsidian overflow-x-hidden font-sans">
+
+  <!-- SVG Noise Filter definition for inline rendering -->
+  <svg class="hidden">
+    <filter id="global-noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.05 0"/>
+    </filter>
+  </svg>
+  <div class="noise-overlay" style="backdrop-filter: url(#global-noise);"></div>
+
+  <!-- A. NAVBAR — "The Floating Island" -->
+  <header id="main-header" class="fixed top-6 left-1/2 -translate-x-1/2 z-40 navbar-pill transition-all duration-500">
+    <div id="nav-container" class="mx-auto flex items-center justify-between px-6 py-4 rounded-full border border-white/10 bg-transparent transition-all duration-500">
+      <a href="#" onclick="goLanding()" class="font-extrabold text-xl tracking-tight text-white flex items-center gap-2">
+        <span class="text-champagne font-drama italic">Trend</span>Base
+      </a>
+      
+      <!-- Nav links for Landing -->
+      <nav id="landing-nav" class="hidden md:flex items-center gap-8 text-sm font-medium">
+        <a href="#features" class="text-white/70 hover:text-white transition hover-lift">Características</a>
+        <a href="#leaderboard-section" class="text-white/70 hover:text-white transition hover-lift">Leaderboard</a>
+        <a href="#philosophy" class="text-white/70 hover:text-white transition hover-lift">Filosofía</a>
+        <a href="#protocol" class="text-white/70 hover:text-white transition hover-lift">Protocolo</a>
+        <a href="#pricing" class="text-white/70 hover:text-white transition hover-lift">Planes</a>
+      </nav>
+
+      <!-- Nav Links for Dashboard (will toggle based on active view) -->
+      <nav id="dash-nav" class="hidden items-center gap-6 text-sm font-medium">
+        <span class="text-white/40">Modo Dashboard</span>
+      </nav>
+
+      <div class="flex items-center gap-4">
+        <!-- Currency/Theme and Auth Buttons -->
+        <span id="currencyBadge" onclick="goSection('perfil')" class="hidden font-mono text-xs font-bold px-3 py-1.5 border border-white/10 rounded-full cursor-pointer text-white/70 bg-white/5 hover:bg-white/10 transition" title="Cambiar moneda">ARS</span>
+        
+        <div id="navAuthBtns" class="flex items-center gap-2">
+          <button onclick="openAuth('login')" class="text-white/80 hover:text-white text-xs font-bold uppercase tracking-wider px-4 py-2 hover:bg-white/5 rounded-full transition">Ingresar</button>
+          <button onclick="openAuth('signup')" class="btn-magnetic bg-champagne text-obsidian px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider">Comenzar gratis</button>
+        </div>
+        
+        <div id="navUser" class="hidden relative">
+          <button onclick="toggleDD()" class="w-8 h-8 rounded-full bg-champagne text-obsidian font-bold text-sm flex items-center justify-center border border-white/20 hover:scale-105 transition" id="userAvatar">U</button>
+          <div id="userDD" class="hidden absolute right-0 top-12 bg-obsidian border border-white/10 rounded-2xl p-2 w-52 z-50 shadow-2xl">
+            <div class="px-3 py-2 border-b border-white/10 mb-1">
+              <div class="text-[10px] text-white/40 truncate" id="userEmailLabel">usuario@email.com</div>
+              <span class="inline-block text-[9px] font-mono font-bold uppercase bg-champagne/10 text-champagne px-1.5 py-0.5 rounded mt-1" id="userPlanLabel">Free</span>
+            </div>
+            <button onclick="enterDash(); closeDD();" class="w-full flex items-center gap-2 px-3 py-2 hover:bg-white/5 rounded-lg text-xs text-white/80 hover:text-white transition"><i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard</button>
+            <button onclick="goSection('guardados'); closeDD();" class="w-full flex items-center gap-2 px-3 py-2 hover:bg-white/5 rounded-lg text-xs text-white/80 hover:text-white transition"><i data-lucide="bookmark" class="w-4 h-4"></i> Guardados</button>
+            <button onclick="scrollToPlans(); closeDD();" class="w-full flex items-center gap-2 px-3 py-2 hover:bg-white/5 rounded-lg text-xs text-white/80 hover:text-white transition"><i data-lucide="crown" class="w-4 h-4"></i> Cambiar plan</button>
+            <button onclick="logout(); closeDD();" class="w-full flex items-center gap-2 px-3 py-2 hover:bg-white/5 rounded-lg text-xs text-red-400 hover:text-red-300 transition border-t border-white/5 mt-1"><i data-lucide="log-out" class="w-4 h-4"></i> Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- AUTHENTICATION MODAL -->
+  <div id="authModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div class="bg-obsidian border border-white/10 rounded-[2.5rem] w-full max-w-md overflow-hidden shadow-2xl p-8">
+      <div class="text-center mb-6">
+        <span class="font-extrabold text-2xl text-white"><span class="text-champagne font-drama italic">Trend</span>Base</span>
+        <h2 id="authTitle" class="text-lg font-bold text-white mt-4">Bienvenido de vuelta</h2>
+        <p id="authSubtitle" class="text-xs text-white/50 mt-1">Ingresá para acceder al dashboard</p>
+      </div>
+
+      <div class="flex border border-white/10 rounded-xl overflow-hidden bg-white/5 p-1 mb-6">
+        <button id="tabLogin" onclick="setAuthMode('login')" class="flex-1 py-2 text-xs font-bold rounded-lg transition-all active bg-white/10 text-white">Iniciar Sesión</button>
+        <button id="tabSignup" onclick="setAuthMode('signup')" class="flex-1 py-2 text-xs font-bold rounded-lg transition-all text-white/50 hover:text-white">Registrarse</button>
+      </div>
+
+      <div class="space-y-4">
+        <!-- Google OAuth Button -->
+        <button onclick="loginGoogle()" class="w-full py-3 px-4 bg-white text-obsidian hover:bg-ivory font-bold text-xs uppercase tracking-wider rounded-xl flex items-center justify-center gap-3 transition">
+          <svg width="16" height="16" viewBox="0 0 24 24" class="w-4 h-4"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Continuar con Google
+        </button>
+
+        <div class="flex items-center gap-3 text-[10px] text-white/30 uppercase font-mono py-2">
+          <span class="h-[1px] bg-white/10 flex-1"></span>
+          o usar email
+          <span class="h-[1px] bg-white/10 flex-1"></span>
+        </div>
+
+        <input type="email" id="authEmail" placeholder="tu@email.com" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:border-champagne outline-none transition">
+        <input type="password" id="authPass" placeholder="Contraseña (mín. 6 caracteres)" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:border-champagne outline-none transition">
+        
+        <div id="authErr" class="hidden text-xs text-red-400 bg-red-500/10 border border-red-500/20 px-3 py-2 rounded-xl">Error</div>
+        <div id="authOk" class="hidden text-xs text-green-400 bg-green-500/10 border border-green-500/20 px-3 py-2 rounded-xl">Correcto</div>
+
+        <button onclick="doAuth()" id="authSubmit" class="btn-magnetic w-full py-3.5 bg-champagne text-obsidian font-extrabold text-xs uppercase tracking-wider rounded-xl transition">
+          Iniciar Sesión
+        </button>
+        <button onclick="closeAuth()" class="w-full text-center text-[10px] text-white/40 hover:text-white uppercase tracking-wider py-1 font-mono transition">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUCT DETAIL MODAL (`prodModal`) -->
+  <div id="prodModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onclick="closeProdModal(event)">
+    <div class="bg-obsidian border border-white/10 rounded-[2.5rem] w-full max-w-2xl overflow-y-auto max-h-[90vh] shadow-2xl flex flex-col">
+      <div class="flex items-center justify-between px-8 py-6 border-b border-white/10 sticky top-0 bg-obsidian/90 backdrop-blur-md z-10">
+        <h3 id="pmTitle" class="text-lg font-bold text-white">Producto</h3>
+        <button onclick="closeProdModalDirect()" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/60 hover:text-white transition">✕</button>
+      </div>
+      
+      <div id="pmImgWrap" class="w-full aspect-[21/9] overflow-hidden bg-black/20"></div>
+
+      <div class="p-8 space-y-6">
+        <div class="flex items-baseline gap-4">
+          <div id="pmScore" class="text-5xl font-extrabold text-white tracking-tight">97</div>
+          <div class="text-xs text-white/40 font-mono uppercase">TrendScore</div>
+          <span id="pmTag" class="tag tag-hot text-xs font-mono font-bold px-2 py-0.5 rounded uppercase">HOT</span>
+        </div>
+
+        <div class="flex border-b border-white/10 gap-4 mb-4">
+          <button onclick="switchModalTab('info',this)" class="modal-tab py-2 text-xs font-bold text-champagne border-b-2 border-champagne">Información</button>
+          <button onclick="switchModalTab('history',this)" class="modal-tab py-2 text-xs font-bold text-white/50 hover:text-white">Historial 90 días</button>
+          <button onclick="switchModalTab('suppliers',this)" class="modal-tab py-2 text-xs font-bold text-white/50 hover:text-white">Proveedores</button>
+        </div>
+
+        <!-- Info Tab -->
+        <div id="tab-info" class="modal-tab-content active-section space-y-6">
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <div class="bg-white/5 border border-white/5 rounded-2xl p-4 text-center">
+              <div id="pmChange" class="text-base font-bold text-champagne">+18%</div>
+              <div class="text-[9px] text-white/40 uppercase font-mono mt-1">Cambio 24hs</div>
+            </div>
+            <div class="bg-white/5 border border-white/5 rounded-2xl p-4 text-center">
+              <div id="pmMargin" class="text-base font-bold text-green-400">45-60%</div>
+              <div class="text-[9px] text-white/40 uppercase font-mono mt-1">Margen est.</div>
+            </div>
+            <div class="bg-white/5 border border-white/5 rounded-2xl p-4 text-center">
+              <div id="pmCat" class="text-base font-bold text-white">Tecnología</div>
+              <div class="text-[9px] text-white/40 uppercase font-mono mt-1">Categoría</div>
+            </div>
+            <div class="bg-white/5 border border-white/5 rounded-2xl p-4 text-center">
+              <div id="pmPrice" class="text-base font-bold text-white">$35 - $80</div>
+              <div class="text-[9px] text-white/40 uppercase font-mono mt-1">Precio venta est.</div>
+            </div>
+            <div class="bg-white/5 border border-white/5 rounded-2xl p-4 text-center">
+              <div id="pmComp" class="text-base font-bold text-white">Media</div>
+              <div class="text-[9px] text-white/40 uppercase font-mono mt-1">Competencia</div>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <div class="text-[10px] font-mono text-white/40 uppercase">Plataformas donde es tendencia</div>
+            <div id="pmPlats" class="flex flex-wrap gap-2"></div>
+          </div>
+
+          <div class="space-y-2">
+            <div class="text-[10px] font-mono text-white/40 uppercase">Regiones activas</div>
+            <div id="pmCountries" class="flex flex-wrap gap-2"></div>
+          </div>
+        </div>
+
+        <!-- History Tab -->
+        <div id="tab-history" class="modal-tab-content hidden space-y-4">
+          <div class="h-48 relative w-full">
+            <canvas id="historyChart"></canvas>
+          </div>
+          <div class="overflow-x-auto rounded-xl border border-white/10">
+            <table class="w-full text-xs font-mono text-white/70">
+              <thead>
+                <tr class="bg-white/5 border-b border-white/10 text-left">
+                  <th class="p-3 uppercase">Semana</th>
+                  <th class="p-3 uppercase">Score</th>
+                  <th class="p-3 uppercase">Cambio</th>
+                  <th class="p-3 uppercase">País líder</th>
+                </tr>
+              </thead>
+              <tbody id="historyTbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Suppliers Tab -->
+        <div id="tab-suppliers" class="modal-tab-content hidden space-y-6">
+          <div id="pmSuppliers" class="space-y-6"></div>
+        </div>
+
+        <!-- Modal Footer Actions -->
+        <div class="flex flex-wrap gap-3 border-t border-white/10 pt-6">
+          <button id="pmSaveBtn" onclick="saveCurrentProduct()" class="flex-1 py-3 border border-white/20 hover:border-champagne/50 hover:bg-champagne/10 text-xs font-bold uppercase tracking-wider rounded-xl transition">
+            <i data-lucide="bookmark" class="w-4 h-4 inline-block mr-1"></i> Guardar
+          </button>
+          <button onclick="analyzeProduct()" class="flex-1 py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold uppercase tracking-wider rounded-xl transition">
+            <i data-lucide="bot" class="w-4 h-4 inline-block mr-1"></i> Analizar con IA
+          </button>
+          <button id="pmSoldBtn" onclick="markAsSold()" class="flex-1 py-3 bg-green-600 hover:bg-green-700 text-white text-xs font-bold uppercase tracking-wider rounded-xl transition">
+            <i data-lucide="check" class="w-4 h-4 inline-block mr-1"></i> Lo vendí
+          </button>
+        </div>
+
+        <div id="soldConfirm" class="hidden text-center text-xs text-green-400 bg-green-500/10 border border-green-500/20 p-3 rounded-xl">
+          ¡Registrado! Tu reporte ayuda a la comunidad dropshipper 🎉
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ONBOARDING MODAL -->
+  <div id="onboardingPopup" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div class="bg-obsidian border border-white/10 rounded-[2.5rem] w-full max-w-md p-8 text-center shadow-2xl">
+      <h3 class="text-xl font-bold text-white mb-2">¿Cómo te está yendo? 👋</h3>
+      <p class="text-xs text-white/50 mb-6">Llevas una semana usando TrendBase. ¿Ya encontraste algún producto para vender?</p>
+      
+      <div class="flex flex-col gap-3">
+        <button onclick="answerOnboarding('yes')" class="w-full py-3.5 bg-green-600/15 border border-green-500/40 text-green-400 font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-green-600/30 transition">
+          ✅ Sí, ya vendí algo
+        </button>
+        <button onclick="answerOnboarding('exploring')" class="w-full py-3.5 bg-white/5 border border-white/10 text-white font-semibold text-xs uppercase tracking-wider rounded-xl hover:bg-white/10 transition">
+          🔍 Todavía estoy explorando
+        </button>
+        <button onclick="answerOnboarding('no')" class="w-full py-3.5 bg-white/5 border border-white/10 text-white/60 font-medium text-xs uppercase tracking-wider rounded-xl hover:bg-white/10 transition">
+          😕 No encontré nada útil aún
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ─── APP VIEW: LANDING ────────────────────────────────────────────────── -->
+  <div id="view-landing" class="app-view active-view">
+    
+    <!-- Hero Section -->
+    <section class="relative h-[100dvh] w-full overflow-hidden flex items-end">
+      <!-- Unsplash Dark Velvet Luxury Abstract background -->
+      <div class="absolute inset-0 z-0">
+        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1600" alt="TrendBase Midnight Luxe Hero" class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-t from-obsidian via-obsidian/75 to-transparent"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-obsidian/90 via-obsidian/40 to-transparent"></div>
+      </div>
+
+      <!-- Hero Content (bottom-left third) -->
+      <div class="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 pb-16 md:pb-24">
+        <div class="max-w-3xl">
+          <!-- Live status tag -->
+          <div class="hero-fade-item inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-champagne/30 bg-obsidian/80 backdrop-blur-md text-xs font-mono text-champagne mb-6 uppercase tracking-widest">
+            <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+            Monitoreo en tiempo real · latam
+          </div>
+          
+          <!-- Large scale contrast heading -->
+          <h1 class="hero-fade-item text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight leading-[1.05] text-white">
+            Dropshipping meets <br>
+            <span class="font-drama italic font-normal text-champagne text-5xl sm:text-7xl md:text-8xl block mt-2">Absoluto Control.</span>
+          </h1>
+          
+          <!-- Subtitle -->
+          <p class="hero-fade-item text-white/70 text-lg md:text-xl font-medium mt-6 mb-10 max-w-xl leading-relaxed">
+            Encontrá los productos virales antes que todos con monitoreo en tiempo real e inteligencia de mercado en TikTok, Amazon y Mercado Libre en latam.
+          </p>
+
+          <!-- CTA and Secondary Action -->
+          <div class="hero-fade-item flex flex-wrap gap-4 items-center">
+            <a href="#pricing" class="btn-magnetic group relative overflow-hidden bg-champagne text-obsidian px-8 py-4 rounded-full text-sm font-extrabold uppercase tracking-widest transition-all duration-300">
+              <span class="relative z-10">Comenzar gratis (Probar 7 días gratis)</span>
+              <div class="absolute inset-0 bg-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></div>
+            </a>
+            <button onclick="enterDash()" class="btn-magnetic group border border-white/20 hover:border-champagne/50 px-8 py-4 rounded-full text-sm font-semibold tracking-wider text-white transition-colors duration-300">
+              Ingresar al Dashboard →
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Bar -->
+    <section class="py-12 border-y border-white/5 bg-black/40">
+      <div class="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+        <div>
+          <div class="text-3xl font-extrabold text-white" id="kpiProductos">47K+</div>
+          <div class="text-[10px] text-white/50 uppercase font-mono tracking-wider mt-1">Productos Monitoreados</div>
+        </div>
+        <div>
+          <div class="text-3xl font-extrabold text-white">9</div>
+          <div class="text-[10px] text-white/50 uppercase font-mono tracking-wider mt-1">Plataformas</div>
+        </div>
+        <div>
+          <div class="text-3xl font-extrabold text-white">3</div>
+          <div class="text-[10px] text-white/50 uppercase font-mono tracking-wider mt-1">Países LATAM</div>
+        </div>
+        <div>
+          <div class="text-3xl font-extrabold text-champagne font-mono">STABLE</div>
+          <div class="text-[10px] text-white/50 uppercase font-mono tracking-wider mt-1">Motor de Monitoreo</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Leaderboard / Showcase section -->
+    <section id="leaderboard-section" class="py-24 bg-obsidian">
+      <div class="max-w-7xl mx-auto px-6 md:px-12">
+        <div class="text-center mb-16">
+          <span class="text-xs font-mono text-champagne uppercase tracking-widest block mb-3">Comunidad</span>
+          <h2 class="text-3xl md:text-5xl font-extrabold text-white tracking-tight">Productos que están volando</h2>
+          <p class="text-white/60 text-sm mt-3 max-w-md mx-auto">Ventas reales registradas por dropshippers activos en este momento.</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-16 text-center">
+          <div class="bg-white/5 border border-white/5 rounded-2xl p-6">
+            <div id="cStatSales" class="text-3xl font-extrabold text-white">—</div>
+            <div class="text-[9px] text-white/40 uppercase font-mono mt-1">Ventas registradas</div>
+          </div>
+          <div class="bg-white/5 border border-white/5 rounded-2xl p-6">
+            <div id="cStatUsers" class="text-3xl font-extrabold text-white">—</div>
+            <div class="text-[9px] text-white/40 uppercase font-mono mt-1">Vendedores activos</div>
+          </div>
+          <div class="bg-white/5 border border-white/5 rounded-2xl p-6">
+            <div id="cStatTop" class="text-base font-bold text-champagne truncate mt-2">—</div>
+            <div class="text-[9px] text-white/40 uppercase font-mono mt-2">Producto estrella</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="publicLeaderboard">
+          <!-- Dynamically populated leaderboard cards -->
+        </div>
+
+        <div class="text-center mb-12 mt-24">
+          <span class="text-xs font-mono text-champagne uppercase tracking-widest block mb-3">Tendencias ahora</span>
+          <h2 class="text-3xl font-extrabold text-white tracking-tight">Muestra de Productos Calientes</h2>
+        </div>
+        <div id="landingProducts" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <!-- Dynamically populated showcase products -->
+        </div>
+      </div>
+    </section>
+
+    <!-- C. FEATURES — "Interactive Functional Artifacts" -->
+    <section id="features" class="py-24 bg-black/60 border-t border-white/5 relative z-20">
+      <div class="max-w-7xl mx-auto px-6 md:px-12">
+        <div class="mb-16 text-center">
+          <span class="text-xs font-mono text-champagne uppercase tracking-widest block mb-3">Métrica y Precisión</span>
+          <h2 class="text-3xl md:text-5xl font-extrabold text-white tracking-tight">Todo para vender en tendencia</h2>
+        </div>
+
+        <!-- Features Cards Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          <!-- Card 1 — "Diagnostic Shuffler" -->
+          <div class="bg-white/5 border border-white/10 rounded-[2.5rem] p-8 flex flex-col justify-between h-[500px] hover:border-champagne/30 transition-all duration-300 overflow-hidden relative group">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-champagne/10 border border-champagne/20 flex items-center justify-center text-champagne mb-6">
+                <i data-lucide="flame"></i>
+              </div>
+              <h3 class="text-xl font-bold text-white mb-2">Monitoreo en tiempo real</h3>
+              <p class="text-white/60 text-sm leading-relaxed">
+                Rastreo continuo de 47k+ productos en 9 plataformas líderes como TikTok, Amazon y Mercado Libre.
+              </p>
+            </div>
+
+            <!-- Shuffler Live UI Interface -->
+            <div class="relative w-full h-[240px] mt-6 flex items-center justify-center">
+              
+              <!-- Shuffler Card A -->
+              <div id="shuffler-card-0" class="absolute w-[90%] bg-obsidian border border-white/10 rounded-2xl p-4 shadow-xl transition-all duration-500 z-30 transform translate-y-0 scale-100">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-[10px] font-mono text-champagne uppercase bg-champagne/10 px-2 py-0.5 rounded">TikTok Viral</span>
+                  <span class="text-xs font-mono text-green-400 font-bold">+240%</span>
+                </div>
+                <p class="font-bold text-sm text-white mb-2">Humidificador de Llama</p>
+                <div class="flex justify-between items-center text-[10px] font-mono text-white/50">
+                  <span>Score: <b class="text-white">98/100</b></span>
+                  <span>Plataforma: <b class="text-white">TikTok</b></span>
+                </div>
+              </div>
+
+              <!-- Shuffler Card B -->
+              <div id="shuffler-card-1" class="absolute w-[90%] bg-obsidian/95 border border-white/10 rounded-2xl p-4 shadow-xl transition-all duration-500 z-20 transform translate-y-4 scale-95 opacity-80">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-[10px] font-mono text-blue-400 uppercase bg-blue-400/10 px-2 py-0.5 rounded">Mercado Libre</span>
+                  <span class="text-xs font-mono text-green-400 font-bold">+180%</span>
+                </div>
+                <p class="font-bold text-sm text-white mb-2">Trípode Inteligente con Auto-Rastreo</p>
+                <div class="flex justify-between items-center text-[10px] font-mono text-white/50">
+                  <span>Score: <b class="text-white">95/100</b></span>
+                  <span>Plataforma: <b class="text-white">Meli</b></span>
+                </div>
+              </div>
+
+              <!-- Shuffler Card C -->
+              <div id="shuffler-card-2" class="absolute w-[90%] bg-obsidian/90 border border-white/10 rounded-2xl p-4 shadow-xl transition-all duration-500 z-10 transform translate-y-8 scale-90 opacity-60">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-[10px] font-mono text-orange-400 uppercase bg-orange-400/10 px-2 py-0.5 rounded">Amazon Pro</span>
+                  <span class="text-xs font-mono text-green-400 font-bold">+150%</span>
+                </div>
+                <p class="font-bold text-sm text-white mb-2">Depiladora Láser IPL Pro</p>
+                <div class="flex justify-between items-center text-[10px] font-mono text-white/50">
+                  <span>Score: <b class="text-white">92/100</b></span>
+                  <span>Plataforma: <b class="text-white">Amazon</b></span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Card 2 — "Telemetry Typewriter" -->
+          <div class="bg-white/5 border border-white/10 rounded-[2.5rem] p-8 flex flex-col justify-between h-[500px] hover:border-champagne/30 transition-all duration-300 overflow-hidden relative group">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-champagne/10 border border-champagne/20 flex items-center justify-center text-champagne mb-6">
+                <i data-lucide="globe"></i>
+              </div>
+              <h3 class="text-xl font-bold text-white mb-2">Precios y métricas localizados</h3>
+              <p class="text-white/60 text-sm leading-relaxed">
+                Datos específicos para latam en ARS, UYU y CLP con historial de tendencia de 90 días para mitigar riesgos.
+              </p>
+            </div>
+
+            <!-- Typewriter Telemetry Interface -->
+            <div class="w-full bg-black/60 border border-white/5 rounded-2xl p-6 h-[220px] flex flex-col justify-between font-mono text-[11px] text-white/80">
+              <div class="flex items-center justify-between border-b border-white/10 pb-2 mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-champagne animate-ping"></span>
+                  <span class="text-[10px] uppercase font-bold text-champagne">Telemetry Feed</span>
+                </div>
+                <span class="text-[9px] text-white/30">v2.1_STABLE</span>
+              </div>
+              <div id="typewriter-console" class="flex-1 overflow-y-auto leading-relaxed text-green-400 font-mono">
+                <!-- Animated prompt output -->
+              </div>
+              <div class="text-[9px] text-white/20 border-t border-white/5 pt-2 mt-2 flex justify-between">
+                <span>DB STATUS: CONNECTED</span>
+                <span>PING: 24ms</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3 — "Cursor Protocol Scheduler" -->
+          <div class="bg-white/5 border border-white/10 rounded-[2.5rem] p-8 flex flex-col justify-between h-[500px] hover:border-champagne/30 transition-all duration-300 overflow-hidden relative group">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-champagne/10 border border-champagne/20 flex items-center justify-center text-champagne mb-6">
+                <i data-lucide="calculator"></i>
+              </div>
+              <h3 class="text-xl font-bold text-white mb-2">Filtros de rentabilidad avanzada</h3>
+              <p class="text-white/60 text-sm leading-relaxed">
+                Cálculo automático de margen estimado, nivel de competencia del nicho y calculadora de retorno.
+              </p>
+            </div>
+
+            <!-- Interactive Scheduler Simulation Grid -->
+            <div id="scheduler-container" class="relative w-full bg-black/40 border border-white/10 rounded-2xl p-4 h-[240px] flex flex-col justify-between overflow-hidden">
+              <div class="text-[9px] font-mono text-white/40 uppercase mb-2 flex justify-between">
+                <span>Rentabilidad Semanal</span>
+                <span id="scheduler-status" class="text-champagne font-bold">READY</span>
+              </div>
+              
+              <div class="grid grid-cols-7 gap-1.5 my-auto z-10">
+                <div class="scheduler-day border border-white/10 rounded-lg p-1.5 text-center cursor-pointer transition-colors" data-day="S">
+                  <div class="text-[7px] text-white/40 font-mono">D</div>
+                  <div class="text-[10px] font-bold text-white mt-0.5">08</div>
+                </div>
+                <div class="scheduler-day border border-white/10 rounded-lg p-1.5 text-center cursor-pointer transition-colors" data-day="M">
+                  <div class="text-[7px] text-white/40 font-mono">L</div>
+                  <div class="text-[10px] font-bold text-white mt-0.5">09</div>
+                </div>
+                <div class="scheduler-day border border-white/10 rounded-lg p-1.5 text-center cursor-pointer transition-colors animate-pulse" data-day="T">
+                  <div class="text-[7px] text-white/40 font-mono">M</div>
+                  <div class="text-[10px] font-bold text-white mt-0.5">10</div>
+                </div>
+                <div class="scheduler-day border border-white/10 rounded-lg p-1.5 text-center cursor-pointer transition-colors" data-day="W">
+                  <div class="text-[7px] text-white/40 font-mono">M</div>
+                  <div class="text-[10px] font-bold text-white mt-0.5">11</div>
+                </div>
+                <div class="scheduler-day border border-white/10 rounded-lg p-1.5 text-center cursor-pointer transition-colors" data-day="T">
+                  <div class="text-[7px] text-white/40 font-mono">J</div>
+                  <div class="text-[10px] font-bold text-white mt-0.5">12</div>
+                </div>
+                <div class="scheduler-day border border-white/10 rounded-lg p-1.5 text-center cursor-pointer transition-colors" data-day="F">
+                  <div class="text-[7px] text-white/40 font-mono">V</div>
+                  <div class="text-[10px] font-bold text-white mt-0.5">13</div>
+                </div>
+                <div class="scheduler-day border border-white/10 rounded-lg p-1.5 text-center cursor-pointer transition-colors" data-day="S">
+                  <div class="text-[7px] text-white/40 font-mono">S</div>
+                  <div class="text-[10px] font-bold text-white mt-0.5">14</div>
+                </div>
+              </div>
+
+              <button id="scheduler-action" class="w-full bg-white/5 border border-white/10 hover:bg-white/10 text-white font-mono text-[9px] py-2 rounded-lg transition-all z-10">
+                CALCULAR RETORNO ESTIMADO
+              </button>
+
+              <!-- Animated Cursor SVG -->
+              <svg id="scheduler-cursor" class="absolute w-5 h-5 pointer-events-none z-30 transform -translate-x-10 -translate-y-10 transition-all duration-300" viewBox="0 0 24 24" fill="none">
+                <path d="M4.5 3V17L9 12.5L14.5 21L17.5 19L12.5 11L18.5 10L4.5 3Z" fill="#C9A84C" stroke="#0D0D12" stroke-width="1.5"/>
+              </svg>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- D. PHILOSOPHY — "The Manifesto" -->
+    <section id="philosophy" class="relative py-32 bg-black overflow-hidden flex items-center justify-center">
+      <!-- Unsplash gold paint architectural shadows texture at low opacity -->
+      <div class="absolute inset-0 z-0 opacity-15">
+        <img src="https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=1600" alt="TrendBase Luxury Gold Pattern" class="w-full h-full object-cover">
+      </div>
+      
+      <div class="relative z-10 w-full max-w-4xl mx-auto px-6 text-center">
+        <span class="text-xs font-mono text-champagne uppercase tracking-widest block mb-6">Manifiesto</span>
+        
+        <div class="space-y-8">
+          <p class="text-white/40 text-sm md:text-base font-mono tracking-wide max-w-lg mx-auto leading-relaxed">
+            La mayoría de los dropshippers buscan productos a ciegas, perdiendo tiempo y dinero en campañas que no convierten.
+          </p>
+          <p id="philosophy-main-text" class="text-3xl md:text-6xl font-light text-white leading-tight font-sans tracking-tight">
+            Nosotros nos enfocamos en el <br>
+            <span class="font-drama italic text-champagne font-normal block mt-4 font-drama">Monitoreo Científico de Tendencias.</span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- E. PROTOCOL — "Sticky Stacking Archive" -->
+    <section id="protocol" class="relative bg-obsidian min-h-[300vh]">
+      <div class="sticky-pin-container">
+        
+        <!-- Step 1 -->
+        <div class="protocol-card min-h-[100dvh] w-full flex items-center bg-obsidian border-b border-white/5 py-24">
+          <div class="max-w-7xl mx-auto px-6 md:px-12 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="space-y-6">
+              <span class="font-mono text-xs text-champagne">PASO 01 //</span>
+              <h3 class="text-3xl md:text-5xl font-extrabold text-white tracking-tight">Extracción Multiplataforma</h3>
+              <p class="text-white/70 text-base leading-relaxed">
+                Nuestros motores analizan millones de señales en TikTok, Amazon, Instagram y Mercado Libre cada hora. Almacenamos métricas crudas listas para su evaluación estadística.
+              </p>
+            </div>
+            
+            <div class="h-[300px] flex items-center justify-center relative overflow-hidden bg-black/25 rounded-3xl border border-white/5">
+              <svg class="w-48 h-48 animate-[spin_20s_linear_infinite]" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="45" fill="none" stroke="#C9A84C" stroke-width="0.5" stroke-dasharray="2 6"/>
+                <circle cx="50" cy="50" r="35" fill="none" stroke="#FAF8F5" stroke-width="0.5" stroke-dasharray="10 5"/>
+                <circle cx="50" cy="50" r="25" fill="none" stroke="#C9A84C" stroke-width="1"/>
+                <line x1="50" y1="0" x2="50" y2="100" stroke="#FAF8F5" stroke-width="0.2" opacity="0.3"/>
+                <line x1="0" y1="50" x2="100" y2="50" stroke="#FAF8F5" stroke-width="0.2" opacity="0.3"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="protocol-card min-h-[100dvh] w-full flex items-center bg-slate/90 border-b border-white/5 py-24">
+          <div class="max-w-7xl mx-auto px-6 md:px-12 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="space-y-6">
+              <span class="font-mono text-xs text-champagne">PASO 02 //</span>
+              <h3 class="text-3xl md:text-5xl font-extrabold text-white tracking-tight">Algoritmo de Tendencia</h3>
+              <p class="text-white/70 text-base leading-relaxed">
+                Combinamos datos de volumen de búsqueda, tasa de interacción en TikTok, nivel de competencia y volumen de ventas históricas para generar un score de 1 a 100 que define el potencial viral del producto.
+              </p>
+            </div>
+            
+            <div class="h-[300px] flex items-center justify-center relative overflow-hidden bg-black/45 rounded-3xl border border-white/5">
+              <div class="relative w-64 h-48 border border-white/10 rounded-xl overflow-hidden flex flex-col justify-between p-4">
+                <div class="grid grid-cols-4 gap-4 h-full">
+                  <div class="bg-white/5 rounded"></div>
+                  <div class="bg-white/5 rounded"></div>
+                  <div class="bg-white/10 rounded"></div>
+                  <div class="bg-white/5 rounded"></div>
+                  <div class="bg-white/5 rounded"></div>
+                  <div class="bg-white/20 rounded"></div>
+                  <div class="bg-white/5 rounded"></div>
+                  <div class="bg-white/5 rounded"></div>
+                  <div class="bg-white/10 rounded"></div>
+                  <div class="bg-white/5 rounded"></div>
+                  <div class="bg-white/5 rounded"></div>
+                  <div class="bg-white/15 rounded"></div>
+                </div>
+                <div class="absolute left-0 w-full h-[2px] bg-champagne shadow-[0_0_10px_#C9A84C] animate-[scan_3s_ease-in-out_infinite]"></div>
+              </div>
+              <style>
+                @keyframes scan {
+                  0%, 100% { top: 0%; }
+                  50% { top: 100%; }
+                }
+              </style>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="protocol-card min-h-[100dvh] w-full flex items-center bg-obsidian py-24">
+          <div class="max-w-7xl mx-auto px-6 md:px-12 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="space-y-6">
+              <span class="font-mono text-xs text-champagne">PASO 03 //</span>
+              <h3 class="text-3xl md:text-5xl font-extrabold text-white tracking-tight">Validación y Localización</h3>
+              <p class="text-white/70 text-base leading-relaxed">
+                Convertimos todas las métricas en ARS, UYU y CLP para darte visibilidad absoluta del margen neto en tu moneda local. Tendrás los enlaces de proveedores locales e internacionales de inmediato.
+              </p>
+            </div>
+            
+            <div class="h-[300px] flex items-center justify-center relative overflow-hidden bg-black/25 rounded-3xl border border-white/5">
+              <svg class="w-64 h-32" viewBox="0 0 100 50">
+                <path d="M 0 25 L 10 25 L 20 25 L 25 10 L 30 40 L 35 25 L 50 25 L 60 5 L 65 45 L 70 25 L 85 25 L 90 25 L 100 25" fill="none" stroke="#C9A84C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="pulse-path"/>
+              </svg>
+              <style>
+                .pulse-path {
+                  stroke-dasharray: 200;
+                  stroke-dashoffset: 200;
+                  animation: dash 4s linear infinite;
+                }
+                @keyframes dash {
+                  to { stroke-dashoffset: 0; }
+                }
+              </style>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- F. MEMBERSHIP / PRICING -->
+    <section id="pricing" class="py-32 bg-ivory text-slate relative z-20">
+      <div class="max-w-6xl mx-auto px-6">
+        
+        <div class="text-center mb-16">
+          <span class="text-xs font-mono text-champagne uppercase tracking-widest block mb-4">Suscripción</span>
+          <h2 class="text-4xl md:text-6xl font-extrabold tracking-tight text-obsidian">Precios sin sorpresas</h2>
+          <p class="text-slate/60 text-base mt-4 max-w-lg mx-auto">
+            Elegí tu país para ver los precios en tu moneda local.
+          </p>
+
+          <div class="flex justify-center gap-3 mt-8">
+            <button onclick="changeCurrency('AR')" id="btn-currency-AR" class="currency-toggle-btn active-toggle bg-obsidian text-white px-5 py-2.5 rounded-full text-xs font-bold font-mono tracking-wider transition-all duration-300">
+              🇦🇷 ARGENTINA
+            </button>
+            <button onclick="changeCurrency('UY')" id="btn-currency-UY" class="currency-toggle-btn bg-slate/10 text-slate hover:bg-slate/20 px-5 py-2.5 rounded-full text-xs font-bold font-mono tracking-wider transition-all duration-300">
+              🇺🇾 Uruguay
+            </button>
+            <button onclick="changeCurrency('CL')" id="btn-currency-CL" class="currency-toggle-btn bg-slate/10 text-slate hover:bg-slate/20 px-5 py-2.5 rounded-full text-xs font-bold font-mono tracking-wider transition-all duration-300">
+              🇨🇱 Chile
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+          
+          <!-- Free -->
+          <div class="bg-white border border-slate/10 rounded-[2rem] p-8 flex flex-col justify-between hover-lift shadow-sm">
+            <div>
+              <span class="text-xs font-mono text-slate/40 uppercase tracking-widest block mb-2">Básico</span>
+              <h3 class="text-2xl font-bold text-obsidian mb-4">Free</h3>
+              <div class="mb-6">
+                <span id="price-free" class="text-4xl font-extrabold text-obsidian">$0</span>
+                <span id="price-period-free" class="text-xs font-mono text-slate/40 block mt-1">ARS/mes</span>
+              </div>
+              <p class="text-slate/60 text-xs mb-6 border-b border-slate/5 pb-4">
+                Para explorar la plataforma y ver las tendencias principales.
+              </p>
+              <ul class="space-y-3 text-xs text-slate/80 font-medium mb-8">
+                <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> Top 20 productos</li>
+                <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> Links de AliExpress</li>
+                <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> Calculadora de rentabilidad</li>
+              </ul>
+            </div>
+            <button onclick="openAuth('signup')" class="w-full bg-obsidian hover:bg-slate text-white py-3 rounded-full text-xs font-bold uppercase tracking-wider transition-colors duration-300">
+              Empezar gratis
+            </button>
+          </div>
+
+          <!-- Starter -->
+          <div class="bg-obsidian border-2 border-champagne text-white rounded-[2rem] p-8 flex flex-col justify-between relative shadow-xl transform scale-105 z-10">
+            <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-champagne text-obsidian text-[9px] font-mono font-extrabold uppercase px-3 py-1 rounded-full tracking-widest">
+              MÁS POPULAR
+            </div>
+            <div>
+              <span class="text-xs font-mono text-champagne uppercase tracking-widest block mb-2">Recomendado</span>
+              <h3 class="text-2xl font-bold text-white mb-4">Starter</h3>
+              <div class="mb-6">
+                <span id="price-starter" class="text-5xl font-extrabold text-champagne">$9.999</span>
+                <span id="price-period-starter" class="text-xs font-mono text-white/40 block mt-1">ARS/mes</span>
+              </div>
+              <p class="text-white/60 text-xs mb-6 border-b border-white/5 pb-4">
+                Para emprendedores serios buscando su próximo ganador.
+              </p>
+              <ul class="space-y-3 text-xs text-white/80 font-medium mb-8">
+                <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-champagne"></i> Top 150 productos</li>
+                <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-champagne"></i> Análisis de mercado completo</li>
+                <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-champagne"></i> Asistente de IA (10 msg/día)</li>
+                <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-champagne"></i> Historial completo de 90 días</li>
+              </ul>
+            </div>
+            <button onclick="subscribe('starter')" class="btn-magnetic w-full bg-champagne text-obsidian py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider">
+              Probar 7 días gratis
+            </button>
+          </div>
+
+          <!-- Pro -->
+          <div class="bg-white border border-slate/10 rounded-[2rem] p-8 flex flex-col justify-between hover-lift shadow-sm">
+            <div>
+              <span class="text-xs font-mono text-slate/40 uppercase tracking-widest block mb-2">Escalar</span>
+              <h3 class="text-2xl font-bold text-obsidian mb-4">Pro</h3>
+              <div class="mb-6">
+                <span id="price-pro" class="text-4xl font-extrabold text-obsidian">$19.999</span>
+                <span id="price-period-pro" class="text-xs font-mono text-slate/40 block mt-1">ARS/mes</span>
+              </div>
+              <p class="text-slate/60 text-xs mb-6 border-b border-slate/5 pb-4">
+                Para escalar tu negocio con alertas inmediatas.
+              </p>
+              <ul class="space-y-3 text-xs text-slate/80 font-medium mb-8">
+                <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> Todos los productos</li>
+                <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> Comparador de ventas y métricas</li>
+                <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> Asistente de IA (15 msg/día)</li>
+                <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> Alertas vía WhatsApp / Correo</li>
+              </ul>
+            </div>
+            <button onclick="subscribe('pro')" class="w-full bg-obsidian hover:bg-slate text-white py-3 rounded-full text-xs font-bold uppercase tracking-wider transition-colors duration-300">
+              Comenzar con Pro
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-obsidian border-t border-white/5 py-16 rounded-t-[4rem]">
+      <div class="max-w-7xl mx-auto px-6 md:px-12">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+          <div class="md:col-span-2 space-y-4">
+            <span class="text-white font-extrabold text-xl"><span class="text-champagne font-drama italic">Trend</span>Base</span>
+            <p class="text-white/50 text-xs max-w-xs leading-relaxed">
+              Herramientas avanzadas de inteligencia competitiva para dropshippers en Latinoamérica.
+            </p>
+            
+            <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full text-[9px] font-mono text-green-400">
+              <span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-ping"></span>
+              SYSTEM OPERATIONAL // TRENDBASE ENGINE STABLE
+            </div>
+          </div>
+          <div>
+            <h4 class="text-white font-semibold text-xs uppercase tracking-wider mb-4">Navegación</h4>
+            <ul class="space-y-2 text-xs text-white/50">
+              <li><a href="#features" class="hover:text-champagne transition">Características</a></li>
+              <li><a href="#leaderboard-section" class="hover:text-champagne transition">Leaderboard</a></li>
+              <li><a href="#philosophy" class="hover:text-champagne transition">Filosofía</a></li>
+              <li><a href="#pricing" class="hover:text-champagne transition">Planes</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-white font-semibold text-xs uppercase tracking-wider mb-4">Legales</h4>
+            <ul class="space-y-2 text-xs text-white/50">
+              <li><a href="#" class="hover:text-champagne transition">Privacidad</a></li>
+              <li><a href="#" class="hover:text-champagne transition">Términos del Servicio</a></li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-white/30 gap-4">
+          <span>© 2026 TrendBase Inc. Todos los derechos reservados.</span>
+          <span>Hecho para dropshippers en latam</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+
+  <!-- ─── APP VIEW: DASHBOARD ─────────────────────────────────────────────── -->
+  <div id="view-dash" class="app-view">
+    <div class="min-h-screen grid grid-cols-1 md:grid-cols-[240px_1fr] pt-24 pb-20 md:pb-0">
+      
+      <!-- Dashboard Sidebar -->
+      <aside class="hidden md:flex flex-col bg-black/40 border-r border-white/10 p-6 space-y-6">
+        <div class="space-y-1">
+          <div class="text-[9px] font-mono text-white/30 uppercase tracking-widest px-3 mb-2">Panel</div>
+          <button onclick="goSection('tendencias')" id="sb-tendencias" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-white/70 hover:text-white hover:bg-white/5 transition active-sidebar-item"><i data-lucide="flame" class="w-4 h-4"></i> Tendencias</button>
+          <button onclick="goSection('analisis')" id="sb-analisis" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-white/70 hover:text-white hover:bg-white/5 transition"><i data-lucide="bar-chart-2" class="w-4 h-4"></i> Análisis</button>
+          <button onclick="goSection('alertas')" id="sb-alertas" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-white/70 hover:text-white hover:bg-white/5 transition"><span class="flex items-center gap-3"><i data-lucide="bell" class="w-4 h-4"></i> Alertas</span> <span id="alertBadge" class="hidden bg-red-500 text-white text-[9px] font-mono px-2 py-0.5 rounded-full">3</span></button>
+          <button onclick="goSection('guardados')" id="sb-guardados" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-white/70 hover:text-white hover:bg-white/5 transition"><span class="flex items-center gap-3"><i data-lucide="bookmark" class="w-4 h-4"></i> Guardados</span> <span id="savedCountSidebar" class="bg-white/10 text-white/60 text-[9px] font-mono px-2 py-0.5 rounded-full">0</span></button>
+          <button onclick="goSection('perfil')" id="sb-perfil" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-white/70 hover:text-white hover:bg-white/5 transition"><i data-lucide="user" class="w-4 h-4"></i> Mi perfil</button>
+          <button onclick="goSection('negocio')" id="sb-negocio" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-white/70 hover:text-white hover:bg-white/5 transition"><i data-lucide="briefcase" class="w-4 h-4"></i> Mi negocio</button>
+        </div>
+
+        <div class="pt-6 border-t border-white/5 space-y-1">
+          <div class="text-[9px] font-mono text-white/30 uppercase tracking-widest px-3 mb-2">Categorías</div>
+          <button onclick="filterCat('')" id="sb-cat-all" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-white/60 hover:text-white hover:bg-white/5 transition active-sidebar-sub"><i data-lucide="grid" class="w-3.5 h-3.5"></i> Todas</button>
+          <button onclick="filterCat('Tecnología')" id="sb-cat-tecnologia" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-white/60 hover:text-white hover:bg-white/5 transition"><i data-lucide="laptop" class="w-3.5 h-3.5"></i> Tecnología</button>
+          <button onclick="filterCat('Belleza')" id="sb-cat-belleza" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-white/60 hover:text-white hover:bg-white/5 transition"><i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Belleza</button>
+          <button onclick="filterCat('Hogar')" id="sb-cat-hogar" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-white/60 hover:text-white hover:bg-white/5 transition"><i data-lucide="home" class="w-3.5 h-3.5"></i> Hogar</button>
+          <button onclick="filterCat('Moda')" id="sb-cat-moda" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-white/60 hover:text-white hover:bg-white/5 transition"><i data-lucide="shirt" class="w-3.5 h-3.5"></i> Moda</button>
+          <button onclick="filterCat('Deportes')" id="sb-cat-deportes" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-white/60 hover:text-white hover:bg-white/5 transition"><i data-lucide="trophy" class="w-3.5 h-3.5"></i> Deportes</button>
+        </div>
+      </aside>
+
+      <!-- Dashboard Content View Area -->
+      <main class="p-6 md:p-10 space-y-8 overflow-y-auto max-w-7xl mx-auto w-full">
+        
+        <!-- SECTION: TENDENCIAS -->
+        <section id="sec-tendencias" class="dash-section active-section space-y-6">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <h2 class="text-2xl font-extrabold text-white tracking-tight">Monitoreo de Productos Virales</h2>
+              <p class="text-xs text-white/50 mt-1" id="freshness">Actualizado hace instantes</p>
+            </div>
+            
+            <div class="flex items-center gap-2 flex-wrap">
+              <select onchange="filterRegion(this.value)" class="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-xs font-semibold text-white/80 outline-none focus:border-champagne">
+                <option value="">Región (Todas)</option>
+                <option value="AR">🇦🇷 Argentina</option>
+                <option value="UY">🇺🇾 Uruguay</option>
+                <option value="CL">🇨🇱 Chile</option>
+              </select>
+              <select onchange="filterSort(this.value)" class="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-xs font-semibold text-white/80 outline-none focus:border-champagne">
+                <option value="score">Ordenar por TrendScore</option>
+                <option value="change">Ordenar por Crecimiento</option>
+                <option value="margin">Ordenar por Margen</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="productsLoading" class="flex items-center gap-3 p-4 bg-white/5 rounded-xl border border-white/5">
+            <span class="w-5 h-5 rounded-full border-2 border-champagne border-t-transparent animate-spin"></span>
+            <span class="text-xs text-white/60 font-mono">Conectando con base de datos de tendencias...</span>
+          </div>
+
+          <!-- Product Table List -->
+          <div class="bg-white/5 border border-white/10 rounded-[2rem] overflow-hidden">
+            <div class="p-6 border-b border-white/10 flex justify-between items-center bg-black/20">
+              <h3 id="tableTitle" class="text-xs font-mono text-champagne uppercase tracking-widest">Top Productos en Tendencia</h3>
+              <span id="tableProductCount" class="text-xs text-white/40">0 productos</span>
+            </div>
+            
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs text-left">
+                <thead>
+                  <tr class="border-b border-white/10 text-white/40 font-mono uppercase text-[9px]">
+                    <th class="p-4 w-12 text-center">#</th>
+                    <th class="p-4">Producto</th>
+                    <th class="p-4">TrendScore</th>
+                    <th class="p-4">Cambio</th>
+                    <th class="p-4">Margen</th>
+                    <th class="p-4">Competencia</th>
+                    <th class="p-4">Venta Est.</th>
+                    <th class="p-4">Costo Est.</th>
+                    <th class="p-4 w-12"></th>
+                  </tr>
+                </thead>
+                <tbody id="productsTbody" class="divide-y divide-white/5">
+                  <!-- Dynamically populated table list rows -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Table Pagination -->
+            <div id="pagination" class="p-4 flex items-center justify-center gap-2 border-t border-white/10 bg-black/10"></div>
+          </div>
+        </section>
+
+        <!-- SECTION: ANÁLISIS -->
+        <section id="sec-analisis" class="dash-section space-y-6">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <h2 class="text-2xl font-extrabold text-white tracking-tight">Estadísticas y Análisis de Nichos</h2>
+              <p class="text-xs text-white/50 mt-1">Inteligencia de mercado consolidada</p>
+            </div>
+            
+            <div class="flex items-center border border-white/10 rounded-xl bg-white/5 p-1">
+              <button onclick="setAnalysisPeriod(7)" id="ap7" class="px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase transition">7 Días</button>
+              <button onclick="setAnalysisPeriod(30)" id="ap30" class="px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase transition ap-active bg-white/10 text-white">30 Días</button>
+              <button onclick="setAnalysisPeriod(90)" id="ap90" class="px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase transition">90 Días</button>
+            </div>
+          </div>
+
+          <!-- Analysis KPIs Grid -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="analysisKpis"></div>
+
+          <!-- Gráficos y Tablas -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <div class="lg:col-span-2 bg-white/5 border border-white/10 rounded-[2rem] p-6 space-y-4">
+              <h3 class="text-xs font-mono text-champagne uppercase tracking-widest border-b border-white/5 pb-2">Historial de TrendScore 90 días</h3>
+              <select id="analysisProductSel" onchange="renderAnalysisHistory()" class="w-full bg-obsidian border border-white/10 rounded-xl px-4 py-2 text-xs text-white outline-none focus:border-champagne"></select>
+              <div class="h-64 relative w-full mt-4">
+                <canvas id="analysisChart"></canvas>
+              </div>
+              <div class="overflow-x-auto rounded-xl border border-white/10 mt-4">
+                <table class="w-full text-xs font-mono text-white/70 text-left">
+                  <thead>
+                    <tr class="bg-white/5 border-b border-white/10">
+                      <th class="p-3 uppercase">Semana</th>
+                      <th class="p-3 uppercase">Score</th>
+                      <th class="p-3 uppercase">Cambio</th>
+                      <th class="p-3 uppercase">País líder</th>
+                    </tr>
+                  </thead>
+                  <tbody id="analysisTbody" class="divide-y divide-white/5"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Calculadora ROI -->
+            <div class="bg-white/5 border border-white/10 rounded-[2.5rem] p-6 space-y-4">
+              <h3 class="text-xs font-mono text-champagne uppercase tracking-widest border-b border-white/5 pb-2">Calculadora de Margen</h3>
+              <div class="space-y-3">
+                <div>
+                  <label class="text-[9px] font-mono text-white/40 uppercase block mb-1">Costo unitario ($)</label>
+                  <input type="number" id="calcCost" oninput="calcROI()" value="5.5" class="w-full bg-obsidian border border-white/10 rounded-xl px-4 py-2 text-xs text-white outline-none focus:border-champagne">
+                </div>
+                <div>
+                  <label class="text-[9px] font-mono text-white/40 uppercase block mb-1">Precio de venta ($)</label>
+                  <input type="number" id="calcPrice" oninput="calcROI()" value="25" class="w-full bg-obsidian border border-white/10 rounded-xl px-4 py-2 text-xs text-white outline-none focus:border-champagne">
+                </div>
+                <div>
+                  <label class="text-[9px] font-mono text-white/40 uppercase block mb-1">Publicidad por venta ($)</label>
+                  <input type="number" id="calcAds" oninput="calcROI()" value="2" class="w-full bg-obsidian border border-white/10 rounded-xl px-4 py-2 text-xs text-white outline-none focus:border-champagne">
+                </div>
+                <div>
+                  <label class="text-[9px] font-mono text-white/40 uppercase block mb-1">Ventas estimadas mensuales</label>
+                  <input type="number" id="calcSales" oninput="calcROI()" value="100" class="w-full bg-obsidian border border-white/10 rounded-xl px-4 py-2 text-xs text-white outline-none focus:border-champagne">
+                </div>
+              </div>
+              <div id="calcResult" class="border-t border-white/5 pt-4"></div>
+            </div>
+
+          </div>
+
+          <!-- Oportunidades y Tendencias por región -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white/5 border border-white/10 rounded-[2rem] p-6 space-y-4">
+              <h3 class="text-xs font-mono text-champagne uppercase tracking-widest border-b border-white/5 pb-2">Oportunidades Recomendadas</h3>
+              <div id="opportunityList" class="divide-y divide-white/5"></div>
+            </div>
+            <div class="bg-white/5 border border-white/10 rounded-[2rem] p-6 space-y-4">
+              <h3 class="text-xs font-mono text-champagne uppercase tracking-widest border-b border-white/5 pb-2">Distribución por País</h3>
+              <div id="regionHeatmap" class="grid grid-cols-1 sm:grid-cols-3 gap-4"></div>
+            </div>
+          </div>
+
+          <!-- Asistente de IA -->
+          <div class="bg-white/5 border border-white/10 rounded-[2.5rem] overflow-hidden flex flex-col">
+            <div class="px-6 py-4 border-b border-white/10 bg-black/20 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-ping"></span>
+                <span class="text-xs font-bold text-white">Asistente IA TrendBase</span>
+              </div>
+              <span class="text-[9px] font-mono text-white/40 uppercase">Anthropic Claude Engine</span>
+            </div>
+            
+            <div id="aiMessages" class="p-6 h-64 overflow-y-auto space-y-3 flex flex-col text-xs font-mono">
+              <div class="msg msg-ai bg-white/5 text-white/80 p-3 rounded-2xl max-w-[85%] self-start border border-white/5">
+                ¡Hola! Soy tu asistente de tendencias de TrendBase. ¿Sobre qué producto te gustaría que analicemos su estrategia, estimación de márgenes o canales de reventa en LATAM?
+              </div>
+            </div>
+
+            <div class="px-6 py-3 border-t border-white/10 flex gap-2 items-center bg-black/10">
+              <input type="text" id="aiInput" placeholder="Pregúntame sobre productos o estrategias de venta..." class="flex-1 bg-obsidian border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white placeholder-white/30 outline-none focus:border-champagne" onkeydown="if(event.key==='Enter')askAI()">
+              <button id="aiSend" onclick="askAI()" class="bg-champagne text-obsidian px-5 py-2.5 rounded-xl text-xs font-extrabold uppercase tracking-wider">Enviar</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION: ALERTAS -->
+        <section id="sec-alertas" class="dash-section space-y-6">
+          <div class="flex justify-between items-center">
+            <div>
+              <h2 class="text-2xl font-extrabold text-white tracking-tight">Centro de Alertas</h2>
+              <p class="text-xs text-white/50 mt-1">Notificaciones de stock y picos de tendencia</p>
+            </div>
+            <button onclick="markAllRead()" class="text-xs text-champagne font-bold uppercase tracking-wider hover:underline transition">Marcar como leídas</button>
+          </div>
+
+          <div class="bg-white/5 border border-white/10 rounded-[2rem] overflow-hidden divide-y divide-white/5">
+            <!-- Alerta 1 -->
+            <div class="p-6 flex items-start gap-4 hover:bg-white/5 transition cursor-pointer">
+              <span class="w-2.5 h-2.5 rounded-full bg-red-500 mt-1.5 flex-shrink-0 animate-pulse"></span>
+              <div class="flex-1">
+                <div class="text-sm font-bold text-white">⚠ Alerta de Stock Bajo: Humidificador de Llama</div>
+                <p class="text-xs text-white/60 mt-1">Quedan solo 2 unidades disponibles en CJ Dropshipping a precio promocional.</p>
+                <span class="text-[9px] font-mono text-white/30 uppercase mt-2 block">Hace 15 minutos</span>
+              </div>
+            </div>
+            <!-- Alerta 2 -->
+            <div class="p-6 flex items-start gap-4 hover:bg-white/5 transition cursor-pointer">
+              <span class="w-2.5 h-2.5 rounded-full bg-champagne mt-1.5 flex-shrink-0"></span>
+              <div class="flex-1">
+                <div class="text-sm font-bold text-white">🔥 Pico de Tendencia: Trípode Inteligente con IA</div>
+                <p class="text-xs text-white/60 mt-1">El score del producto subió +18% en las últimas 24 horas debido a alta viralidad en TikTok Chile.</p>
+                <span class="text-[9px] font-mono text-white/30 uppercase mt-2 block">Hace 2 horas</span>
+              </div>
+            </div>
+            <!-- Alerta 3 -->
+            <div class="p-6 flex items-start gap-4 hover:bg-white/5 transition cursor-pointer">
+              <span class="w-2.5 h-2.5 rounded-full bg-champagne mt-1.5 flex-shrink-0"></span>
+              <div class="flex-1">
+                <div class="text-sm font-bold text-white">🚀 Nuevo Producto Viral Detectado</div>
+                <p class="text-xs text-white/60 mt-1">Agregado al catálogo: Depiladora Láser IPL Pro con estimación de margen superior al 55%.</p>
+                <span class="text-[9px] font-mono text-white/30 uppercase mt-2 block">Hace 1 día</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION: GUARDADOS -->
+        <section id="sec-guardados" class="dash-section space-y-6">
+          <div>
+            <h2 class="text-2xl font-extrabold text-white tracking-tight">Mis Productos Guardados</h2>
+            <p class="text-xs text-white/50 mt-1">Lista de productos seleccionados para seguimiento</p>
+          </div>
+          <div id="savedContent"></div>
+        </section>
+
+        <!-- SECTION: MI PERFIL -->
+        <section id="sec-perfil" class="dash-section space-y-6">
+          <div>
+            <h2 class="text-2xl font-extrabold text-white tracking-tight">Mi Perfil de Vendedor</h2>
+            <p class="text-xs text-white/50 mt-1">Configura las monedas de tu negocio y metas</p>
+          </div>
+          <div id="perfilContent"></div>
+        </section>
+
+        <!-- SECTION: MI NEGOCIO -->
+        <section id="sec-negocio" class="dash-section space-y-6">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <h2 class="text-2xl font-extrabold text-white tracking-tight">Dashboard Financiero de Ventas</h2>
+              <p class="text-xs text-white/50 mt-1">Estadísticas reales de facturación e inversión publicitaria</p>
+            </div>
+            <button onclick="showAddProductModal()" class="btn-magnetic bg-champagne text-obsidian px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider">+ Cargar Producto</button>
+          </div>
+
+          <div id="negocioContent" class="space-y-6"></div>
+        </section>
+
+      </main>
+    </div>
+
+    <!-- Mobile Navigation Bar -->
+    <div id="mobileNav" class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-obsidian/90 backdrop-blur-md border-t border-white/10 flex items-center justify-around py-3 px-2">
+      <button onclick="goSection('tendencias'); updateMobileNav('tendencias')" id="mbn-tendencias" class="flex flex-col items-center gap-1 text-[10px] font-bold text-champagne"><i data-lucide="flame" class="w-5 h-5"></i>Inicio</button>
+      <button onclick="goSection('analisis'); updateMobileNav('analisis')" id="mbn-analisis" class="flex flex-col items-center gap-1 text-[10px] font-bold text-white/60 hover:text-white"><i data-lucide="bar-chart-2" class="w-5 h-5"></i>Análisis</button>
+      <button onclick="goSection('guardados'); updateMobileNav('guardados')" id="mbn-guardados" class="flex flex-col items-center gap-1 text-[10px] font-bold text-white/60 hover:text-white"><i data-lucide="bookmark" class="w-5 h-5"></i>Guardados</button>
+      <button onclick="goSection('perfil'); updateMobileNav('perfil')" id="mbn-perfil" class="flex flex-col items-center gap-1 text-[10px] font-bold text-white/60 hover:text-white"><i data-lucide="user" class="w-5 h-5"></i>Perfil</button>
+      <button onclick="goSection('negocio'); updateMobileNav('negocio')" id="mbn-negocio" class="flex flex-col items-center gap-1 text-[10px] font-bold text-white/60 hover:text-white"><i data-lucide="briefcase" class="w-5 h-5"></i>Negocio</button>
+    </div>
+  </div>
+
+
+  <!-- ─── JAVASCRIPT APP ENGINE ───────────────────────────────────────────── -->
+  <script>
+    // System Configurations & Data fallbacks
+    const PLANS = {
+      free:    { maxProducts: 20,    ai: false, advFilters: false, history: 7,  analysis: false, comparator: false, aiMessages: 0  },
+      starter: { maxProducts: 150,   ai: true,  advFilters: true,  history: 90, analysis: true,  comparator: false, aiMessages: 10 },
+      pro:     { maxProducts: 99999, ai: true,  advFilters: true,  history: 90, analysis: true,  comparator: true,  aimessages: 15 },
+    };
+    function currentPlan(){ return PLANS[plan] || PLANS.free; }
+
+    const PLT={
+      TT:{label:'TikTok',bg:'#000000',fg:'#fff'},
+      IG:{label:'Instagram',bg:'#E1306C',fg:'#fff'},
+      YT:{label:'YouTube',bg:'#FF0000',fg:'#fff'},
+      PT:{label:'Pinterest',bg:'#E60023',fg:'#fff'},
+      FB:{label:'Facebook',bg:'#1877F2',fg:'#fff'},
+      AM:{label:'Amazon',bg:'#FF9900',fg:'#000'},
+      ML:{label:'Mercado Libre',bg:'#FFE600',fg:'#000'},
+      GT:{label:'Google Trends',bg:'#4285F4',fg:'#fff'},
+      AE:{label:'AliExpress',bg:'#FF4747',fg:'#fff'},
+    };
+
+    const PRICES={
+      AR:{starter:'$9.999/mes',pro:'$19.999/mes',period:'ARS'},
+      UY:{starter:'$390/mes',pro:'$790/mes',period:'UYU'},
+      CL:{starter:'$4.990/mes',pro:'$9.990/mes',period:'CLP'}
+    };
+
+    const WEEKS=['Sem 1','Sem 2','Sem 3','Sem 4','Sem 5','Sem 6','Sem 7','Sem 8','Sem 9','Sem 10','Sem 11','Sem 12','Sem 13','Sem 14','Sem 15','Hoy'];
+    const LEADERS=['🇦🇷 Argentina','🇺🇾 Uruguay','🇨🇱 Chile','🇦🇷 Argentina','🇨🇱 Chile','🇺🇾 Uruguay','🇦🇷 Argentina','🇨🇱 Chile'];
+
+    let PRODUCTS = [];
+    let ALL_PRODUCTS = [];
+    let productsLoaded = false;
+    let user=null,plan='free',currentProd=null,authMode='login',aiHistory=[],aiLoading=false;
+    let saved=JSON.parse(localStorage.getItem('tb_saved')||'[]');
+    let filter={plt:'',region:'',cat:'',minMargin:0,comp:'',minPrice:0};
+    let histChart=null,analysisChart=null,currentPage=1;
+    const PAGE_SIZE=20;
+    let loadRetries = 0;
+    let aiSummaryLoaded = false;
+
+    // Load Session & Profile state
+    function init() {
+      const sess = localStorage.getItem('tb_session');
+      if(sess) {
+        try {
+          const s = JSON.parse(sess);
+          user = { email: s.email };
+          plan = localStorage.getItem('tb_plan') || 'free';
+        } catch(e){}
+      }
+      
+      // Load products
+      loadProducts();
+      renderPublicLeaderboard();
+      updateNav();
+      savedCount();
+      
+      // Initialize telemetry typewriter
+      setTimeout(() => {
+        typeNextMessage();
+      }, 500);
+    }
+
+    // Floating Island Navbar Scrolling Effect
+    window.addEventListener('scroll', () => {
+      const navContainer = document.getElementById('nav-container');
+      if (window.scrollY > 50) {
+        navContainer.classList.remove('bg-transparent');
+        navContainer.classList.add('bg-obsidian/85', 'backdrop-blur-xl', 'py-3');
+      } else {
+        navContainer.classList.remove('bg-obsidian/85', 'backdrop-blur-xl', 'py-3');
+        navContainer.classList.add('bg-transparent');
+      }
+    });
+
+    // Stacking sticky cards for Protocol using ScrollTrigger
+    const protocolCards = gsap.utils.toArray('.protocol-card');
+    protocolCards.forEach((card, index) => {
+      if (index < protocolCards.length - 1) {
+        gsap.to(card, {
+          scale: 0.9,
+          filter: 'blur(10px)',
+          opacity: 0.5,
+          scrollTrigger: {
+            trigger: card,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: true,
+            pin: true,
+            pinSpacing: false
+          }
+        });
+      }
+    });
+
+    // Navigation toggles: Landing ⇆ Dashboard
+    function goLanding() {
+      document.getElementById('view-landing').classList.add('active-view');
+      document.getElementById('view-dash').classList.remove('active-view');
+      
+      document.getElementById('landing-nav').classList.remove('hidden');
+      document.getElementById('landing-nav').classList.add('flex');
+      document.getElementById('dash-nav').classList.add('hidden');
+      document.getElementById('dash-nav').classList.remove('flex');
+
+      document.getElementById('main-header').classList.remove('top-0', 'w-full', 'max-w-none', 'rounded-none');
+      document.getElementById('main-header').classList.add('top-6', 'navbar-pill');
+      document.getElementById('nav-container').classList.remove('rounded-none');
+      document.getElementById('nav-container').classList.add('rounded-full');
+    }
+
+    function enterDash() {
+      document.getElementById('view-landing').classList.remove('active-view');
+      document.getElementById('view-dash').classList.add('active-view');
+      
+      document.getElementById('landing-nav').classList.add('hidden');
+      document.getElementById('landing-nav').classList.remove('flex');
+      document.getElementById('dash-nav').classList.remove('hidden');
+      document.getElementById('dash-nav').classList.add('flex');
+
+      document.getElementById('main-header').classList.add('top-0', 'w-full', 'max-w-none', 'rounded-none');
+      document.getElementById('main-header').classList.remove('top-6', 'navbar-pill');
+      document.getElementById('nav-container').classList.add('rounded-none');
+      document.getElementById('nav-container').classList.remove('rounded-full');
+
+      // Go to tendencies by default
+      goSection('tendencias');
+    }
+
+    // Dashboard sections navigation
+    function goSection(sec) {
+      document.querySelectorAll('.dash-section').forEach(s => s.classList.remove('active-section'));
+      const activeSec = document.getElementById(`sec-${sec}`);
+      if(activeSec) activeSec.classList.add('active-section');
+
+      // Sidebar links active highlight
+      document.querySelectorAll('aside button').forEach(b => b.classList.remove('active-sidebar-item'));
+      const activeBtn = document.getElementById(`sb-${sec}`);
+      if(activeBtn) activeBtn.classList.add('active-sidebar-item');
+
+      // Sync views
+      if(sec === 'guardados') renderSaved();
+      if(sec === 'perfil') renderPerfil();
+      if(sec === 'negocio') renderNegocio();
+      if(sec === 'analisis') renderAnalysis();
+    }
+
+    function updateMobileNav(sec) {
+      document.querySelectorAll('#mobileNav button').forEach(b => {
+        b.classList.remove('text-champagne');
+        b.classList.add('text-white/60');
+      });
+      const activeMobileBtn = document.getElementById(`mbn-${sec}`);
+      if(activeMobileBtn) {
+        activeMobileBtn.classList.add('text-champagne');
+        activeMobileBtn.classList.remove('text-white/60');
+      }
+    }
+
+    function updateNav() {
+      const authBtns = document.getElementById('navAuthBtns');
+      const userBadge = document.getElementById('navUser');
+      const currencyBadge = document.getElementById('currencyBadge');
+
+      if(user) {
+        authBtns.classList.add('hidden');
+        userBadge.classList.remove('hidden');
+        currencyBadge.classList.remove('hidden');
+        document.getElementById('userEmailLabel').textContent = user.email;
+        document.getElementById('userPlanLabel').textContent = plan.toUpperCase();
+        document.getElementById('userAvatar').textContent = user.email[0].toUpperCase();
+      } else {
+        authBtns.classList.remove('hidden');
+        userBadge.classList.add('hidden');
+        currencyBadge.classList.add('hidden');
+      }
+    }
+
+    // ── PRODUCTS FETCH & SETUP ───────────────────────────────────────────────
+    async function loadProducts() {
+      const loadingEl = document.getElementById('productsLoading');
+      const kpiEl = document.getElementById('kpiProductos');
+      try {
+        const res = await fetch('/api/products');
+        const text = await res.text();
+        let data;
+        try { data = JSON.parse(text); } catch(e) { throw new Error('Respuesta inválida del servidor'); }
+        if(!res.ok) throw new Error(data.error || 'Error ' + res.status);
+
+        if(!data.products || !data.products.length || data.stale || data.generating) {
+          triggerGeneration(0);
+          if(data.products && data.products.length) {
+            setProducts(data.products, data);
+          }
+          return;
+        }
+        setProducts(data.products, data);
+      } catch(e) {
+        console.error('Error cargando productos:', e.message);
+        if(loadRetries < 3) { loadRetries++; setTimeout(loadProducts, 4000); }
+      }
+    }
+
+    function setProducts(products, data) {
+      const loadingEl = document.getElementById('productsLoading');
+      const kpiEl = document.getElementById('kpiProductos');
+      
+      const mapped = products.map(p => ({
+        name: p.name, cat: p.cat, score: p.score, change: p.change,
+        changeNum: p.change_num !== undefined ? p.change_num : p.changeNum,
+        plts: p.plts || [], margin: p.margin,
+        marginStr: p.margin_str || p.marginStr,
+        hot: p.hot, regions: p.regions || [],
+        comp: p.comp, priceMin: p.price_min || p.priceMin,
+        priceStr: p.price_str || p.priceStr,
+        history: p.history || [], rank: p.rank || 0,
+        suppliers: p.suppliers || [],
+      }));
+
+      ALL_PRODUCTS = mapped;
+      PRODUCTS = mapped;
+      productsLoaded = true;
+      if(loadingEl) loadingEl.style.display='none';
+      if(kpiEl) kpiEl.textContent = (data && data.count ? data.count : PRODUCTS.length) + '+';
+      
+      updateNav();
+      renderLandingProducts();
+      renderProducts(true);
+      populateAnalysisSelect();
+      populateComparators();
+      
+      const freshEl = document.getElementById('freshness');
+      if(freshEl && data) {
+        const mins = Math.floor((data.age||0)/60);
+        freshEl.textContent = data.stale ? '⟳ Actualizando...' : (mins < 2 ? '✓ Recién actualizado' : 'Hace ' + mins + ' min');
+      }
+    }
+
+    async function triggerGeneration(batchIndex) {
+      try {
+        const res = await fetch('/api/generate?secret=trendbase2025&batch=' + batchIndex);
+        const data = await res.json();
+        if(data.nextBatch !== null && data.nextBatch !== undefined) {
+          setTimeout(() => triggerGeneration(data.nextBatch), 1000);
+        } else if(data.done) {
+          setTimeout(() => loadProducts(), 1000);
+        }
+      } catch(e) {}
+    }
+
+    // ── RENDER PRODUCTS ──────────────────────────────────────────────────────
+    function renderLandingProducts() {
+      const container = document.getElementById('landingProducts');
+      if(!container) return;
+      
+      const list = (PRODUCTS || []).slice(0, 8);
+      container.innerHTML = list.map((p, i) => {
+        const image = p.img || `https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=600`;
+        return `
+          <div onclick="openProduct(${i})" class="bg-white/5 border border-white/10 rounded-[2rem] overflow-hidden hover-lift shadow-sm cursor-pointer p-4 space-y-4">
+            <div class="aspect-video w-full rounded-2xl overflow-hidden bg-black/20 relative">
+              <img src="${image}" class="w-full h-full object-cover">
+              <span class="absolute top-3 left-3 text-[9px] font-mono font-bold uppercase bg-champagne text-obsidian px-2 py-0.5 rounded">${p.cat}</span>
+            </div>
+            <div class="space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-mono text-champagne font-bold">Score: ${p.score}</span>
+                <span class="text-[10px] font-mono text-green-400 font-bold">${p.change}</span>
+              </div>
+              <h4 class="text-sm font-bold text-white truncate">${p.name}</h4>
+              <div class="flex justify-between items-center text-[10px] text-white/50 border-t border-white/5 pt-2">
+                <span>Margen: <b class="text-green-400 font-mono">${p.marginStr}</b></span>
+                <span>Comp: <b class="text-white font-mono">${p.comp}</b></span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderProducts(resetPage=false) {
+      const tbody = document.getElementById('productsTbody');
+      if(!tbody) return;
+      if(resetPage) currentPage = 1;
+
+      // Filter products
+      let allFiltered = ALL_PRODUCTS.filter(p => {
+        if(filter.plt && !p.plts.includes(filter.plt)) return false;
+        if(filter.region && !p.regions.includes(filter.region)) return false;
+        if(filter.cat && p.cat !== filter.cat) return false;
+        if(filter.comp && p.comp !== filter.comp) return false;
+        return true;
+      });
+
+      const maxP = currentPlan().maxProducts;
+      allFiltered = allFiltered.slice(0, maxP);
+
+      const countLabel = document.getElementById('tableProductCount');
+      if(countLabel) countLabel.textContent = `${allFiltered.length} productos`;
+
+      const start = (currentPage - 1) * PAGE_SIZE;
+      const list = allFiltered.slice(start, start + PAGE_SIZE);
+
+      tbody.innerHTML = list.map((p, i) => {
+        const idx = ALL_PRODUCTS.indexOf(p);
+        const compClass = p.comp === 'Baja' ? 'text-green-400 bg-green-500/10 border-green-500/20' : p.comp === 'Alta' ? 'text-red-400 bg-red-500/10 border-red-500/20' : 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20';
+        return `
+          <tr onclick="openProduct(${idx})" class="hover:bg-white/5 transition cursor-pointer text-xs">
+            <td class="p-4 text-center font-mono text-white/40">${start + i + 1}</td>
+            <td class="p-4 font-bold text-white">${p.name}</td>
+            <td class="p-4 font-mono text-champagne">${p.score}</td>
+            <td class="p-4 font-mono text-green-400">${p.change}</td>
+            <td class="p-4 font-mono text-green-400">${p.marginStr}</td>
+            <td class="p-4">
+              <span class="px-2 py-0.5 rounded border text-[9px] font-bold ${compClass}">${p.comp}</span>
+            </td>
+            <td class="p-4 font-mono text-white/70">${p.priceStr}</td>
+            <td class="p-4 font-mono text-white/40">${p.suppliers && p.suppliers[0] ? p.suppliers[0].price : '—'}</td>
+            <td class="p-4 text-right">
+              <button onclick="event.stopPropagation(); toggleSave(${idx})" class="text-white/40 hover:text-champagne transition"><i data-lucide="bookmark" class="w-4 h-4"></i></button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      renderPagination(Math.ceil(allFiltered.length / PAGE_SIZE), allFiltered.length);
+      lucide.createIcons();
+    }
+
+    function renderPagination(totalPages, total) {
+      const el = document.getElementById('pagination');
+      if(!el) return;
+      if(totalPages <= 1) { el.innerHTML = ''; return; }
+      
+      let html = '';
+      html += `<button class="px-3 py-1.5 rounded-lg border border-white/10 hover:bg-white/5 text-white/60 transition" ${currentPage === 1 ? 'disabled style="opacity:0.4"' : ''} onclick="goPage(${currentPage - 1})">‹</button>`;
+      for(let i = 1; i <= totalPages; i++) {
+        html += `<button class="px-3 py-1.5 rounded-lg border border-white/10 transition ${i === currentPage ? 'bg-champagne text-obsidian font-bold' : 'hover:bg-white/5 text-white/80'}" onclick="goPage(${i})">${i}</button>`;
+      }
+      html += `<button class="px-3 py-1.5 rounded-lg border border-white/10 hover:bg-white/5 text-white/60 transition" ${currentPage === totalPages ? 'disabled style="opacity:0.4"' : ''} onclick="goPage(${currentPage + 1})">›</button>`;
+      el.innerHTML = html;
+    }
+
+    function goPage(p) {
+      currentPage = p;
+      renderProducts();
+    }
+
+    // ── FILTERS & CATEGORIES ─────────────────────────────────────────────────
+    function filterCat(cat) {
+      filter.cat = cat;
+      // update highlights in sidebar
+      document.querySelectorAll('aside button').forEach(b => b.classList.remove('text-champagne', 'bg-white/5'));
+      const btnId = cat === '' ? 'sb-cat-all' : `sb-cat-${cat.toLowerCase()}`;
+      const activeBtn = document.getElementById(btnId);
+      if(activeBtn) {
+        activeBtn.classList.add('text-champagne', 'bg-white/5');
+      }
+      renderProducts(true);
+    }
+
+    function filterRegion(reg) {
+      filter.region = reg;
+      renderProducts(true);
+    }
+
+    function filterSort(sortVal) {
+      if(sortVal === 'score') {
+        PRODUCTS.sort((a,b) => b.score - a.score);
+      } else if(sortVal === 'change') {
+        PRODUCTS.sort((a,b) => b.changeNum - a.changeNum);
+      } else if(sortVal === 'margin') {
+        PRODUCTS.sort((a,b) => b.margin - a.margin);
+      }
+      renderProducts(true);
+    }
+
+    // ── ANALYSIS ENGINE ──────────────────────────────────────────────────────
+    function renderAnalysis() {
+      var prods = PRODUCTS || ALL_PRODUCTS || [];
+      if(!prods.length) return;
+      
+      renderAnalysisKPIs();
+      renderOpportunities();
+      renderRegionHeatmap();
+      renderTopMargin();
+      
+      setTimeout(() => {
+        renderAnalysisCatChart();
+        renderAnalysisChart();
+      }, 100);
+    }
+
+    function renderAnalysisKPIs() {
+      const el = document.getElementById('analysisKpis');
+      if(!el) return;
+      
+      const prods = PRODUCTS;
+      const avgMargin = Math.round(prods.reduce((a,p) => a + p.margin, 0) / prods.length) || 0;
+      const cats = {}; prods.forEach(p => { cats[p.cat] = (cats[p.cat] || 0) + 1; });
+      const topCat = Object.entries(cats).sort((a,b) => b[1] - a[1])[0];
+      const lowComp = prods.filter(p => p.comp === 'Baja').length;
+      
+      el.innerHTML = `
+        <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
+          <div class="text-[9px] text-white/40 uppercase font-mono tracking-wider">Productos Analizados</div>
+          <div class="text-3xl font-extrabold text-white mt-1">${prods.length}</div>
+          <div class="text-[9px] text-green-400 font-mono mt-1">${prods.filter(p=>p.hot).length} HOT ahora</div>
+        </div>
+        <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
+          <div class="text-[9px] text-white/40 uppercase font-mono tracking-wider">Categoría Líder</div>
+          <div class="text-lg font-bold text-champagne truncate mt-1">${topCat ? topCat[0] : 'Ninguna'}</div>
+          <div class="text-[9px] text-white/40 font-mono mt-1">${topCat ? Math.round(topCat[1]/prods.length*100) : 0}% del total</div>
+        </div>
+        <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
+          <div class="text-[9px] text-white/40 uppercase font-mono tracking-wider">Margen Promedio</div>
+          <div class="text-3xl font-extrabold text-green-400 mt-1">${avgMargin}%</div>
+          <div class="text-[9px] text-green-400 font-mono mt-1">Sólido vs mes anterior</div>
+        </div>
+        <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
+          <div class="text-[9px] text-white/40 uppercase font-mono tracking-wider">Baja Competencia</div>
+          <div class="text-3xl font-extrabold text-white mt-1">${lowComp}</div>
+          <div class="text-[9px] text-champagne font-mono mt-1">Score top: ${prods[0] ? prods[0].score : 0}</div>
+        </div>
+      `;
+    }
+
+    function opportunityScore(p) {
+      const compScore = p.comp === 'Baja' ? 3 : p.comp === 'Media' ? 2 : 1;
+      return Math.round((p.score * p.margin * compScore) / 100);
+    }
+
+    function renderOpportunities() {
+      const el = document.getElementById('opportunityList');
+      if(!el) return;
+      const sorted = [...PRODUCTS].sort((a,b) => opportunityScore(b) - opportunityScore(a)).slice(0, 5);
+      
+      el.innerHTML = sorted.map(p => `
+        <div class="py-3 flex justify-between items-center text-xs">
+          <div>
+            <div class="font-bold text-white">${p.name}</div>
+            <div class="text-[10px] text-white/50">${p.cat} · comp: ${p.comp}</div>
+          </div>
+          <div class="text-right">
+            <div class="font-bold text-green-400 font-mono">${p.marginStr}</div>
+            <div class="text-[9px] text-white/40 font-mono">Score: ${p.score}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderRegionHeatmap() {
+      const el = document.getElementById('regionHeatmap');
+      if(!el) return;
+      
+      const regions = {
+        AR: { count:0, name:'Argentina', flag:'🇦🇷', color:'text-blue-400', bg:'bg-blue-400/5', border:'border-blue-400/20' },
+        UY: { count:0, name:'Uruguay', flag:'🇺🇾', color:'text-green-400', bg:'bg-green-400/5', border:'border-green-500/20' },
+        CL: { count:0, name:'Chile', flag:'🇨🇱', color:'text-yellow-400', bg:'bg-yellow-400/5', border:'border-yellow-400/20' }
+      };
+
+      PRODUCTS.forEach(p => {
+        (p.regions || []).forEach(r => {
+          if(regions[r]) regions[r].count++;
+        });
+      });
+      const total = PRODUCTS.length || 1;
+
+      el.innerHTML = Object.entries(regions).map(([k, r]) => {
+        const pct = Math.round(r.count / total * 100);
+        return `
+          <div class="p-4 border rounded-2xl ${r.border} ${r.bg} text-left">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-lg">${r.flag}</span>
+              <span class="text-sm font-extrabold ${r.color}">${pct}%</span>
+            </div>
+            <div class="text-[10px] font-bold text-white">${r.name}</div>
+            <div class="text-[8px] text-white/40 uppercase font-mono mt-0.5">${r.count} productos</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderTopMargin() {
+      const el = document.getElementById('topMarginList');
+      if(!el) return;
+      const sorted = [...PRODUCTS].sort((a,b) => b.margin - a.margin).slice(0, 5);
+      
+      el.innerHTML = sorted.map((p, i) => `
+        <div class="py-3 flex justify-between items-center text-xs">
+          <span class="font-mono text-white/40">#0${i+1}</span>
+          <div class="flex-1 px-3 truncate">
+            <div class="font-bold text-white truncate">${p.name}</div>
+            <div class="text-[10px] text-white/50">${p.cat}</div>
+          </div>
+          <span class="font-bold text-green-400 font-mono">${p.marginStr}</span>
+        </div>
+      `).join('');
+    }
+
+    function renderAnalysisCatChart() {
+      const el = document.getElementById('analysisCatChart');
+      if(!el) return;
+      
+      const cats = {};
+      PRODUCTS.forEach(p => { if(p.cat) cats[p.cat] = (cats[p.cat] || 0) + 1; });
+      const total = PRODUCTS.length || 1;
+      const sorted = Object.entries(cats).sort((a,b) => b[1] - a[1]);
+      
+      el.innerHTML = sorted.map(([name, count]) => {
+        const pct = Math.round(count / total * 100);
+        return `
+          <div class="space-y-1 text-xs">
+            <div class="flex justify-between font-medium">
+              <span class="text-white/70">${name}</span>
+              <span class="text-champagne font-mono font-bold">${pct}%</span>
+            </div>
+            <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+              <div class="h-full bg-champagne rounded-full" style="width: ${pct}%"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function populateAnalysisSelect() {
+      const sel = document.getElementById('analysisProductSel');
+      if(!sel) return;
+      sel.innerHTML = '<option value="">— Seleccioná un producto —</option>' + PRODUCTS.slice(0, 100).map((p, i) => `<option value="${i}">${p.name}</option>`).join('');
+    }
+
+    function renderAnalysisHistory() {
+      const sel = document.getElementById('analysisProductSel');
+      if(!sel || sel.value === '') return;
+      
+      const idx = parseInt(sel.value);
+      const p = PRODUCTS[idx];
+      if(!p) return;
+
+      const tbody = document.getElementById('analysisTbody');
+      if(!tbody) return;
+
+      tbody.innerHTML = (p.history || []).map((score, i) => {
+        const prev = p.history[i-1] || score;
+        const diff = score - prev;
+        const changeClass = diff >= 0 ? 'text-green-400' : 'text-red-400';
+        return `
+          <tr class="text-xs">
+            <td class="p-3 font-mono text-white/50">${WEEKS[i]}</td>
+            <td class="p-3 font-bold text-white font-mono">${score}</td>
+            <td class="p-3 font-mono font-bold ${changeClass}">${diff >= 0 ? '+' : ''}${diff}</td>
+            <td class="p-3 text-white/70">${LEADERS[i % LEADERS.length]}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function calcROI() {
+      const cost = parseFloat(document.getElementById('calcCost').value) || 0;
+      const price = parseFloat(document.getElementById('calcPrice').value) || 0;
+      const ads = parseFloat(document.getElementById('calcAds').value) || 0;
+      const sales = parseInt(document.getElementById('calcSales').value) || 0;
+      const el = document.getElementById('calcResult');
+      if(!el) return;
+      if(!cost || !price) { el.innerHTML = '<p class="text-xs text-white/40">Completa los campos.</p>'; return; }
+      
+      const netPerSale = price - cost - ads;
+      const monthlyProfit = netPerSale * sales;
+      const margin = Math.round((netPerSale / price) * 100);
+      const roi = cost > 0 ? Math.round((netPerSale / cost) * 100) : 0;
+      const breakeven = netPerSale > 0 ? Math.ceil(cost / netPerSale) : 0;
+      
+      el.innerHTML = `
+        <div class="grid grid-cols-2 gap-2 mt-4 text-xs font-mono">
+          <div class="bg-white/5 rounded-xl p-3 text-center">
+            <div class="text-[9px] text-white/40 uppercase">Ganancia/venta</div>
+            <div class="font-bold mt-1 text-green-400">$${netPerSale.toFixed(2)}</div>
+          </div>
+          <div class="bg-white/5 rounded-xl p-3 text-center">
+            <div class="text-[9px] text-white/40 uppercase">Margen neto</div>
+            <div class="font-bold mt-1 text-white">${margin}%</div>
+          </div>
+          <div class="bg-white/5 rounded-xl p-3 text-center">
+            <div class="text-[9px] text-white/40 uppercase">ROI</div>
+            <div class="font-bold mt-1 text-white">${roi}%</div>
+          </div>
+          <div class="bg-white/5 rounded-xl p-3 text-center">
+            <div class="text-[9px] text-white/40 uppercase">Ganancia/mes</div>
+            <div class="font-bold mt-1 text-green-400">$${monthlyProfit.toFixed(0)}</div>
+          </div>
+          <div class="col-span-2 bg-green-500/10 border border-green-500/20 rounded-xl p-3 text-center">
+            <div class="text-[9px] text-white/40 uppercase">Break-even</div>
+            <div class="font-bold mt-1 text-green-400">${breakeven} ventas</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function populateComparators() {
+      var options = '<option value="">Selecciona</option>' + PRODUCTS.slice(0, 100).map(function(p, i){return `<option value="${i}">${p.name}</option>`;}).join('');
+      // Standard loader configs
+    }
+
+    // ── PUBLIC LEADERBOARD ───────────────────────────────────────────────────
+    async function renderPublicLeaderboard() {
+      const el = document.getElementById('publicLeaderboard');
+      if(!el) return;
+      try {
+        const res = await fetch('/api/leaderboard');
+        const data = await res.json();
+        const tops = data.top_products || [];
+        const total = data.total_sales || 0;
+
+        const cSales = document.getElementById('cStatSales');
+        const cUsers = document.getElementById('cStatUsers');
+        const cTop = document.getElementById('cStatTop');
+        if(cSales) cSales.textContent = total;
+        if(cUsers) cUsers.textContent = tops.length;
+        if(cTop && tops[0]) cTop.textContent = tops[0].name.split(' ').slice(0, 3).join(' ') + '...';
+
+        if(!tops.length) {
+          el.innerHTML = '<div class="col-span-3 text-center py-6 text-white/40 text-xs font-mono">Sé el primero en registrar una venta 🚀</div>';
+          return;
+        }
+
+        const medals = ['🥇', '🥈', '🥉'];
+        el.innerHTML = tops.slice(0, 6).map((p, i) => {
+          const barPct = Math.round(p.count / tops[0].count * 100);
+          return `
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-5 space-y-3">
+              <div class="flex items-center gap-3">
+                <span class="text-xl">${medals[i] || '#' + (i + 1)}</span>
+                <div class="flex-1 min-w-0">
+                  <div class="font-bold text-sm text-white truncate">${p.name}</div>
+                  <div class="text-[10px] text-white/40">${p.count} ventas</div>
+                </div>
+              </div>
+              <div class="h-1 bg-white/5 rounded-full overflow-hidden">
+                <div class="h-full bg-champagne" style="width: ${barPct}%"></div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } catch(e) {
+        if(el) el.innerHTML = '<div class="col-span-3 text-center py-6 text-white/40 text-xs font-mono">Registrá ventas para activar el Leaderboard 🚀</div>';
+      }
+    }
+
+    // ── PERFIL ───────────────────────────────────────────────────────────────
+    function getProfile() {
+      try { return JSON.parse(localStorage.getItem('tb_profile')||'{}'); } catch(e){ return {}; }
+    }
+    function saveProfile(data) {
+      try { localStorage.setItem('tb_profile', JSON.stringify(data)); } catch(e){}
+      fetch('/api/track', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ type:'profile', user_id: getUserId(), ...data })
+      }).catch(()=>{});
+    }
+
+    function renderPerfil() {
+      const el = document.getElementById('perfilContent');
+      if(!el) return;
+      const p = getProfile();
+      el.innerHTML = `
+        <div class="max-w-xl bg-white/5 border border-white/10 rounded-[2.5rem] p-8 space-y-6">
+          <div class="flex items-center gap-4 border-b border-white/5 pb-6">
+            <div class="w-16 h-16 rounded-full bg-champagne text-obsidian flex items-center justify-center text-2xl font-extrabold" id="avatarCircle">
+              ${(p.name||'?')[0].toUpperCase()}
+            </div>
+            <div>
+              <div class="text-lg font-bold text-white">${p.name || 'Tu Nombre'}</div>
+              <div class="text-xs text-white/40 mt-1">${p.country || 'País no definido'} · Plan ${plan.toUpperCase()}</div>
+            </div>
+          </div>
+
+          <div class="space-y-4 text-xs font-mono">
+            <div>
+              <label class="text-[9px] text-white/40 uppercase tracking-wider block mb-1">Nombre o Apodo</label>
+              <input id="pfName" value="${p.name || ''}" placeholder="Ej: Ignacio" class="w-full bg-obsidian border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-champagne">
+            </div>
+
+            <div>
+              <label class="text-[9px] text-white/40 uppercase tracking-wider block mb-1">País</label>
+              <select id="pfCountry" class="w-full bg-obsidian border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-champagne">
+                <option value="">Selecciona tu país</option>
+                <option value="Argentina" ${p.country==='Argentina'?'selected':''}>🇦🇷 Argentina</option>
+                <option value="Uruguay" ${p.country==='Uruguay'?'selected':''}>🇺🇾 Uruguay</option>
+                <option value="Chile" ${p.country==='Chile'?'selected':''}>🇨🇱 Chile</option>
+              </select>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="text-[9px] text-white/40 uppercase tracking-wider block mb-1">Moneda de venta</label>
+                <select id="pfSellCurrency" class="w-full bg-obsidian border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-champagne">
+                  <option value="ARS" ${(p.sellCurrency||'ARS')==='ARS'?'selected':''}>ARS</option>
+                  <option value="UYU" ${p.sellCurrency==='UYU'?'selected':''}>UYU</option>
+                  <option value="CLP" ${p.sellCurrency==='CLP'?'selected':''}>CLP</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-[9px] text-white/40 uppercase tracking-wider block mb-1">Moneda de compra</label>
+                <select id="pfBuyCurrency" class="w-full bg-obsidian border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-champagne">
+                  <option value="USD" ${(p.buyCurrency||'USD')==='USD'?'selected':''}>USD</option>
+                  <option value="ARS" ${p.buyCurrency==='ARS'?'selected':''}>ARS</option>
+                  <option value="UYU" ${p.buyCurrency==='UYU'?'selected':''}>UYU</option>
+                  <option value="CLP" ${p.buyCurrency==='CLP'?'selected':''}>CLP</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="text-[9px] text-white/40 uppercase tracking-wider block mb-1">Meta mensual de ventas</label>
+              <input id="pfGoal" type="number" value="${p.goal || 10}" class="w-24 bg-obsidian border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-champagne">
+            </div>
+
+            <button onclick="savePerfil()" class="btn-magnetic w-full py-3.5 bg-champagne text-obsidian font-extrabold uppercase tracking-wider rounded-xl">
+              Guardar Perfil
+            </button>
+            <div id="pfSaved" class="hidden text-center text-xs text-green-400 font-bold">✓ Perfil Guardado</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function savePerfil() {
+      const name = document.getElementById('pfName').value.trim();
+      const country = document.getElementById('pfCountry').value;
+      const goal = parseInt(document.getElementById('pfGoal').value) || 10;
+      const sellCurrency = document.getElementById('pfSellCurrency').value;
+      const buyCurrency = document.getElementById('pfBuyCurrency').value;
+      
+      saveProfile({ name, country, goal, sellCurrency, buyCurrency });
+      
+      const av = document.getElementById('avatarCircle');
+      if(av && name) av.textContent = name[0].toUpperCase();
+      
+      const saved = document.getElementById('pfSaved');
+      if(saved) {
+        saved.classList.remove('hidden');
+        setTimeout(() => saved.classList.add('hidden'), 2000);
+      }
+    }
+
+    // ── MI NEGOCIO ───────────────────────────────────────────────────────────
+    function getSalesData() {
+      try { return JSON.parse(localStorage.getItem('tb_sales')||'{}'); } catch(e){ return {}; }
+    }
+    function saveSalesData(data) {
+      try { localStorage.setItem('tb_sales', JSON.stringify(data)); } catch(e){}
+    }
+    function getUserId() {
+      let uid = localStorage.getItem('tb_uid');
+      if(!uid) { uid = 'u_'+Math.random().toString(36).slice(2)+Date.now().toString(36); localStorage.setItem('tb_uid', uid); }
+      return uid;
+    }
+    function getNegocioProducts() {
+      try { return JSON.parse(localStorage.getItem('tb_negocio')||'[]'); } catch(e){ return []; }
+    }
+    function saveNegocioProducts(arr) {
+      try { localStorage.setItem('tb_negocio', JSON.stringify(arr)); } catch(e){}
+    }
+
+    function renderNegocio() {
+      const el = document.getElementById('negocioContent');
+      if(!el) return;
+      const products = getNegocioProducts();
+
+      // Financial calculations
+      let totalInverted=0, totalRevenue=0, totalAds=0, totalStock=0, totalSold=0;
+      products.forEach(p => {
+        const costConverted = p.cost * p.fx;
+        totalInverted += costConverted * p.stock;
+        totalRevenue += p.price * p.sold;
+        totalAds += p.ads;
+        totalStock += p.stock;
+        totalSold += p.sold;
+      });
+
+      const totalProfit = totalRevenue - totalInverted - totalAds;
+      const roi = totalInverted > 0 ? Math.round(totalProfit / (totalInverted + totalAds) * 100) : 0;
+      const stockValue = products.reduce((a, p) => a + p.cost * (p.fx || 1100) * (p.stock - p.sold), 0);
+
+      const profile = getProfile();
+      const sellCurrency = profile.sellCurrency || 'ARS';
+      const buyCurrency = profile.buyCurrency || 'USD';
+
+      el.innerHTML = `
+        <!-- KPIs Financieros -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
+            <div class="text-[9px] text-white/40 uppercase font-mono tracking-wider">Ingresos totales</div>
+            <div class="text-2xl font-extrabold text-green-400 mt-1">$${totalRevenue.toLocaleString()} ${sellCurrency}</div>
+            <div class="text-[9px] text-white/40 font-mono mt-1">${totalSold} unidades vendidas</div>
+          </div>
+          <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
+            <div class="text-[9px] text-white/40 uppercase font-mono tracking-wider">Ganancia Neta</div>
+            <div class="text-2xl font-extrabold mt-1 ${totalProfit>=0?'text-green-400':'text-red-400'}">$${totalProfit.toLocaleString()} ${sellCurrency}</div>
+            <div class="text-[9px] text-white/40 font-mono mt-1">ROI: ${roi}%</div>
+          </div>
+          <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
+            <div class="text-[9px] text-white/40 uppercase font-mono tracking-wider">Inversión Stock</div>
+            <div class="text-2xl font-extrabold text-white mt-1">$${(totalInverted+totalAds).toLocaleString()} ${sellCurrency}</div>
+            <div class="text-[9px] text-white/40 font-mono mt-1">Stock + Publicidad</div>
+          </div>
+          <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
+            <div class="text-[9px] text-white/40 uppercase font-mono tracking-wider">Valor en Stock</div>
+            <div class="text-2xl font-extrabold text-white mt-1">$${stockValue.toLocaleString()} ${sellCurrency}</div>
+            <div class="text-[9px] text-white/40 font-mono mt-1">${totalStock-totalSold} unidades disponibles</div>
+          </div>
+        </div>
+
+        <!-- Tabla Negocio -->
+        <div class="bg-white/5 border border-white/10 rounded-[2rem] overflow-hidden">
+          <div class="p-6 border-b border-white/10 bg-black/20">
+            <h3 class="text-xs font-mono text-champagne uppercase tracking-widest">Mis Productos de Venta</h3>
+          </div>
+          
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left">
+              <thead>
+                <tr class="border-b border-white/10 text-white/40 font-mono uppercase text-[9px]">
+                  <th class="p-4">Producto</th>
+                  <th class="p-4 text-right">Costo</th>
+                  <th class="p-4 text-right">Venta</th>
+                  <th class="p-4 text-right">Stock</th>
+                  <th class="p-4 text-right">Vendido</th>
+                  <th class="p-4 text-right">Ganancia</th>
+                  <th class="p-4 text-right"></th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-white/5">
+                ${products.length ? products.map((p, i) => {
+                  const costSell = p.cost * p.fx;
+                  const profit = (p.price - costSell) * p.sold - p.ads;
+                  return `
+                    <tr class="hover:bg-white/5 transition text-xs">
+                      <td class="p-4 font-bold text-white">${p.name}</td>
+                      <td class="p-4 text-right font-mono">${p.cost} ${buyCurrency} <br> <span class="text-[9px] text-white/40">$${costSell.toFixed(0)} ARS</span></td>
+                      <td class="p-4 text-right font-mono font-bold">$${p.price.toLocaleString()}</td>
+                      <td class="p-4 text-right font-mono">${p.stock - p.sold}/${p.stock}</td>
+                      <td class="p-4 text-right font-mono text-green-400 font-bold">${p.sold}</td>
+                      <td class="p-4 text-right font-mono font-bold ${profit>=0?'text-green-400':'text-red-400'}">$${profit.toFixed(0)}</td>
+                      <td class="p-4 text-right">
+                        <div class="flex gap-2 justify-end">
+                          <button onclick="quickSale(${i})" class="bg-green-600/10 hover:bg-green-600/20 text-green-400 border border-green-500/20 px-2.5 py-1 rounded-lg text-[10px] font-bold">+1 Venta</button>
+                          <button onclick="quickStock(${i})" class="bg-white/5 hover:bg-white/10 px-2.5 py-1 border border-white/10 rounded-lg text-[10px] font-bold">Stock</button>
+                          <button onclick="showAddProductModal(${i})" class="bg-white/5 hover:bg-white/10 px-2.5 py-1 border border-white/10 rounded-lg text-[10px] font-bold">Editar</button>
+                        </div>
+                      </td>
+                    </tr>
+                  `;
+                }).join('') : `<tr><td colspan="7" class="p-8 text-center text-white/40 font-mono">No has agregado productos. Haz click en "+ Cargar Producto" para iniciar.</td></tr>`}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    var editingNegocioIdx = null;
+
+    function showAddProductModal(idx) {
+      editingNegocioIdx = idx !== undefined ? idx : null;
+      const products = getNegocioProducts();
+      const p = idx !== undefined ? products[idx] : {};
+      
+      const overlay = document.createElement('div');
+      overlay.id = 'negocioModal';
+      overlay.className = 'fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm';
+
+      overlay.innerHTML = `
+        <div class="bg-obsidian border border-white/10 rounded-[2.5rem] w-full max-w-md overflow-hidden shadow-2xl p-8">
+          <div class="flex items-center justify-between border-b border-white/10 pb-4 mb-6">
+            <h3 class="text-base font-bold text-white">${idx !== undefined ? 'Editar' : 'Agregar'} Producto</h3>
+            <button onclick="document.getElementById('negocioModal').remove()" class="text-white/60 hover:text-white">✕</button>
+          </div>
+
+          <div class="space-y-4 text-xs font-mono">
+            <div>
+              <label class="text-[9px] text-white/40 uppercase block mb-1">Nombre del producto</label>
+              <input id="np-name" value="${p.name || ''}" placeholder="Ej: Mini proyector" class="w-full bg-obsidian border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-champagne">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="text-[9px] text-white/40 uppercase block mb-1">Costo Unitario (USD)</label>
+                <input id="np-cost" type="number" step="0.01" value="${p.cost || ''}" class="w-full bg-obsidian border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-champagne">
+              </div>
+              <div>
+                <label class="text-[9px] text-white/40 uppercase block mb-1">Venta Unitario (ARS)</label>
+                <input id="np-price" type="number" value="${p.price || ''}" class="w-full bg-obsidian border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-champagne">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="text-[9px] text-white/40 uppercase block mb-1">Stock Comprado</label>
+                <input id="np-stock" type="number" value="${p.stock || ''}" class="w-full bg-obsidian border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-champagne">
+              </div>
+              <div>
+                <label class="text-[9px] text-white/40 uppercase block mb-1">Vendidos</label>
+                <input id="np-sold" type="number" value="${p.sold || 0}" class="w-full bg-obsidian border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-champagne">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="text-[9px] text-white/40 uppercase block mb-1">Inversión Ads</label>
+                <input id="np-ads" type="number" value="${p.ads || 0}" class="w-full bg-obsidian border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-champagne">
+              </div>
+              <div>
+                <label class="text-[9px] text-white/40 uppercase block mb-1">Tipo de cambio FX</label>
+                <input id="np-fx" type="number" value="${p.fx || 1100}" class="w-full bg-obsidian border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-champagne">
+              </div>
+            </div>
+
+            <div>
+              <label class="text-[9px] text-white/40 uppercase block mb-1">Proveedor</label>
+              <select id="np-supplier" class="w-full bg-obsidian border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-champagne">
+                <option value="AliExpress" ${(p.supplier||'AliExpress')==='AliExpress'?'selected':''}>AliExpress</option>
+                <option value="CJ Dropshipping" ${p.supplier==='CJ Dropshipping'?'selected':''}>CJ Dropshipping</option>
+                <option value="Alibaba" ${p.supplier==='Alibaba'?'selected':''}>Alibaba</option>
+                <option value="Local" ${p.supplier==='Local'?'selected':''}>Proveedor local</option>
+              </select>
+            </div>
+
+            <div class="flex gap-3 pt-4 border-t border-white/5">
+              <button onclick="saveNegocioProduct()" class="flex-1 py-3 bg-champagne text-obsidian font-extrabold uppercase rounded-xl">Guardar</button>
+              ${idx !== undefined ? `<button onclick="deleteNegocioProduct(${idx})" class="py-3 px-4 border border-red-500/20 text-red-400 rounded-xl hover:bg-red-500/10 transition">Eliminar</button>` : ''}
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+    }
+
+    function saveNegocioProduct() {
+      const products = getNegocioProducts();
+      const p = {
+        name: document.getElementById('np-name').value.trim(),
+        cost: parseFloat(document.getElementById('np-cost').value) || 0,
+        price: parseFloat(document.getElementById('np-price').value) || 0,
+        stock: parseInt(document.getElementById('np-stock').value) || 0,
+        sold: parseInt(document.getElementById('np-sold').value) || 0,
+        ads: parseFloat(document.getElementById('np-ads').value) || 0,
+        fx: parseFloat(document.getElementById('np-fx').value) || 1100,
+        supplier: document.getElementById('np-supplier').value,
+        status: 'activo'
+      };
+
+      if(!p.name) return alert('Ingresá el nombre');
+      
+      if(editingNegocioIdx !== null) {
+        products[editingNegocioIdx] = p;
+      } else {
+        products.push(p);
+      }
+      
+      saveNegocioProducts(products);
+      document.getElementById('negocioModal').remove();
+      renderNegocio();
+    }
+
+    function deleteNegocioProduct(idx) {
+      if(!confirm('¿Eliminar producto?')) return;
+      const products = getNegocioProducts();
+      products.splice(idx, 1);
+      saveNegocioProducts(products);
+      document.getElementById('negocioModal').remove();
+      renderNegocio();
+    }
+
+    function quickSale(idx) {
+      const products = getNegocioProducts();
+      if(!products[idx]) return;
+      if(products[idx].sold >= products[idx].stock) {
+        showToast('Sin stock disponible', 'error');
+        return;
+      }
+      products[idx].sold = (products[idx].sold || 0) + 1;
+      saveNegocioProducts(products);
+      
+      // Sync to Supabase
+      fetch('/api/track', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ type:'sale', user_id:getUserId(), product_name:products[idx].name, product_cat:'', product_score:0 })
+      }).catch(()=>{});
+
+      renderNegocio();
+      showToast('¡Venta registrada! +1 ' + products[idx].name, 'success');
+    }
+
+    function quickStock(idx) {
+      const products = getNegocioProducts();
+      if(!products[idx]) return;
+      const qty = parseInt(prompt('¿Cuántas unidades agregás al stock?', '10'));
+      if(isNaN(qty) || qty <= 0) return;
+      products[idx].stock = (products[idx].stock || 0) + qty;
+      saveNegocioProducts(products);
+      renderNegocio();
+      showToast('+' + qty + ' unidades de stock agregadas', 'success');
+    }
+
+    function showToast(msg, type) {
+      const t = document.createElement('div');
+      const bg = type === 'success' ? 'bg-green-600' : 'bg-red-600';
+      t.className = `fixed bottom-24 left-1/2 -translate-x-1/2 ${bg} text-white px-5 py-3 rounded-full text-xs font-bold font-mono shadow-2xl z-[9999] whitespace-nowrap`;
+      t.textContent = msg;
+      document.body.appendChild(t);
+      setTimeout(() => {
+        t.style.opacity = '0';
+        t.style.transition = 'opacity 0.3s';
+        setTimeout(() => t.remove(), 300);
+      }, 2000);
+    }
+
+    // ── GUEST / AUTH LOGIN LOGIC ─────────────────────────────────────────────
+    function openAuth(m='login') {
+      document.getElementById('authModal').classList.remove('hidden');
+      setAuthMode(m);
+    }
+    function closeAuth() {
+      document.getElementById('authModal').classList.add('hidden');
+    }
+    function setAuthMode(m) {
+      authMode = m;
+      document.getElementById('tabLogin').classList.toggle('bg-white/10', m==='login');
+      document.getElementById('tabLogin').classList.toggle('text-white', m==='login');
+      document.getElementById('tabSignup').classList.toggle('bg-white/10', m==='signup');
+      document.getElementById('tabSignup').classList.toggle('text-white', m==='signup');
+      
+      document.getElementById('authTitle').textContent = m==='login' ? 'Bienvenido de vuelta' : 'Creá tu cuenta gratis';
+      document.getElementById('authSubtitle').textContent = m==='login' ? 'Ingresá para acceder al dashboard' : 'Empezá gratis, suscribite cuando quieras';
+      document.getElementById('authSubmit').textContent = m==='login' ? 'Iniciar sesión' : 'Crear cuenta';
+      
+      document.getElementById('authErr').classList.add('hidden');
+      document.getElementById('authOk').classList.add('hidden');
+    }
+
+    async function doAuth() {
+      const email = document.getElementById('authEmail').value.trim();
+      const pass = document.getElementById('authPass').value;
+      const btn = document.getElementById('authSubmit');
+      
+      document.getElementById('authErr').classList.add('hidden');
+      document.getElementById('authOk').classList.add('hidden');
+      
+      if(!email || !pass) {
+        document.getElementById('authErr').textContent = 'Completá email y contraseña';
+        document.getElementById('authErr').classList.remove('hidden');
+        return;
+      }
+      if(pass.length < 6) {
+        document.getElementById('authErr').textContent = 'Contraseña mínimo 6 caracteres';
+        document.getElementById('authErr').classList.remove('hidden');
+        return;
+      }
+      
+      btn.disabled = true;
+      btn.textContent = 'Procesando...';
+      try {
+        const res = await fetch('/api/auth', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ action:authMode, email, password:pass })
+        });
+        const data = await res.json();
+        if(!res.ok) throw new Error(data.error || 'Error de autenticación');
+
+        if(authMode === 'signup') {
+          document.getElementById('authOk').textContent = '¡Cuenta creada! Iniciando sesión...';
+          document.getElementById('authOk').classList.remove('hidden');
+          setTimeout(() => setAuthMode('login'), 1500);
+        } else {
+          user = { email };
+          plan = 'free';
+          localStorage.setItem('tb_session', JSON.stringify({ email, access_token: data.access_token || '' }));
+          localStorage.setItem('tb_plan', 'free');
+          closeAuth();
+          updateNav();
+          enterDash();
+        }
+      } catch(e) {
+        document.getElementById('authErr').textContent = e.message;
+        document.getElementById('authErr').classList.remove('hidden');
+      }
+      btn.disabled = false;
+      btn.textContent = authMode === 'login' ? 'Iniciar sesión' : 'Crear cuenta';
+    }
+
+    async function loginGoogle() {
+      try {
+        const res = await fetch('/api/auth', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ action:'google' })
+        });
+        const data = await res.json();
+        if(data.url) location.href = data.url;
+      } catch(e) {
+        document.getElementById('authErr').textContent = 'Error al conectar con Google';
+        document.getElementById('authErr').classList.remove('hidden');
+      }
+    }
+
+    function logout() {
+      user = null;
+      plan = 'free';
+      localStorage.removeItem('tb_session');
+      localStorage.removeItem('tb_plan');
+      updateNav();
+      goLanding();
+    }
+
+    function toggleDD() {
+      document.getElementById('userDD').classList.toggle('hidden');
+    }
+    function closeDD() {
+      document.getElementById('userDD').classList.add('hidden');
+    }
+
+    async function subscribe(planName) {
+      if(!user) { openAuth('signup'); return; }
+      try {
+        const res = await fetch('/api/subscribe', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ plan: planName, email: user.email })
+        });
+        const data = await res.json();
+        if(data.url) location.href = data.url;
+      } catch(e) {
+        alert('Error: ' + e.message);
+      }
+    }
+
+    // ── PRODUCTS DETAIL POPUP & SUPPLIERS ────────────────────────────────────
+    let currentProd = null;
+    function openProduct(idx) {
+      currentProd = idx;
+      const p = PRODUCTS[idx];
+      if(!p) return;
+
+      document.getElementById('pmTitle').textContent = p.name;
+      document.getElementById('pmImgWrap').innerHTML = `<img src="${p.img || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=600'}" class="w-full h-full object-cover">`;
+      document.getElementById('pmScore').textContent = p.score;
+      document.getElementById('pmChange').textContent = p.change;
+      document.getElementById('pmMargin').textContent = p.marginStr;
+      document.getElementById('pmCat').textContent = p.cat;
+      document.getElementById('pmPrice').textContent = p.priceStr;
+      
+      const compBadge = document.getElementById('pmComp');
+      compBadge.textContent = p.comp;
+      const compColor = p.comp === 'Baja' ? 'bg-green-500/10 text-green-400 border-green-500/20' : p.comp === 'Alta' ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20';
+      compBadge.className = `text-xs font-bold font-mono px-2 py-0.5 rounded border uppercase ${compColor}`;
+
+      const pmTag = document.getElementById('pmTag');
+      pmTag.textContent = p.hot ? 'HOT' : 'TENDENCIA';
+      pmTag.className = `text-xs font-mono font-bold px-2 py-0.5 rounded uppercase ${p.hot ? 'bg-champagne text-obsidian' : 'bg-white/10 text-white'}`;
+
+      document.getElementById('pmPlats').innerHTML = p.plts.map(pl => `<span class="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[9px] font-mono font-bold">${PLT[pl] ? PLT[pl].label : pl}</span>`).join('');
+      document.getElementById('pmCountries').innerHTML = (p.regions || []).map(r => `<span class="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[9px] font-mono font-bold">${r==='AR'?'🇦🇷 AR':r==='UY'?'🇺🇾 UY':'🇨🇱 CL'}</span>`).join('');
+      
+      renderSuppliersTab(p, document.getElementById('pmSuppliers'));
+      
+      document.getElementById('pmSaveBtn').innerHTML = saved.includes(idx) ? '<i data-lucide="bookmark-check" class="w-4 h-4 inline-block mr-1"></i> Guardado' : '<i data-lucide="bookmark" class="w-4 h-4 inline-block mr-1"></i> Guardar';
+      
+      switchModalTab('info', document.querySelector('.modal-tab'));
+      document.getElementById('prodModal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeProdModal(e) {
+      if(e.target === document.getElementById('prodModal')) closeProdModalDirect();
+    }
+    function closeProdModalDirect() {
+      document.getElementById('prodModal').classList.add('hidden');
+    }
+
+    function saveCurrentProduct() {
+      if(currentProd === null) return;
+      toggleSave(currentProd);
+      document.getElementById('pmSaveBtn').innerHTML = saved.includes(currentProd) ? '<i data-lucide="bookmark-check" class="w-4 h-4 inline-block mr-1"></i> Guardado' : '<i data-lucide="bookmark" class="w-4 h-4 inline-block mr-1"></i> Guardar';
+      lucide.createIcons();
+    }
+
+    function toggleSave(idx) {
+      const i = saved.indexOf(idx);
+      if(i === -1) saved.push(idx);
+      else saved.splice(i, 1);
+      localStorage.setItem('tb_saved', JSON.stringify(saved));
+      savedCount();
+      renderProducts(false);
+      renderLandingProducts();
+    }
+    function savedCount() {
+      const countLabel = document.getElementById('savedCountSidebar');
+      if(countLabel) countLabel.textContent = saved.length;
+    }
+
+    function renderSaved() {
+      const el = document.getElementById('savedContent');
+      if(!el) return;
+      if(!saved.length) {
+        el.innerHTML = '<div class="text-center py-12 text-white/40 text-xs font-mono">No tenés productos guardados todavía.</div>';
+        return;
+      }
+      el.innerHTML = `
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          ${saved.map(idx => {
+            const p = ALL_PRODUCTS[idx];
+            if(!p) return '';
+            return `
+              <div onclick="openProduct(${idx})" class="bg-white/5 border border-white/10 rounded-[2rem] overflow-hidden hover-lift p-4 space-y-4 cursor-pointer">
+                <div class="aspect-video w-full rounded-2xl overflow-hidden bg-black/20 relative">
+                  <img src="${p.img || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=600'}" class="w-full h-full object-cover">
+                  <span class="absolute top-3 left-3 text-[9px] font-mono font-bold uppercase bg-champagne text-obsidian px-2 py-0.5 rounded">${p.cat}</span>
+                </div>
+                <div class="space-y-2">
+                  <h4 class="text-sm font-bold text-white truncate">${p.name}</h4>
+                  <div class="flex justify-between items-center text-[10px] text-white/50 border-t border-white/5 pt-2">
+                    <span>Margen: <b class="text-green-400 font-mono">${p.marginStr}</b></span>
+                    <span>Comp: <b class="text-white font-mono">${p.comp}</b></span>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+
+    function switchModalTab(tab, btn) {
+      document.querySelectorAll('.modal-tab').forEach(t => {
+        t.classList.remove('text-champagne', 'border-b-2', 'border-champagne');
+        t.classList.add('text-white/50');
+      });
+      btn.classList.add('text-champagne', 'border-b-2', 'border-champagne');
+      btn.classList.remove('text-white/50');
+      
+      document.querySelectorAll('.modal-tab-content').forEach(c => c.classList.add('hidden'));
+      document.getElementById('tab-' + tab).classList.remove('hidden');
+
+      if(tab === 'history' && currentProd !== null) {
+        renderHistoryChart();
+      }
+    }
+
+    function renderHistoryChart() {
+      const p = PRODUCTS[currentProd];
+      if(!p) return;
+      
+      const tbody = document.getElementById('historyTbody');
+      if(!tbody) return;
+      tbody.innerHTML = p.history.map((score, i) => {
+        const prev = p.history[i-1] || score;
+        const diff = score - prev;
+        const changeClass = diff >= 0 ? 'text-green-400' : 'text-red-400';
+        return `
+          <tr class="border-b border-white/5 text-xs">
+            <td class="p-3 font-mono text-white/50">${WEEKS[i]}</td>
+            <td class="p-3 font-bold text-white font-mono">${score}</td>
+            <td class="p-3 font-mono font-bold ${changeClass}">${diff >= 0 ? '+' : ''}${diff}</td>
+            <td class="p-3 text-white/70">${LEADERS[i % LEADERS.length]}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    const SUPPLIERS_BUY = [
+      { name:'AliExpress', icon:'🛒', url:'https://www.aliexpress.com/wholesale?SearchText=', ship:'10-25 días · Envío gratis', note:'El más popular para dropshipping', color:'#FF4747' },
+      { name:'Alibaba', icon:'🏭', url:'https://www.alibaba.com/trade/search?SearchText=', ship:'20-35 días · Mayorista', note:'Precios más bajos, mínimo por lote', color:'#FF6A00' },
+      { name:'CJ Dropshipping', icon:'🚀', url:'https://cjdropshipping.com/search/', ship:'7-12 días · Bodega LATAM', note:'Bodega en Brasil y México', color:'#00A87E' },
+    ];
+
+    function renderSuppliersTab(p, el) {
+      if(!el) return;
+      const q = encodeURIComponent(p.name || '');
+      el.innerHTML = `
+        <div class="space-y-4">
+          <div class="text-[9px] font-mono text-white/40 uppercase tracking-widest border-b border-white/5 pb-2">Dónde comprar (Est. AliExpress)</div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            ${SUPPLIERS_BUY.map(s => {
+              const estPrice = (p.score * 0.08).toFixed(2);
+              return `
+                <a href="${s.url + q}" target="_blank" class="bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl p-4 flex flex-col justify-between transition duration-200">
+                  <div>
+                    <div class="text-sm font-bold text-white mb-1">${s.icon} ${s.name}</div>
+                    <div class="text-[8px] font-mono text-white/40 mb-2">${s.ship}</div>
+                    <div class="text-[9px] text-white/60 leading-relaxed">${s.note}</div>
+                  </div>
+                  <div class="text-xs font-extrabold text-green-400 font-mono mt-4">~USD ${estPrice}</div>
+                </a>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+      // Load real AE products
+      loadAEProducts(p.name, el);
+    }
+
+    function markAsSold() {
+      if(currentProd === null) return;
+      const p = PRODUCTS[currentProd];
+      if(!p) return;
+      
+      const sales = getSalesData();
+      const key = (p.name || '').toLowerCase().trim();
+      sales[key] = (sales[key] || 0) + 1;
+      saveSalesData(sales);
+
+      // Save to business negocio
+      const negProducts = getNegocioProducts();
+      const negIdx = negProducts.findIndex(np => (np.name || '').toLowerCase().trim() === key);
+      if(negIdx >= 0) {
+        negProducts[negIdx].sold = (negProducts[negIdx].sold || 0) + 1;
+        saveNegocioProducts(negProducts);
+      } else {
+        negProducts.push({
+          name: p.name, cost: Math.max(3, p.score * 0.08), price: Math.max(10, p.score * 0.25) * 1100,
+          stock: 10, sold: 1, ads: 0, fx: 1100, supplier: 'AliExpress', status: 'activo'
+        });
+        saveNegocioProducts(negProducts);
+      }
+
+      // Sync to Supabase track
+      fetch('/api/track', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ type:'sale', user_id:getUserId(), product_name:p.name, product_cat:p.cat, product_score:p.score })
+      }).catch(()=>{});
+
+      const confirm = document.getElementById('soldConfirm');
+      if(confirm) {
+        confirm.classList.remove('hidden');
+        setTimeout(() => confirm.classList.add('hidden'), 3000);
+      }
+      
+      renderPublicLeaderboard();
+    }
+
+    function analyzeProduct() {
+      if(currentProd === null) return;
+      const p = PRODUCTS[currentProd];
+      closeProdModalDirect();
+      enterDash();
+      setTimeout(() => {
+        goSection('analisis');
+        askAI(`Analizá el producto "${p.name}" con TrendScore ${p.score}, margen ${p.marginStr} y competencia ${p.comp}. ¿Por qué está en tendencia y cómo lo venderías en LATAM?`);
+      }, 300);
+    }
+
+    // ── ANTHROPIC CLAUDE CHAT IA ─────────────────────────────────────────────
+    const AI_SYS = 'Sos el asistente IA de TrendBase, plataforma de tendencias para dropshippers de Argentina, Uruguay y Chile. Ayudás con: productos virales, márgenes estimados, proveedores, estrategias de venta. Respondé en español, conciso y útil. Máximo 3 párrafos.';
+    
+    async function askAI(msg) {
+      if(aiLoading) return;
+      const input = document.getElementById('aiInput');
+      const text = msg || input.value.trim();
+      if(!text) return;
+      
+      if(input) input.value = '';
+      aiLoading = true;
+      
+      const msgs = document.getElementById('aiMessages');
+      msgs.innerHTML += `<div class="msg msg-user bg-champagne text-obsidian p-3 rounded-2xl max-w-[85%] self-end font-bold font-mono">${text}</div>`;
+      msgs.innerHTML += `<div id="typing" class="p-3 bg-white/5 border border-white/5 rounded-2xl flex items-center gap-1 self-start"><span class="w-1.5 h-1.5 rounded-full bg-white/30 animate-bounce"></span><span class="w-1.5 h-1.5 rounded-full bg-white/30 animate-bounce" style="animation-delay: 0.2s"></span><span class="w-1.5 h-1.5 rounded-full bg-white/30 animate-bounce" style="animation-delay: 0.4s"></span></div>`;
+      msgs.scrollTop = msgs.scrollHeight;
+      
+      aiHistory.push({ role:'user', content:text });
+      try {
+        const res = await fetch('/api/chat', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ messages: aiHistory, system: AI_SYS })
+        });
+        const data = await res.json();
+        if(!res.ok) throw new Error(data.error || 'Error del servidor de IA');
+        
+        const reply = data.text || 'Sin respuesta.';
+        aiHistory.push({ role:'assistant', content:reply });
+        
+        const typingEl = document.getElementById('typing');
+        if(typingEl) {
+          typingEl.outerHTML = `<div class="msg msg-ai bg-white/5 border border-white/5 text-white/80 p-3 rounded-2xl max-w-[85%] self-start leading-relaxed">${reply.replace(/\n/g, '<br>')}</div>`;
+        }
+      } catch(e) {
+        aiHistory.pop();
+        const typingEl = document.getElementById('typing');
+        if(typingEl) {
+          typingEl.outerHTML = `<div class="msg msg-ai text-red-400 bg-red-500/10 border border-red-500/20 p-3 rounded-2xl max-w-[85%] self-start">⚠️ ${e.message}</div>`;
+        }
+      }
+      aiLoading = false;
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    // ── CURRENCY SWITCHER ────────────────────────────────────────────────────
+    const prices = {
+      AR: { free: "$0", starter: "$9.999", pro: "$19.999", period: "ARS/mes" },
+      UY: { free: "$0", starter: "$390", pro: "$790", period: "UYU/mes" },
+      CL: { free: "$0", starter: "$4.990", pro: "$9.990", period: "CLP/mes" }
+    };
+
+    function changeCurrency(country) {
+      document.querySelectorAll('.currency-toggle-btn').forEach(btn => {
+        btn.classList.remove('active-toggle', 'bg-obsidian', 'text-white');
+        btn.classList.add('bg-slate/10', 'text-slate');
+      });
+      const activeBtn = document.getElementById(`btn-currency-${country}`);
+      if(activeBtn) {
+        activeBtn.classList.add('active-toggle', 'bg-obsidian', 'text-white');
+        activeBtn.classList.remove('bg-slate/10', 'text-slate');
+      }
+
+      document.getElementById('price-free').innerText = prices[country].free;
+      document.getElementById('price-period-free').innerText = prices[country].period;
+
+      document.getElementById('price-starter').innerText = prices[country].starter;
+      document.getElementById('price-period-starter').innerText = prices[country].period;
+
+      document.getElementById('price-pro').innerText = prices[country].pro;
+      document.getElementById('price-period-pro').innerText = prices[country].period;
+    }
+
+    // ── SHUFFLER / TYPEWRITER ANIMATION LOGIC ────────────────────────────────
+    let currentShufflerIndex = 0;
+    const shufflerCards = [
+      document.getElementById('shuffler-card-0'),
+      document.getElementById('shuffler-card-1'),
+      document.getElementById('shuffler-card-2')
+    ];
+
+    setInterval(() => {
+      shufflerCards.forEach((card, idx) => {
+        if(!card) return;
+        let order = (idx - currentShufflerIndex + 3) % 3;
+        if (order === 0) {
+          card.style.zIndex = '10';
+          card.style.transform = 'translateY(8px) scale(0.9)';
+          card.style.opacity = '0.6';
+        } else if (order === 1) {
+          card.style.zIndex = '20';
+          card.style.transform = 'translateY(4px) scale(0.95)';
+          card.style.opacity = '0.8';
+        } else if (order === 2) {
+          card.style.zIndex = '30';
+          card.style.transform = 'translateY(0px) scale(1)';
+          card.style.opacity = '1';
+        }
+      });
+      currentShufflerIndex = (currentShufflerIndex + 1) % 3;
+    }, 3000);
+
+    const typewriterFeed = document.getElementById('typewriter-console');
+    const messages = [
+      "[$] Monitoreando tendencias de Argentina...",
+      "[$] Analizando engagement de TikTok en ARS...",
+      "[$] Encontrados 14 productos calientes en Mercado Libre.",
+      "[$] Sincronizando datos de Uruguay en UYU...",
+      "[$] Evaluando costos de flete internacional CLP...",
+      "[$] TrendBase Engine listo."
+    ];
+    let msgIdx = 0;
+    let charIdx = 0;
+    let currentMsg = '';
+
+    function typeNextMessage() {
+      if(!typewriterFeed) return;
+      if (msgIdx >= messages.length) {
+        msgIdx = 0;
+        typewriterFeed.innerHTML = '';
+      }
+      currentMsg = messages[msgIdx];
+      charIdx = 0;
+      typeCharacter();
+    }
+
+    function typeCharacter() {
+      if(!typewriterFeed) return;
+      if (charIdx < currentMsg.length) {
+        typewriterFeed.innerHTML += currentMsg.charAt(charIdx);
+        charIdx++;
+        setTimeout(typeCharacter, 45);
+      } else {
+        typewriterFeed.innerHTML += '<br>';
+        msgIdx++;
+        setTimeout(typeNextMessage, 1500);
+      }
+    }
+
+    const cursor = document.getElementById('scheduler-cursor');
+    const days = document.querySelectorAll('.scheduler-day');
+    const actionBtn = document.getElementById('scheduler-action');
+    const statusLabel = document.getElementById('scheduler-status');
+
+    function animateCursorScheduler() {
+      const containerEl = document.getElementById('scheduler-container');
+      if(!containerEl || !cursor || !actionBtn) return;
+      const containerRect = containerEl.getBoundingClientRect();
+      const targetDay = days[2];
+      if(!targetDay) return;
+      const dayRect = targetDay.getBoundingClientRect();
+      const btnRect = actionBtn.getBoundingClientRect();
+
+      gsap.to(cursor, {
+        x: dayRect.left - containerRect.left + dayRect.width / 2,
+        y: dayRect.top - containerRect.top + dayRect.height / 2,
+        duration: 1.5,
+        ease: 'power2.inOut',
+        onComplete: () => {
+          gsap.to(cursor, {
+            scale: 0.8,
+            duration: 0.15,
+            yoyo: true,
+            repeat: 1,
+            onComplete: () => {
+              targetDay.classList.add('bg-champagne/20', 'border-champagne');
+              if(statusLabel) statusLabel.innerText = "MARGEN ESTIMADO: 45%-60%";
+              
+              gsap.to(cursor, {
+                x: btnRect.left - containerRect.left + btnRect.width / 2,
+                y: btnRect.top - containerRect.top + btnRect.height / 2,
+                duration: 1.5,
+                ease: 'power2.inOut',
+                onComplete: () => {
+                  gsap.to(cursor, {
+                    scale: 0.8,
+                    duration: 0.15,
+                    yoyo: true,
+                    repeat: 1,
+                    onComplete: () => {
+                      actionBtn.classList.add('bg-champagne', 'text-obsidian');
+                      actionBtn.innerText = "RETORNO ESTIMADO: +210%";
+                      
+                      gsap.to(cursor, {
+                        opacity: 0,
+                        duration: 0.5,
+                        delay: 2,
+                        onComplete: () => {
+                          targetDay.classList.remove('bg-champagne/20', 'border-champagne');
+                          actionBtn.classList.remove('bg-champagne', 'text-obsidian');
+                          actionBtn.innerText = "CALCULAR RETORNO ESTIMADO";
+                          if(statusLabel) statusLabel.innerText = "READY";
+                          gsap.set(cursor, { x: -30, y: -30, opacity: 1, scale: 1 });
+                          setTimeout(animateCursorScheduler, 1000);
+                        }
+                      });
+                    }
+                  });
+                }
+              });
+            }
+          });
+        }
+      });
+    }
+    setTimeout(animateCursorScheduler, 2000);
+
+    const AI_SYS='Sos el asistente IA de TrendBase, plataforma de tendencias para dropshippers de Argentina, Uruguay y Chile. Ayudás con: productos virales, márgenes estimados, proveedores, estrategias de venta. Respondé en español, conciso y útil. Máximo 3 párrafos.';
+    async function askAI(msg){
+      if(aiLoading)return;
+      var planData = currentPlan();
+      var maxMsg = planData.aiMessages || 0;
+      if(maxMsg === 0) { showToast('El asistente IA requiere plan Starter o superior.', 'error'); return; }
+      var todayKey = 'tb_ai_msgs_'+new Date().toISOString().slice(0,10);
+      var todayCount = parseInt(localStorage.getItem(todayKey)||'0');
+      if(todayCount >= maxMsg) { showToast('Alcanzaste el límite de mensajes IA diarios. Upgradeá al plan Pro.', 'error'); return; }
+      localStorage.setItem(todayKey, todayCount+1);
+
+      const input=document.getElementById('aiInput'),btn=document.getElementById('aiSend'),msgs=document.getElementById('aiMessages');
+      const text=msg||input.value.trim();if(!text)return;
+      if(input)input.value='';aiLoading=true;if(btn)btn.disabled=true;
+      
+      msgs.innerHTML+='<div class="msg msg-user bg-champagne text-obsidian p-3 rounded-2xl max-w-[85%] self-end font-bold">'+text+'</div>';
+      msgs.innerHTML+='<div class="typing" id="typing"><span class="text-white/40">Generando respuesta...</span></div>';
+      msgs.scrollTop=msgs.scrollHeight;aiHistory.push({role:'user',content:text});
+      try{
+        const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:aiHistory,system:AI_SYS})});
+        let data;try{data=await res.json();}catch(je){throw new Error('Error del servidor ('+res.status+')');}
+        if(!res.ok)throw new Error(data.error||'Error: '+res.status);
+        const reply=data.text||'Sin respuesta.';aiHistory.push({role:'assistant',content:reply});
+        document.getElementById('typing').outerHTML='<div class="msg msg-ai bg-white/5 text-white/80 p-3 rounded-2xl max-w-[85%] self-start border border-white/5">'+reply.replace(/\\n/g,'<br>')+'</div>';
+      }catch(e){aiHistory.pop();document.getElementById('typing').outerHTML='<div class="msg msg-ai bg-red-500/10 text-red-400 p-3 rounded-2xl max-w-[85%] self-start border border-red-500/20">\u26A0\uFE0F '+e.message+'</div>';}
+      aiLoading=false;if(btn)btn.disabled=false;msgs.scrollTop=msgs.scrollHeight;
+    }
+
+    async function loadAEProducts(productName, container) {
+      try {
+        const res = await fetch('/api/aliexpress?q='+encodeURIComponent(productName));
+        const data = await res.json();
+        if(!data.products||!data.products.length) return;
+        const items = data.products.slice(0,4).map(p=>{
+          const div = document.createElement('a');
+          div.href = p.url;
+          div.target = '_blank';
+          div.rel = 'noopener';
+          div.className = 'flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl hover:border-champagne transition no-underline text-white';
+          
+          const img = document.createElement('img');
+          img.src = '/api/imgproxy?url=' + encodeURIComponent(p.image);
+          img.className = 'w-12 h-12 object-cover rounded-lg shrink-0';
+          img.onerror = () => img.style.display = 'none';
+          
+          const info = document.createElement('div');
+          info.className = 'flex-1 min-w-0 text-xs';
+          info.innerHTML = '<div class="font-bold truncate">'+p.title+'</div>' +
+            '<div class="text-[10px] text-white/40 mt-0.5">' +
+            (p.commission ? '<span class="bg-green-500/20 text-green-400 px-1.5 py-0.5 rounded font-mono font-bold mr-1">'+p.commission+'% comisión</span>' : '') +
+            (p.rating ? '⭐ '+p.rating+'%' : '') + '</div>';
+            
+          const price = document.createElement('div');
+          price.className = 'font-mono font-bold text-green-400 shrink-0';
+          price.textContent = p.price;
+          
+          div.appendChild(img);div.appendChild(info);div.appendChild(price);
+          return div;
+        });
+        const wrap = document.createElement('div');
+        wrap.className = 'col-span-full mt-4 space-y-2';
+        wrap.innerHTML = '<h4 class="text-xs font-mono font-bold text-champagne uppercase tracking-wider mb-2">Productos reales en AliExpress</h4>';
+        const list = document.createElement('div');
+        list.className = 'grid gap-2';
+        items.forEach(i => list.appendChild(i));
+        wrap.appendChild(list);
+        container.appendChild(wrap);
+      } catch(e) {}
+    }
+
+    function checkOnboarding() {
+      var shown = localStorage.getItem('tb_onboarding_shown');
+      if(shown) return;
+      var firstVisit = localStorage.getItem('tb_first_visit');
+      if(!firstVisit) { localStorage.setItem('tb_first_visit', Date.now()); return; }
+      var daysSince = (Date.now() - parseInt(firstVisit)) / (1000*60*60*24);
+      if(daysSince >= 7) {
+        setTimeout(function(){
+          var el = document.getElementById('onboardingPopup');
+          if(el) el.classList.remove('hidden');
+        }, 3000);
+      }
+    }
+
+    function closeOnboarding() {
+      var el = document.getElementById('onboardingPopup');
+      if(el) el.classList.add('hidden');
+      localStorage.setItem('tb_onboarding_shown', '1');
+    }
+
+    function answerOnboarding(answer) {
+      closeOnboarding();
+      fetch('/api/track', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+          type:'onboarding',
+          user_id: getUserId(),
+          answer: answer,
+          plan: currentPlan ? currentPlan().name : 'free'
+        })
+      }).catch(function(){});
+      if(answer === 'yes') {
+        setTimeout(function(){
+          showToast('¡Excelente! Si querés compartir tu experiencia, escribinos a hola@trendbase.app 🙌', 'success');
+        }, 500);
+      }
+    }
+
+    function showUpgradeToast(msg) {
+      let t=document.getElementById('upgradeToast');
+      if(!t){
+        t=document.createElement('div');
+        t.id='upgradeToast';
+        t.className='fixed bottom-8 left-1/2 -translate-x-1/2 bg-obsidian border border-champagne text-white px-6 py-4 rounded-2xl text-xs font-bold font-mono shadow-2xl z-[9999] flex items-center gap-4';
+        document.body.appendChild(t);
+      }
+      t.innerHTML=msg+'<button onclick="scrollToPlans()" class="bg-champagne text-obsidian px-3 py-1.5 rounded-lg text-[10px] font-extrabold uppercase tracking-wider hover:bg-white transition whitespace-nowrap">Ver planes</button>';
+      t.style.display='flex';
+      clearTimeout(t._to);
+      t._to=setTimeout(()=>t.style.display='none',5000);
+    }
+
+    // Run app engine init
+    init();
+  </script>
+
+</body>
+</html>
