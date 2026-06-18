@@ -18,16 +18,38 @@ document.addEventListener('DOMContentLoaded', () => {
   
   const WEEKS = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'];
 
-  function initDashboard() {
-    // Top KPIs
-    document.getElementById('kpiTotal').textContent = products.length + '+';
+    function initDashboard() {
+    // Calculate KPIs from real data
+    const total = products.length;
+    let avgMargin = 0;
+    let totalHot = 0;
+    let allRegions = new Set();
     
+    products.forEach(p => {
+        avgMargin += p.margin;
+        if (p.score >= 90) totalHot++;
+        if (p.regions) p.regions.forEach(r => allRegions.add(r));
+    });
+    avgMargin = Math.round(avgMargin / total);
+
+    document.getElementById('kpiTotal').textContent = total + '+';
+    // The second card in dashboard is Promedio ROI
+    const roiEl = document.querySelector('div.grid > div:nth-child(3) > div > div.text-3xl');
+    if(roiEl) roiEl.textContent = avgMargin + '%';
+    
+    // The third card is Tendencias Nuevas
+    const tendEl = document.querySelector('div.grid > div:nth-child(4) > div > div.text-3xl');
+    if(tendEl) tendEl.textContent = totalHot;
+
     // Hero Card (Top #1 Product)
     if(products.length > 0) {
       const p1 = products[0];
-      document.getElementById('heroTitle').textContent = p1.name;
-      document.getElementById('heroCat').textContent = p1.cat;
-      document.getElementById('heroScore').textContent = p1.score;
+      const titleEl = document.getElementById('heroTitle');
+      if(titleEl) {
+          titleEl.textContent = p1.name;
+          document.getElementById('heroCat').textContent = p1.cat;
+          document.getElementById('heroScore').textContent = p1.score;
+      }
     }
     
     initCharts();
@@ -90,16 +112,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  window.renderTable = function() {
+    window.renderTable = function() {
     const tbody = document.getElementById('tableBody');
     const start = (currentPage - 1) * PAGE_SIZE;
     const list = products.slice(start, start + PAGE_SIZE);
     
     tbody.innerHTML = list.map((p, i) => {
       const idx = start + i;
-      const isHot = p.score >= 85;
+      const isHot = p.score >= 90;
       const badgeStyle = isHot ? 'bg-pastel-pink text-pink-700' : 'bg-gray-100 text-gray-600';
       
+      const pltsHtml = p.plts.map(plt => `<span class="bg-gray-100 text-gray-500 text-[10px] uppercase font-bold px-2 py-1 rounded mr-1">${plt}</span>`).join('');
+
       return `
         <tr class="border-b border-gray-100 hover:bg-gray-50/50 transition">
           <td class="p-4 pl-6">
@@ -107,16 +131,14 @@ document.addEventListener('DOMContentLoaded', () => {
               <div class="w-10 h-10 rounded-xl bg-gray-100 border border-gray-200 flex items-center justify-center flex-shrink-0">
                 <i data-lucide="image" class="w-4 h-4 text-gray-400"></i>
               </div>
-              <div class="font-bold text-gray-900 leading-tight">${p.name}</div>
+              <div class="font-bold text-gray-900 leading-tight max-w-[200px] truncate" title="${p.name}">${p.name}</div>
             </div>
           </td>
           <td class="p-4 font-mono text-gray-500">${p.cat}</td>
+          <td class="p-4">${pltsHtml}</td>
+          <td class="p-4 font-mono font-bold text-gray-700">${p.price_str}</td>
           <td class="p-4">
             <span class="px-2 py-1 rounded-lg text-xs font-bold ${badgeStyle}">${p.score}</span>
-          </td>
-          <td class="p-4 font-mono font-bold text-green-600">${p.margin}%</td>
-          <td class="p-4">
-            <span class="text-[10px] uppercase font-bold text-gray-500 tracking-wider bg-gray-100 px-2 py-1 rounded-md">${p.comp}</span>
           </td>
           <td class="p-4 pr-6 text-right">
             <button onclick="openProduct(${idx})" class="bg-black hover:bg-gray-800 text-white text-xs font-bold px-4 py-2 rounded-xl transition saas-shadow">Ver Detalle</button>
