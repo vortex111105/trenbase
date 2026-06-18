@@ -513,22 +513,6 @@
         </div>
       </div>
 
-      <!-- Asistente de IA -->
-      <div class="bg-white rounded-[2rem] saas-shadow overflow-hidden flex flex-col mt-6 border border-gray-100">
-        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
-            <span class="text-sm font-extrabold text-gray-900">Asistente IA TrendBase</span>
-          </div>
-          <span class="text-[9px] font-mono text-gray-400 uppercase font-bold tracking-widest bg-gray-200 px-2 py-1 rounded-md">Anthropic Claude Engine</span>
-        </div>
-        
-        <div class="p-6 h-64 overflow-y-auto space-y-4 flex flex-col text-sm bg-white">
-          <div class="bg-gray-100 text-gray-800 p-4 rounded-2xl rounded-tl-sm max-w-[85%] self-start saas-shadow-sm">
-            <p class="font-medium text-xs leading-relaxed">¡Hola! Soy tu asistente de tendencias de TrendBase. ¿Sobre qué producto te gustaría que analicemos su estrategia, estimación de márgenes o canales de reventa en LATAM?</p>
-          </div>
-        </div>
-
       <!-- Oportunidades y Tendencias por región -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
         <div class="bg-white rounded-[2rem] p-6 saas-shadow saas-card-hover space-y-4 border border-gray-100 flex flex-col">
@@ -599,7 +583,6 @@
         <div class="bg-white rounded-[2rem] p-6 saas-shadow saas-card-hover space-y-4 border border-gray-100 flex flex-col items-center justify-center text-center">
           <h3 class="text-xs font-mono text-gray-400 uppercase tracking-widest border-b border-gray-100 pb-2 font-bold w-full text-left">Distribución</h3>
           <div class="relative w-24 h-24 mt-2">
-            <!-- Simulated CSS Pie Chart for Categories -->
             <div class="absolute inset-0 rounded-full border-[12px] border-black" style="clip-path: polygon(50% 50%, 100% 0, 100% 100%, 0 100%, 0 0, 50% 0);"></div>
             <div class="absolute inset-0 rounded-full border-[12px] border-gray-300" style="clip-path: polygon(50% 50%, 50% 0, 100% 0);"></div>
           </div>
@@ -610,13 +593,27 @@
         </div>
       </div>
 
+      <!-- Asistente de IA -->
+      <div class="bg-white rounded-[2rem] saas-shadow overflow-hidden flex flex-col mt-6 border border-gray-100">
+        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
+            <span class="text-sm font-extrabold text-gray-900">Asistente IA TrendBase</span>
+          </div>
+          <span class="text-[9px] font-mono text-gray-400 uppercase font-bold tracking-widest bg-gray-200 px-2 py-1 rounded-md">Anthropic Claude Engine</span>
+        </div>
+        
+        <div id="aiMessages" class="p-6 h-64 overflow-y-auto space-y-4 flex flex-col text-sm bg-white">
+          <div class="bg-gray-100 text-gray-800 p-4 rounded-2xl rounded-tl-sm max-w-[85%] self-start saas-shadow-sm">
+            <p class="font-medium text-xs leading-relaxed">¡Hola! Soy tu asistente de tendencias de TrendBase. ¿Sobre qué producto te gustaría que analicemos su estrategia, estimación de márgenes o canales de reventa en LATAM?</p>
+          </div>
+        </div>
 
         <div class="px-6 py-4 border-t border-gray-100 flex gap-3 items-center bg-gray-50">
-          <input type="text" placeholder="Pregúntame sobre estrategias de venta..." class="flex-1 bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-gray-400 transition saas-shadow-sm">
-          <button class="bg-black text-white px-6 py-3 rounded-xl text-xs font-extrabold uppercase tracking-wider saas-shadow hover:-translate-y-0.5 transition flex items-center gap-2">Enviar <i data-lucide="send" class="w-4 h-4"></i></button>
+          <input type="text" id="aiInput" placeholder="Pregúntame sobre estrategias de venta..." class="flex-1 bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-gray-400 transition saas-shadow-sm" onkeydown="if(event.key==='Enter')askAI()">
+          <button id="aiSend" onclick="askAI()" class="bg-black text-white px-6 py-3 rounded-xl text-xs font-extrabold uppercase tracking-wider saas-shadow hover:-translate-y-0.5 transition flex items-center gap-2">Enviar <i data-lucide="send" class="w-4 h-4"></i></button>
         </div>
       </div>
-
     </section>
 
     <!-- ALERTAS SECTION -->
@@ -629,7 +626,7 @@
       </div>
       
       <div class="flex justify-between items-center mb-6">
-        <button class="text-xs text-gray-500 font-bold uppercase tracking-wider hover:text-gray-900 transition flex items-center gap-2"><i data-lucide="check-check" class="w-4 h-4"></i> Marcar todas como leídas</button>
+        <button onclick="markAllRead()" class="text-xs text-gray-500 font-bold uppercase tracking-wider hover:text-gray-900 transition flex items-center gap-2"><i data-lucide="check-check" class="w-4 h-4"></i> Marcar todas como leídas</button>
       </div>
       <div class="bg-white rounded-[2rem] saas-shadow overflow-hidden divide-y divide-gray-100 border border-gray-100">
         <!-- Alerta 1 -->
@@ -679,7 +676,7 @@
       </div>
       
       <div class="flex justify-between items-center mb-6">
-        <button class="text-xs text-gray-500 font-bold uppercase tracking-wider hover:text-gray-900 transition flex items-center gap-2"><i data-lucide="check-check" class="w-4 h-4"></i> Marcar todas como leídas</button>
+        <button onclick="markAllRead()" class="text-xs text-gray-500 font-bold uppercase tracking-wider hover:text-gray-900 transition flex items-center gap-2"><i data-lucide="check-check" class="w-4 h-4"></i> Marcar todas como leídas</button>
       </div>
       <div class="bg-white rounded-[2rem] saas-shadow overflow-hidden divide-y divide-gray-100 border border-gray-100">
         <!-- Alerta 1 -->
@@ -754,7 +751,7 @@
           <h2 class="text-2xl font-extrabold text-gray-900 tracking-tight">Mi Negocio</h2>
           <p class="text-xs text-gray-500 mt-1">Registra tus ventas y sube de nivel</p>
         </div>
-        <button class="bg-black text-white px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider saas-shadow hover:-translate-y-0.5 transition flex items-center gap-2"><i data-lucide="plus" class="w-4 h-4"></i> Cargar Producto</button>
+        <button onclick="showAddProductModal()" class="bg-black text-white px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider saas-shadow hover:-translate-y-0.5 transition flex items-center gap-2"><i data-lucide="plus" class="w-4 h-4"></i> Cargar Producto</button>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Quick Stats / Leaderboard preview -->
@@ -765,6 +762,8 @@
             <span class="text-3xl">🔥</span>
             <div class="absolute -bottom-2 bg-black text-white text-[10px] font-bold px-2 py-0.5 rounded-full">NIVEL 1</div>
           </div>
+        </div>
+      </div>
         <div class="bg-white rounded-[2rem] p-6 saas-shadow saas-card-hover flex flex-col justify-center items-center text-center">
           <div class="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mb-4 border border-green-100">
             <i data-lucide="plus" class="w-8 h-8 text-green-500"></i>

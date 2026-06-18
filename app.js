@@ -394,3 +394,107 @@ document.addEventListener('DOMContentLoaded', () => {
   
   initDashboard();
 });
+
+
+// --- ROI CALCULATOR LOGIC ---
+function calcROISliders() {
+  const cost = parseFloat(document.getElementById('calcCost').value) || 0;
+  const ads = parseFloat(document.getElementById('calcAds').value) || 0;
+  const price = parseFloat(document.getElementById('calcPrice').value) || 0;
+  
+  document.getElementById('calcCostVal').textContent = '$' + cost.toFixed(2);
+  document.getElementById('calcAdsVal').textContent = '$' + ads.toFixed(2);
+  document.getElementById('calcPriceVal').textContent = '$' + price.toFixed(2);
+  
+  const profit = price - (cost + ads);
+  const margin = price > 0 ? (profit / price) * 100 : 0;
+  
+  let resultHTML = '';
+  if (profit > 0) {
+    resultHTML = `
+      <div class="col-span-1">
+        <div class="text-[10px] text-gray-500 font-bold uppercase">Ganancia Neta</div>
+        <div class="text-xl font-black text-green-500">+$${profit.toFixed(2)}</div>
+      </div>
+      <div class="col-span-1 text-right">
+        <div class="text-[10px] text-gray-500 font-bold uppercase">Margen</div>
+        <div class="text-xl font-black text-green-500">${margin.toFixed(0)}%</div>
+      </div>
+    `;
+  } else {
+    resultHTML = `
+      <div class="col-span-2">
+        <div class="text-[10px] text-gray-500 font-bold uppercase text-center">Pérdida Estimada</div>
+        <div class="text-xl font-black text-red-500 text-center">-$${Math.abs(profit).toFixed(2)}</div>
+      </div>
+    `;
+  }
+  document.getElementById('calcResult').innerHTML = resultHTML;
+}
+
+// Initial calc
+setTimeout(() => {
+    if(document.getElementById('calcCost')) calcROISliders();
+}, 500);
+
+// --- AI ASSISTANT LOGIC ---
+function askAI() {
+  const input = document.getElementById('aiInput');
+  const msgs = document.getElementById('aiMessages');
+  if(!input || !msgs || input.value.trim() === '') return;
+  
+  const text = input.value.trim();
+  
+  // User message
+  msgs.innerHTML += `
+    <div class="bg-black text-white p-4 rounded-2xl rounded-tr-sm max-w-[85%] self-end saas-shadow-sm mt-4">
+      <p class="font-medium text-xs leading-relaxed">${text}</p>
+    </div>
+  `;
+  
+  input.value = '';
+  msgs.scrollTop = msgs.scrollHeight;
+  
+  // Fake typing
+  const typingId = 'typing-' + Date.now();
+  msgs.innerHTML += `
+    <div id="${typingId}" class="bg-gray-100 text-gray-500 p-4 rounded-2xl rounded-tl-sm max-w-[85%] self-start saas-shadow-sm mt-4 flex items-center gap-2">
+      <span class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></span>
+      <span class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></span>
+      <span class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.4s"></span>
+    </div>
+  `;
+  msgs.scrollTop = msgs.scrollHeight;
+  
+  setTimeout(() => {
+    document.getElementById(typingId).remove();
+    msgs.innerHTML += `
+      <div class="bg-gray-100 text-gray-800 p-4 rounded-2xl rounded-tl-sm max-w-[85%] self-start saas-shadow-sm mt-4">
+        <p class="font-medium text-xs leading-relaxed">Según mis datos, ese producto tiene una alta estacionalidad. Te recomendaría preparar creativos enfocados en el ángulo de "regalo ideal" y apuntar a audiencias de 25-34 años en TikTok Ads. El CPA estimado rondará los $4.50.</p>
+      </div>
+    `;
+    msgs.scrollTop = msgs.scrollHeight;
+  }, 2000);
+}
+
+// --- ALERTS LOGIC ---
+function markAllRead() {
+  const sec = document.getElementById('sec-alertas');
+  if(!sec) return;
+  const badges = sec.querySelectorAll('.bg-red-500, .bg-orange-500, .bg-blue-500, .animate-pulse');
+  badges.forEach(b => {
+    b.classList.remove('bg-red-500', 'bg-orange-500', 'bg-blue-500', 'animate-pulse');
+    b.classList.add('bg-gray-300');
+  });
+  const textAlerts = sec.querySelectorAll('.text-red-500, .text-orange-500, .text-blue-500');
+  textAlerts.forEach(t => {
+    t.classList.remove('text-red-500', 'text-orange-500', 'text-blue-500');
+    t.classList.add('text-gray-400');
+  });
+  alert('Todas las alertas marcadas como leídas.');
+}
+
+// --- NEGOCIO MODAL ---
+function showAddProductModal() {
+  alert('Aquí se abriría el modal para registrar una nueva venta o cargar producto. (Funcionalidad Simulada)');
+}
