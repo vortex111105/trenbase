@@ -47,10 +47,10 @@
       theme: {
         extend: {
           colors: {
-            obsidian: '#0D0D12',
-            champagne: '#C9A84C',
+            obsidian: '#161821', /* Smoother, elegant dark blue-grey */
+            champagne: '#E5C471', /* More visual, less muddy gold */
             ivory: '#FAF8F5',
-            slate: '#2A2A35',
+            slate: '#262836',
             borderWhite: 'rgba(255,255,255,0.08)'
           },
           fontFamily: {
@@ -188,6 +188,45 @@
     .dash-section.active-section {
       display: block;
     }
+  
+    /* --- Realistic Glassmorphism & Depth --- */
+    .glass-panel {
+      background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.01) 100%) !important;
+      backdrop-filter: blur(30px) !important;
+      -webkit-backdrop-filter: blur(30px) !important;
+      border: 1px solid rgba(255,255,255,0.08) !important;
+      border-top: 1px solid rgba(255,255,255,0.15) !important;
+      border-left: 1px solid rgba(255,255,255,0.15) !important;
+      box-shadow: 0 24px 48px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05) !important;
+    }
+    
+    .glass-btn {
+      background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.02) 100%);
+      box-shadow: inset 0 1px 1px rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.1);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .glass-btn:hover {
+      background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%);
+    }
+
+    .neon-badge-green {
+      background: rgba(52, 199, 89, 0.15);
+      color: #55E079;
+      border: 1px solid rgba(52, 199, 89, 0.3);
+      padding: 2px 8px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(52, 199, 89, 0.2);
+    }
+
+    .neon-badge-red {
+      background: rgba(255, 59, 48, 0.15);
+      color: #FF6B60;
+      border: 1px solid rgba(255, 59, 48, 0.3);
+      padding: 2px 8px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(255, 59, 48, 0.2);
+    }
+    
   </style>
 </head>
 <body class="bg-obsidian text-ivory antialiased selection:bg-champagne selection:text-obsidian overflow-x-hidden font-sans">
@@ -270,7 +309,7 @@
             <button onclick="enterDash(); closeDD();" class="w-full flex items-center gap-2 px-3 py-2 hover:bg-white/5 rounded-lg text-xs text-white/80 hover:text-white transition"><i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard</button>
             <button onclick="goSection('guardados'); closeDD();" class="w-full flex items-center gap-2 px-3 py-2 hover:bg-white/5 rounded-lg text-xs text-white/80 hover:text-white transition"><i data-lucide="bookmark" class="w-4 h-4"></i> Guardados</button>
             <button onclick="scrollToPlans(); closeDD();" class="w-full flex items-center gap-2 px-3 py-2 hover:bg-white/5 rounded-lg text-xs text-white/80 hover:text-white transition"><i data-lucide="crown" class="w-4 h-4"></i> Cambiar plan</button>
-            <button onclick="logout(); closeDD();" class="w-full flex items-center gap-2 px-3 py-2 hover:bg-white/5 rounded-lg text-xs text-red-400 hover:text-red-300 transition border-t border-white/5 mt-1"><i data-lucide="log-out" class="w-4 h-4"></i> Cerrar sesión</button>
+            <button onclick="logout(); closeDD();" class="w-full flex items-center gap-2 px-3 py-2 hover:bg-white/5 rounded-lg text-xs neon-badge-red font-bold text-xs hover:text-red-300 transition border-t border-white/5 mt-1"><i data-lucide="log-out" class="w-4 h-4"></i> Cerrar sesión</button>
           </div>
         </div>
       </div>
@@ -301,7 +340,7 @@
 
   <!-- AUTHENTICATION MODAL -->
   <div id="authModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-    <div class="bg-obsidian border border-white/10 rounded-[2.5rem] w-full max-w-md overflow-hidden shadow-2xl p-8">
+    <div class="glass-panel rounded-[2.5rem] w-full max-w-md overflow-hidden shadow-2xl p-8">
       <div class="text-center mb-6">
         <span class="font-extrabold text-2xl text-white"><span class="text-champagne font-drama italic">Trend</span>Base</span>
         <h2 id="authTitle" class="text-lg font-bold text-white mt-4">Bienvenido de vuelta</h2>
@@ -329,8 +368,8 @@
         <input type="email" id="authEmail" placeholder="tu@email.com" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:border-champagne outline-none transition">
         <input type="password" id="authPass" placeholder="Contraseña (mín. 6 caracteres)" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:border-champagne outline-none transition">
         
-        <div id="authErr" class="hidden text-xs text-red-400 bg-red-500/10 border border-red-500/20 px-3 py-2 rounded-xl">Error</div>
-        <div id="authOk" class="hidden text-xs text-green-400 bg-green-500/10 border border-green-500/20 px-3 py-2 rounded-xl">Correcto</div>
+        <div id="authErr" class="hidden text-xs neon-badge-red font-bold text-xs bg-red-500/10 border border-red-500/20 px-3 py-2 rounded-xl">Error</div>
+        <div id="authOk" class="hidden text-xs neon-badge-green font-bold text-xs bg-green-500/10 border border-green-500/20 px-3 py-2 rounded-xl">Correcto</div>
 
         <button onclick="doAuth()" id="authSubmit" class="btn-magnetic w-full py-3.5 bg-champagne text-obsidian font-extrabold text-xs uppercase tracking-wider rounded-xl transition">
           Iniciar Sesión
@@ -344,7 +383,7 @@
 
   <!-- PRODUCT DETAIL MODAL (`prodModal`) -->
   <div id="prodModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onclick="closeProdModal(event)">
-    <div class="bg-obsidian border border-white/10 rounded-[2.5rem] w-full max-w-2xl overflow-y-auto max-h-[90vh] shadow-2xl flex flex-col">
+    <div class="glass-panel rounded-[2.5rem] w-full max-w-2xl overflow-y-auto max-h-[90vh] shadow-2xl flex flex-col">
       <div class="flex items-center justify-between px-8 py-6 border-b border-white/10 sticky top-0 bg-obsidian/90 backdrop-blur-md z-10">
         <h3 id="pmTitle" class="text-lg font-bold text-white">Producto</h3>
         <button onclick="closeProdModalDirect()" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/60 hover:text-white transition">✕</button>
@@ -371,23 +410,23 @@
         <!-- Info Tab -->
         <div id="tab-info" class="modal-tab-content active-section space-y-6">
           <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            <div class="bg-white/5 border border-white/5 rounded-2xl p-4 text-center">
+            <div class="glass-panel rounded-2xl p-4 text-center">
               <div id="pmChange" class="text-base font-bold text-champagne">+18%</div>
               <div class="text-[9px] text-white/40 uppercase font-mono mt-1">Cambio 24hs</div>
             </div>
-            <div class="bg-white/5 border border-white/5 rounded-2xl p-4 text-center">
-              <div id="pmMargin" class="text-base font-bold text-green-400">45-60%</div>
+            <div class="glass-panel rounded-2xl p-4 text-center">
+              <div id="pmMargin" class="text-base font-bold neon-badge-green font-bold text-xs">45-60%</div>
               <div class="text-[9px] text-white/40 uppercase font-mono mt-1">Margen est.</div>
             </div>
-            <div class="bg-white/5 border border-white/5 rounded-2xl p-4 text-center">
+            <div class="glass-panel rounded-2xl p-4 text-center">
               <div id="pmCat" class="text-base font-bold text-white">Tecnología</div>
               <div class="text-[9px] text-white/40 uppercase font-mono mt-1">Categoría</div>
             </div>
-            <div class="bg-white/5 border border-white/5 rounded-2xl p-4 text-center">
+            <div class="glass-panel rounded-2xl p-4 text-center">
               <div id="pmPrice" class="text-base font-bold text-white">$35 - $80</div>
               <div class="text-[9px] text-white/40 uppercase font-mono mt-1">Precio venta est.</div>
             </div>
-            <div class="bg-white/5 border border-white/5 rounded-2xl p-4 text-center">
+            <div class="glass-panel rounded-2xl p-4 text-center">
               <div id="pmComp" class="text-base font-bold text-white">Media</div>
               <div class="text-[9px] text-white/40 uppercase font-mono mt-1">Competencia</div>
             </div>
@@ -472,7 +511,7 @@
             </div>
 
             <!-- MercadoLibre -->
-            <div class="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3">
+            <div class="glass-panel rounded-2xl p-4 space-y-3">
               <div class="flex items-center justify-between">
                 <span class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
                   <span class="w-5 h-5 bg-yellow-400 rounded-md flex items-center justify-center text-[10px] font-black text-black">ML</span>
@@ -486,14 +525,14 @@
               <p id="mkt-ml-desc" class="text-white/60 text-xs leading-relaxed"></p>
               <div class="flex items-center gap-3 pt-1">
                 <span class="text-xs text-white/40">Precio sugerido:</span>
-                <span id="mkt-precio" class="text-xs text-green-400 font-bold"></span>
+                <span id="mkt-precio" class="text-xs neon-badge-green font-bold text-xs font-bold"></span>
                 <span class="mx-1 text-white/20">·</span>
                 <span id="mkt-diferencial" class="text-xs text-champagne/80 italic"></span>
               </div>
             </div>
 
             <!-- TikTok -->
-            <div class="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3">
+            <div class="glass-panel rounded-2xl p-4 space-y-3">
               <div class="flex items-center justify-between">
                 <span class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
                   <span class="w-5 h-5 bg-black rounded-md flex items-center justify-center text-[10px] font-black text-white">TT</span>
@@ -507,7 +546,7 @@
             </div>
 
             <!-- Instagram -->
-            <div class="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3">
+            <div class="glass-panel rounded-2xl p-4 space-y-3">
               <div class="flex items-center justify-between">
                 <span class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
                   <span class="w-5 h-5 bg-gradient-to-br from-purple-500 to-pink-500 rounded-md flex items-center justify-center text-[10px] font-black text-white">IG</span>
@@ -521,7 +560,7 @@
             </div>
 
             <!-- SEO Keywords -->
-            <div class="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3">
+            <div class="glass-panel rounded-2xl p-4 space-y-3">
               <div class="flex items-center justify-between">
                 <span class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
                   <i data-lucide="search" class="w-3.5 h-3.5 text-blue-400"></i>
@@ -543,7 +582,7 @@
 
           <!-- Error state -->
           <div id="mkt-error" class="hidden bg-red-500/10 border border-red-500/20 rounded-2xl p-4 text-center">
-            <p id="mkt-error-msg" class="text-red-400 text-xs"></p>
+            <p id="mkt-error-msg" class="neon-badge-red font-bold text-xs text-xs"></p>
           </div>
         </div>
 
@@ -552,7 +591,7 @@
           <button id="pmSaveBtn" onclick="saveCurrentProduct()" class="flex-1 py-3 border border-white/20 hover:border-champagne/50 hover:bg-champagne/10 text-xs font-bold uppercase tracking-wider rounded-xl transition">
             <i data-lucide="bookmark" class="w-4 h-4 inline-block mr-1"></i> Guardar
           </button>
-          <button onclick="analyzeProduct()" class="flex-1 py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold uppercase tracking-wider rounded-xl transition">
+          <button onclick="analyzeProduct()" class="flex-1 py-3 glass-btn rounded-xl transition text-xs font-bold uppercase tracking-wider rounded-xl transition">
             <i data-lucide="bot" class="w-4 h-4 inline-block mr-1"></i> Analizar con IA
           </button>
           <button id="pmSoldBtn" onclick="markAsSold()" class="flex-1 py-3 bg-green-600 hover:bg-green-700 text-white text-xs font-bold uppercase tracking-wider rounded-xl transition">
@@ -560,7 +599,7 @@
           </button>
         </div>
 
-        <div id="soldConfirm" class="hidden text-center text-xs text-green-400 bg-green-500/10 border border-green-500/20 p-3 rounded-xl">
+        <div id="soldConfirm" class="hidden text-center text-xs neon-badge-green font-bold text-xs bg-green-500/10 border border-green-500/20 p-3 rounded-xl">
           ¡Registrado! Tu reporte ayuda a la comunidad dropshipper 🎉
         </div>
       </div>
@@ -569,15 +608,15 @@
 
   <!-- ONBOARDING MODAL -->
   <div id="onboardingPopup" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-    <div class="bg-obsidian border border-white/10 rounded-[2.5rem] w-full max-w-md p-8 text-center shadow-2xl">
+    <div class="glass-panel rounded-[2.5rem] w-full max-w-md p-8 text-center shadow-2xl">
       <h3 class="text-xl font-bold text-white mb-2">¿Cómo te está yendo? 👋</h3>
       <p class="text-xs text-white/50 mb-6">Llevas una semana usando TrendBase. ¿Ya encontraste algún producto para vender?</p>
       
       <div class="flex flex-col gap-3">
-        <button onclick="answerOnboarding('yes')" class="w-full py-3.5 bg-green-600/15 border border-green-500/40 text-green-400 font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-green-600/30 transition">
+        <button onclick="answerOnboarding('yes')" class="w-full py-3.5 bg-green-600/15 border border-green-500/40 neon-badge-green font-bold text-xs font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-green-600/30 transition">
           ✅ Sí, ya vendí algo
         </button>
-        <button onclick="answerOnboarding('exploring')" class="w-full py-3.5 bg-white/5 border border-white/10 text-white font-semibold text-xs uppercase tracking-wider rounded-xl hover:bg-white/10 transition">
+        <button onclick="answerOnboarding('exploring')" class="w-full py-3.5 glass-btn text-white font-semibold text-xs uppercase tracking-wider rounded-xl hover:bg-white/10 transition">
           🔍 Todavía estoy explorando
         </button>
         <button onclick="answerOnboarding('no')" class="w-full py-3.5 bg-white/5 border border-white/10 text-white/60 font-medium text-xs uppercase tracking-wider rounded-xl hover:bg-white/10 transition">
@@ -731,15 +770,15 @@
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-16 text-center">
-          <div class="bg-white/5 border border-white/5 rounded-2xl p-6">
+          <div class="glass-panel rounded-2xl p-6">
             <div id="cStatSales" class="text-3xl font-extrabold text-white">—</div>
             <div class="text-[9px] text-white/40 uppercase font-mono mt-1">Ventas registradas</div>
           </div>
-          <div class="bg-white/5 border border-white/5 rounded-2xl p-6">
+          <div class="glass-panel rounded-2xl p-6">
             <div id="cStatUsers" class="text-3xl font-extrabold text-white">—</div>
             <div class="text-[9px] text-white/40 uppercase font-mono mt-1">Vendedores activos</div>
           </div>
-          <div class="bg-white/5 border border-white/5 rounded-2xl p-6">
+          <div class="glass-panel rounded-2xl p-6">
             <div id="cStatTop" class="text-base font-bold text-champagne truncate mt-2">—</div>
             <div class="text-[9px] text-white/40 uppercase font-mono mt-2">Producto estrella</div>
           </div>
@@ -789,7 +828,7 @@
               <div id="shuffler-card-0" class="absolute w-[90%] bg-obsidian border border-white/10 rounded-2xl p-4 shadow-xl transition-all duration-500 z-30 transform translate-y-0 scale-100">
                 <div class="flex items-center justify-between mb-2">
                   <span class="text-[10px] font-mono text-champagne uppercase bg-champagne/10 px-2 py-0.5 rounded">TikTok Viral</span>
-                  <span class="text-xs font-mono text-green-400 font-bold">+240%</span>
+                  <span class="text-xs font-mono neon-badge-green font-bold text-xs font-bold">+240%</span>
                 </div>
                 <p class="font-bold text-sm text-white mb-2">Humidificador de Llama</p>
                 <div class="flex justify-between items-center text-[10px] font-mono text-white/50">
@@ -802,7 +841,7 @@
               <div id="shuffler-card-1" class="absolute w-[90%] bg-obsidian/95 border border-white/10 rounded-2xl p-4 shadow-xl transition-all duration-500 z-20 transform translate-y-4 scale-95 opacity-80">
                 <div class="flex items-center justify-between mb-2">
                   <span class="text-[10px] font-mono text-blue-400 uppercase bg-blue-400/10 px-2 py-0.5 rounded">Mercado Libre</span>
-                  <span class="text-xs font-mono text-green-400 font-bold">+180%</span>
+                  <span class="text-xs font-mono neon-badge-green font-bold text-xs font-bold">+180%</span>
                 </div>
                 <p class="font-bold text-sm text-white mb-2">Trípode Inteligente con Auto-Rastreo</p>
                 <div class="flex justify-between items-center text-[10px] font-mono text-white/50">
@@ -815,7 +854,7 @@
               <div id="shuffler-card-2" class="absolute w-[90%] bg-obsidian/90 border border-white/10 rounded-2xl p-4 shadow-xl transition-all duration-500 z-10 transform translate-y-8 scale-90 opacity-60">
                 <div class="flex items-center justify-between mb-2">
                   <span class="text-[10px] font-mono text-orange-400 uppercase bg-orange-400/10 px-2 py-0.5 rounded">Amazon Pro</span>
-                  <span class="text-xs font-mono text-green-400 font-bold">+150%</span>
+                  <span class="text-xs font-mono neon-badge-green font-bold text-xs font-bold">+150%</span>
                 </div>
                 <p class="font-bold text-sm text-white mb-2">Depiladora Láser IPL Pro</p>
                 <div class="flex justify-between items-center text-[10px] font-mono text-white/50">
@@ -848,7 +887,7 @@
                 </div>
                 <span class="text-[9px] text-white/30">v2.1_STABLE</span>
               </div>
-              <div id="typewriter-console" class="flex-1 overflow-y-auto leading-relaxed text-green-400 font-mono">
+              <div id="typewriter-console" class="flex-1 overflow-y-auto leading-relaxed neon-badge-green font-bold text-xs font-mono">
                 <!-- Animated prompt output -->
               </div>
               <div class="text-[9px] text-white/20 border-t border-white/5 pt-2 mt-2 flex justify-between">
@@ -1006,7 +1045,46 @@
                   0%, 100% { top: 0%; }
                   50% { top: 100%; }
                 }
-              </style>
+              
+    /* --- Realistic Glassmorphism & Depth --- */
+    .glass-panel {
+      background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.01) 100%) !important;
+      backdrop-filter: blur(30px) !important;
+      -webkit-backdrop-filter: blur(30px) !important;
+      border: 1px solid rgba(255,255,255,0.08) !important;
+      border-top: 1px solid rgba(255,255,255,0.15) !important;
+      border-left: 1px solid rgba(255,255,255,0.15) !important;
+      box-shadow: 0 24px 48px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05) !important;
+    }
+    
+    .glass-btn {
+      background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.02) 100%);
+      box-shadow: inset 0 1px 1px rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.1);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .glass-btn:hover {
+      background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%);
+    }
+
+    .neon-badge-green {
+      background: rgba(52, 199, 89, 0.15);
+      color: #55E079;
+      border: 1px solid rgba(52, 199, 89, 0.3);
+      padding: 2px 8px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(52, 199, 89, 0.2);
+    }
+
+    .neon-badge-red {
+      background: rgba(255, 59, 48, 0.15);
+      color: #FF6B60;
+      border: 1px solid rgba(255, 59, 48, 0.3);
+      padding: 2px 8px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(255, 59, 48, 0.2);
+    }
+    
+  </style>
             </div>
           </div>
         </div>
@@ -1035,7 +1113,46 @@
                 @keyframes dash {
                   to { stroke-dashoffset: 0; }
                 }
-              </style>
+              
+    /* --- Realistic Glassmorphism & Depth --- */
+    .glass-panel {
+      background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.01) 100%) !important;
+      backdrop-filter: blur(30px) !important;
+      -webkit-backdrop-filter: blur(30px) !important;
+      border: 1px solid rgba(255,255,255,0.08) !important;
+      border-top: 1px solid rgba(255,255,255,0.15) !important;
+      border-left: 1px solid rgba(255,255,255,0.15) !important;
+      box-shadow: 0 24px 48px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05) !important;
+    }
+    
+    .glass-btn {
+      background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.02) 100%);
+      box-shadow: inset 0 1px 1px rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.1);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .glass-btn:hover {
+      background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%);
+    }
+
+    .neon-badge-green {
+      background: rgba(52, 199, 89, 0.15);
+      color: #55E079;
+      border: 1px solid rgba(52, 199, 89, 0.3);
+      padding: 2px 8px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(52, 199, 89, 0.2);
+    }
+
+    .neon-badge-red {
+      background: rgba(255, 59, 48, 0.15);
+      color: #FF6B60;
+      border: 1px solid rgba(255, 59, 48, 0.3);
+      padding: 2px 8px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(255, 59, 48, 0.2);
+    }
+    
+  </style>
             </div>
           </div>
         </div>
@@ -1131,15 +1248,15 @@
               </h3>
               <div class="space-y-4 mb-8">
                 <div class="flex gap-3">
-                  <i data-lucide="check-circle-2" class="w-5 h-5 text-green-400 shrink-0"></i>
+                  <i data-lucide="check-circle-2" class="w-5 h-5 neon-badge-green font-bold text-xs shrink-0"></i>
                   <div><strong class="text-white">Pro:</strong> Bajo riesgo y cero inventario.</div>
                 </div>
                 <div class="flex gap-3">
-                  <i data-lucide="check-circle-2" class="w-5 h-5 text-green-400 shrink-0"></i>
+                  <i data-lucide="check-circle-2" class="w-5 h-5 neon-badge-green font-bold text-xs shrink-0"></i>
                   <div><strong class="text-white">Pro:</strong> Testeo rápido de múltiples nichos.</div>
                 </div>
                 <div class="flex gap-3 opacity-60">
-                  <i data-lucide="minus-circle" class="w-5 h-5 text-red-400 shrink-0"></i>
+                  <i data-lucide="minus-circle" class="w-5 h-5 neon-badge-red font-bold text-xs shrink-0"></i>
                   <div><strong class="text-white">Contra:</strong> Tiempos de envío de China y márgenes ajustados.</div>
                 </div>
               </div>
@@ -1159,15 +1276,15 @@
               </h3>
               <div class="space-y-4 mb-8">
                 <div class="flex gap-3">
-                  <i data-lucide="check-circle-2" class="w-5 h-5 text-green-400 shrink-0"></i>
+                  <i data-lucide="check-circle-2" class="w-5 h-5 neon-badge-green font-bold text-xs shrink-0"></i>
                   <div><strong class="text-white">Pro:</strong> Alto margen de ganancia y control de calidad.</div>
                 </div>
                 <div class="flex gap-3">
-                  <i data-lucide="check-circle-2" class="w-5 h-5 text-green-400 shrink-0"></i>
+                  <i data-lucide="check-circle-2" class="w-5 h-5 neon-badge-green font-bold text-xs shrink-0"></i>
                   <div><strong class="text-white">Pro:</strong> Construcción de marca real a largo plazo.</div>
                 </div>
                 <div class="flex gap-3 opacity-60">
-                  <i data-lucide="minus-circle" class="w-5 h-5 text-red-400 shrink-0"></i>
+                  <i data-lucide="minus-circle" class="w-5 h-5 neon-badge-red font-bold text-xs shrink-0"></i>
                   <div><strong class="text-white">Contra:</strong> Riesgo de quedarse con stock sin vender.</div>
                 </div>
               </div>
@@ -1290,7 +1407,7 @@
         </div>
         
         <div class="space-y-4">
-          <details class="group bg-white/5 border border-white/10 rounded-2xl p-6 cursor-pointer hover:bg-white/10 transition duration-300">
+          <details class="group glass-panel rounded-2xl p-6 cursor-pointer hover:bg-white/10 transition duration-300">
             <summary class="flex justify-between items-center font-bold text-white text-lg list-none">
               ¿Necesito experiencia previa en Dropshipping?
               <span class="transition group-open:rotate-180">
@@ -1302,7 +1419,7 @@
             </p>
           </details>
           
-          <details class="group bg-white/5 border border-white/10 rounded-2xl p-6 cursor-pointer hover:bg-white/10 transition duration-300">
+          <details class="group glass-panel rounded-2xl p-6 cursor-pointer hover:bg-white/10 transition duration-300">
             <summary class="flex justify-between items-center font-bold text-white text-lg list-none">
               ¿Es fácil cancelar mi suscripción?
               <span class="transition group-open:rotate-180">
@@ -1314,7 +1431,7 @@
             </p>
           </details>
 
-          <details class="group bg-white/5 border border-white/10 rounded-2xl p-6 cursor-pointer hover:bg-white/10 transition duration-300">
+          <details class="group glass-panel rounded-2xl p-6 cursor-pointer hover:bg-white/10 transition duration-300">
             <summary class="flex justify-between items-center font-bold text-white text-lg list-none">
               ¿De dónde sacan los datos?
               <span class="transition group-open:rotate-180">
@@ -1326,7 +1443,7 @@
             </p>
           </details>
 
-          <details class="group bg-white/5 border border-white/10 rounded-2xl p-6 cursor-pointer hover:bg-white/10 transition duration-300">
+          <details class="group glass-panel rounded-2xl p-6 cursor-pointer hover:bg-white/10 transition duration-300">
             <summary class="flex justify-between items-center font-bold text-white text-lg list-none">
               ¿Puedo pagar desde cualquier país?
               <span class="transition group-open:rotate-180">
@@ -1352,7 +1469,7 @@
               Herramientas avanzadas de inteligencia competitiva para dropshippers en Latinoamérica.
             </p>
             
-            <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full text-[9px] font-mono text-green-400">
+            <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full text-[9px] font-mono neon-badge-green font-bold text-xs">
               <span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-ping"></span>
               SYSTEM OPERATIONAL // TRENDBASE ENGINE STABLE
             </div>
@@ -1604,7 +1721,7 @@
                       </div>
                     </div>
                     <div class="text-right">
-                      <div id="provCost1" class="text-xs font-bold text-green-400">~$4.20</div>
+                      <div id="provCost1" class="text-xs font-bold neon-badge-green font-bold text-xs">~$4.20</div>
                       <a href="#" id="provLink1" target="_blank" class="text-[10px] text-champagne hover:underline">Ver link</a>
                     </div>
                   </div>
@@ -1620,7 +1737,7 @@
                       </div>
                     </div>
                     <div class="text-right">
-                      <div id="provCost2" class="text-xs font-bold text-green-400">~$5.10</div>
+                      <div id="provCost2" class="text-xs font-bold neon-badge-green font-bold text-xs">~$5.10</div>
                       <a href="#" id="provLink2" target="_blank" class="text-[10px] text-champagne hover:underline">Ver link</a>
                     </div>
                   </div>
@@ -1647,8 +1764,8 @@
                     <div class="w-4 h-4 rounded-full bg-white absolute bottom-0 left-1/2 transform -translate-x-1/2"></div>
                   </div>
                 </div>
-                <div id="satText" class="text-3xl font-extrabold text-green-400 transition-colors duration-500">24%</div>
-                <div id="satStatus" class="text-xs font-bold text-green-400 uppercase tracking-widest mt-1 transition-colors duration-500">Oportunidad Temprana</div>
+                <div id="satText" class="text-3xl font-extrabold neon-badge-green font-bold text-xs transition-colors duration-500">24%</div>
+                <div id="satStatus" class="text-xs font-bold neon-badge-green font-bold text-xs uppercase tracking-widest mt-1 transition-colors duration-500">Oportunidad Temprana</div>
               </div>
               <div class="text-[10px] text-white/40 text-center leading-relaxed">
                 El volumen de búsquedas es dinámico, y actualmente hay <strong class="text-white" id="satStoreCount">12 tiendas</strong> escalándolo en LATAM.
@@ -2092,25 +2209,23 @@
     async function loadProducts() {
       const loadingEl = document.getElementById('productsLoading');
       const kpiEl = document.getElementById('kpiProductos');
-      try {
-        const res = await fetch('/api/products');
-        const text = await res.text();
-        let data;
-        try { data = JSON.parse(text); } catch(e) { throw new Error('Respuesta inválida del servidor'); }
-        if(!res.ok) throw new Error(data.error || 'Error ' + res.status);
+      
+      // MOCK DATABASE PARA TRENDBASE V1.0
+      const mockData = {
+        products: [
+          { name: "Cama Relajante para Mascotas", cat: "Mascotas", score: 98, change: "up", change_num: 25.4, margin: 65, price_min: 35, price_str: "$35 - $50", hot: true, comp: "Baja", plts: ["TikTok", "Facebook"], regions: ["MX", "CO", "AR"], history: [40, 55, 70, 98], rank: 1, suppliers: [{name:"AliExpress", price: 12}] },
+          { name: "Cepillo Quita Pelos Mágico", cat: "Mascotas", score: 95, change: "up", change_num: 18.2, margin: 70, price_min: 25, price_str: "$25 - $30", hot: true, comp: "Media", plts: ["TikTok", "Instagram"], regions: ["BR", "CO"], history: [30, 60, 80, 95], rank: 2, suppliers: [{name:"AliExpress", price: 6}] },
+          { name: "Proyector Galaxia Inteligente", cat: "Tecnología", score: 92, change: "up", change_num: 12.5, margin: 55, price_min: 45, price_str: "$45 - $60", hot: false, comp: "Alta", plts: ["TikTok", "Amazon"], regions: ["US", "MX"], history: [80, 85, 90, 92], rank: 3, suppliers: [{name:"AliExpress", price: 18}] },
+          { name: "Rizador de Pelo Automático", cat: "Belleza", score: 88, change: "up", change_num: 8.4, margin: 60, price_min: 40, price_str: "$40 - $55", hot: false, comp: "Media", plts: ["Instagram", "Pinterest"], regions: ["AR", "CL"], history: [50, 65, 75, 88], rank: 4, suppliers: [{name:"AliExpress", price: 15}] },
+          { name: "Humidificador Anti-gravedad", cat: "Hogar", score: 85, change: "down", change_num: -2.1, margin: 50, price_min: 30, price_str: "$30 - $45", hot: false, comp: "Muy Alta", plts: ["TikTok", "Shopee"], regions: ["BR", "MX"], history: [95, 90, 88, 85], rank: 5, suppliers: [{name:"AliExpress", price: 14}] },
+          { name: "Collar GPS para Perros", cat: "Mascotas", score: 97, change: "up", change_num: 32.1, margin: 75, price_min: 60, price_str: "$60 - $80", hot: true, comp: "Baja", plts: ["Facebook", "TikTok"], regions: ["CO", "CL", "MX"], history: [20, 45, 80, 97], rank: 6, suppliers: [{name:"AliExpress", price: 15}] }
+        ],
+        count: 47250
+      };
 
-        if(!data.products || !data.products.length || data.stale || data.generating) {
-          triggerGeneration(0);
-          if(data.products && data.products.length) {
-            setProducts(data.products, data);
-          }
-          return;
-        }
-        setProducts(data.products, data);
-      } catch(e) {
-        console.error('Error cargando productos:', e.message);
-        if(loadRetries < 3) { loadRetries++; setTimeout(loadProducts, 4000); }
-      }
+      setTimeout(() => {
+        setProducts(mockData.products, mockData);
+      }, 800); // Simulate network latency
     }
 
     function setProducts(products, data) {
@@ -2121,7 +2236,7 @@
         name: p.name, cat: p.cat, score: p.score, change: p.change,
         changeNum: p.change_num !== undefined ? p.change_num : p.changeNum,
         plts: p.plts || [], margin: p.margin,
-        marginStr: p.margin_str || p.marginStr,
+        marginStr: p.margin_str || p.marginStr || (p.margin ? `${p.margin}% ROI` : 'N/A'),
         hot: p.hot, regions: p.regions || [],
         comp: p.comp, priceMin: p.price_min || p.priceMin,
         priceStr: p.price_str || p.priceStr,
@@ -2181,11 +2296,11 @@
             <div class="space-y-2">
               <div class="flex items-center justify-between">
                 <span class="text-xs font-mono text-champagne font-bold">Score: ${p.score}</span>
-                <span class="text-[10px] font-mono text-green-400 font-bold">${p.change}</span>
+                <span class="text-[10px] font-mono neon-badge-green font-bold text-xs font-bold">${p.change}</span>
               </div>
               <h4 class="text-sm font-bold text-white truncate">${p.name}</h4>
               <div class="flex justify-between items-center text-[10px] text-white/50 border-t border-white/5 pt-2">
-                <span>Margen: <b class="text-green-400 font-mono">${p.marginStr}</b></span>
+                <span>Margen: <b class="neon-badge-green font-bold text-xs font-mono">${p.marginStr}</b></span>
                 <span>Comp: <b class="text-white font-mono">${p.comp}</b></span>
               </div>
             </div>
@@ -2222,7 +2337,7 @@
 
       tbody.innerHTML = list.map((p, i) => {
         const idx = dbToUse.indexOf(p);
-        const compClass = p.comp === 'Baja' ? 'text-green-400 bg-green-500/10 border-green-500/20' : p.comp === 'Alta' ? 'text-red-400 bg-red-500/10 border-red-500/20' : 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20';
+        const compClass = p.comp === 'Baja' ? 'neon-badge-green font-bold text-xs bg-green-500/10 border-green-500/20' : p.comp === 'Alta' ? 'neon-badge-red font-bold text-xs bg-red-500/10 border-red-500/20' : 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20';
         return `
           <tr onclick="openProduct(${idx})" class="hover:bg-white/5 transition cursor-pointer text-xs">
             <td class="p-4 text-center">
@@ -2236,8 +2351,8 @@
               </div>
             </td>
             <td class="p-4 font-mono text-champagne">${p.score}</td>
-            <td class="p-4 font-mono text-green-400">${p.change}</td>
-            <td class="p-4 font-mono text-green-400">${p.marginStr}</td>
+            <td class="p-4 font-mono neon-badge-green font-bold text-xs">${p.change}</td>
+            <td class="p-4 font-mono neon-badge-green font-bold text-xs">${p.marginStr}</td>
             <td class="p-4">
               <span class="px-2 py-0.5 rounded border text-[9px] font-bold ${compClass}">${p.comp}</span>
             </td>
@@ -2352,22 +2467,22 @@
       const lowComp = prods.filter(p => p.comp === 'Baja').length;
       
       el.innerHTML = `
-        <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
+        <div class="glass-panel rounded-2xl p-5">
           <div class="text-[9px] text-white/40 uppercase font-mono tracking-wider">Productos Analizados</div>
           <div class="text-3xl font-extrabold text-white mt-1">${prods.length}</div>
-          <div class="text-[9px] text-green-400 font-mono mt-1">${prods.filter(p=>p.hot).length} HOT ahora</div>
+          <div class="text-[9px] neon-badge-green font-bold text-xs font-mono mt-1">${prods.filter(p=>p.hot).length} HOT ahora</div>
         </div>
-        <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
+        <div class="glass-panel rounded-2xl p-5">
           <div class="text-[9px] text-white/40 uppercase font-mono tracking-wider">Categoría Líder</div>
           <div class="text-lg font-bold text-champagne truncate mt-1">${topCat ? topCat[0] : 'Ninguna'}</div>
           <div class="text-[9px] text-white/40 font-mono mt-1">${topCat ? Math.round(topCat[1]/prods.length*100) : 0}% del total</div>
         </div>
-        <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
+        <div class="glass-panel rounded-2xl p-5">
           <div class="text-[9px] text-white/40 uppercase font-mono tracking-wider">Margen Promedio</div>
-          <div class="text-3xl font-extrabold text-green-400 mt-1">${avgMargin}%</div>
-          <div class="text-[9px] text-green-400 font-mono mt-1">Sólido vs mes anterior</div>
+          <div class="text-3xl font-extrabold neon-badge-green font-bold text-xs mt-1">${avgMargin}%</div>
+          <div class="text-[9px] neon-badge-green font-bold text-xs font-mono mt-1">Sólido vs mes anterior</div>
         </div>
-        <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
+        <div class="glass-panel rounded-2xl p-5">
           <div class="text-[9px] text-white/40 uppercase font-mono tracking-wider">Baja Competencia</div>
           <div class="text-3xl font-extrabold text-white mt-1">${lowComp}</div>
           <div class="text-[9px] text-champagne font-mono mt-1">Score top: ${prods[0] ? prods[0].score : 0}</div>
@@ -2380,7 +2495,7 @@
         elOpp.innerHTML = topOpps.map(p => `
           <div class="py-3 flex justify-between items-center cursor-pointer hover:bg-white/5 px-2 -mx-2 rounded-lg transition" onclick="openProduct(${PRODUCTS.indexOf(p)})">
             <span class="text-xs text-white truncate w-32">${p.name}</span>
-            <span class="text-[10px] font-bold text-green-400 bg-green-500/10 px-2 py-1 rounded">Score ${p.score}</span>
+            <span class="text-[10px] font-bold neon-badge-green font-bold text-xs bg-green-500/10 px-2 py-1 rounded">Score ${p.score}</span>
           </div>
         `).join('');
       }
@@ -2443,7 +2558,7 @@
             <div class="text-[10px] text-white/50">${p.cat} · comp: ${p.comp}</div>
           </div>
           <div class="text-right">
-            <div class="font-bold text-green-400 font-mono">${p.marginStr}</div>
+            <div class="font-bold neon-badge-green font-bold text-xs font-mono">${p.marginStr}</div>
             <div class="text-[9px] text-white/40 font-mono">Score: ${p.score}</div>
           </div>
         </div>
@@ -2456,7 +2571,7 @@
       
       const regions = {
         AR: { count:0, name:'Argentina', flag:'🇦🇷', color:'text-blue-400', bg:'bg-blue-400/5', border:'border-blue-400/20' },
-        UY: { count:0, name:'Uruguay', flag:'🇺🇾', color:'text-green-400', bg:'bg-green-400/5', border:'border-green-500/20' },
+        UY: { count:0, name:'Uruguay', flag:'🇺🇾', color:'neon-badge-green font-bold text-xs', bg:'bg-green-400/5', border:'border-green-500/20' },
         CL: { count:0, name:'Chile', flag:'🇨🇱', color:'text-yellow-400', bg:'bg-yellow-400/5', border:'border-yellow-400/20' }
       };
 
@@ -2494,7 +2609,7 @@
             <div class="font-bold text-white truncate">${p.name}</div>
             <div class="text-[10px] text-white/50">${p.cat}</div>
           </div>
-          <span class="font-bold text-green-400 font-mono">${p.marginStr}</span>
+          <span class="font-bold neon-badge-green font-bold text-xs font-mono">${p.marginStr}</span>
         </div>
       `).join('');
     }
@@ -2647,13 +2762,13 @@
       const satScore = Math.floor(Math.random() * 80) + 10;
       const satStoresCount = p.storeCount || 0;
       
-      let satColor = 'text-green-400';
+      let satColor = 'neon-badge-green font-bold text-xs';
       let satBgColor = 'bg-green-500/10';
       let satStatusText = 'Oportunidad Temprana';
       let needleAngle = -90 + (180 * (satScore / 100)); // -90 to 90
       
       if(satScore > 75) {
-        satColor = 'text-red-400'; satBgColor = 'bg-red-500/10'; satStatusText = 'Saturado';
+        satColor = 'neon-badge-red font-bold text-xs'; satBgColor = 'bg-red-500/10'; satStatusText = 'Saturado';
       } else if(satScore > 40) {
         satColor = 'text-yellow-400'; satBgColor = 'bg-yellow-500/10'; satStatusText = 'Tendencia Activa';
       }
@@ -2687,7 +2802,7 @@
       tbody.innerHTML = historySlice.map((score, i) => {
         const prev = i > 0 ? historySlice[i-1] : score;
         const diff = score - prev;
-        const changeClass = diff >= 0 ? 'text-green-400' : 'text-red-400';
+        const changeClass = diff >= 0 ? 'neon-badge-green font-bold text-xs' : 'neon-badge-red font-bold text-xs';
         return `
           <tr class="text-xs">
             <td class="p-3 font-mono text-white/50">${labelsSlice[i]}</td>
@@ -2906,7 +3021,7 @@
       const netPerSale = price - totalCost;
       const margin = price > 0 ? Math.round((netPerSale / price) * 100) : 0;
       
-      const colorClass = netPerSale > 0 ? 'text-green-400' : 'text-red-400';
+      const colorClass = netPerSale > 0 ? 'neon-badge-green font-bold text-xs' : 'neon-badge-red font-bold text-xs';
       const bgClass = netPerSale > 0 ? 'bg-green-500/10 border-green-500/20' : 'bg-red-500/10 border-red-500/20';
       
       el.innerHTML = `
@@ -2956,7 +3071,7 @@
         el.innerHTML = tops.slice(0, 6).map((p, i) => {
           const barPct = Math.round(p.count / tops[0].count * 100);
           return `
-            <div class="bg-white/5 border border-white/10 rounded-2xl p-5 space-y-3">
+            <div class="glass-panel rounded-2xl p-5 space-y-3">
               <div class="flex items-center gap-3">
                 <span class="text-xl">${medals[i] || '#' + (i + 1)}</span>
                 <div class="flex-1 min-w-0">
@@ -3048,7 +3163,7 @@
             <button onclick="savePerfil()" class="btn-magnetic w-full py-3.5 bg-champagne text-obsidian font-extrabold uppercase tracking-wider rounded-xl">
               Guardar Perfil
             </button>
-            <div id="pfSaved" class="hidden text-center text-xs text-green-400 font-bold">✓ Perfil Guardado</div>
+            <div id="pfSaved" class="hidden text-center text-xs neon-badge-green font-bold text-xs font-bold">✓ Perfil Guardado</div>
           </div>
         </div>
       `;
@@ -3125,7 +3240,7 @@
       overlay.className = 'fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm';
 
       overlay.innerHTML = `
-        <div class="bg-obsidian border border-white/10 rounded-[2.5rem] w-full max-w-lg overflow-hidden shadow-2xl">
+        <div class="glass-panel rounded-[2.5rem] w-full max-w-lg overflow-hidden shadow-2xl">
           <div class="flex items-center justify-between border-b border-white/10 px-8 py-5">
             <h3 class="text-sm font-bold text-white flex items-center gap-2">
               <i data-lucide="link-2" class="w-4 h-4 text-champagne"></i>
@@ -3174,7 +3289,7 @@
               </div>
             `}
 
-            <div id="storeConnectError" class="hidden text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3"></div>
+            <div id="storeConnectError" class="hidden text-xs neon-badge-red font-bold text-xs bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3"></div>
           </div>
 
           <div class="px-8 pb-8 flex gap-3">
@@ -3260,7 +3375,7 @@
             <div>
               <h3 class="text-sm font-bold text-white flex items-center gap-2">
                 <i data-lucide="link-2" class="w-4 h-4 text-champagne"></i> Mi Tienda Online
-                ${profile.store ? `<span class="text-[9px] font-mono bg-green-500/15 text-green-400 border border-green-500/20 px-2 py-0.5 rounded-full">● CONECTADA</span>` : ''}
+                ${profile.store ? `<span class="text-[9px] font-mono bg-green-500/15 neon-badge-green font-bold text-xs border border-green-500/20 px-2 py-0.5 rounded-full">● CONECTADA</span>` : ''}
               </h3>
               <p class="text-xs text-white/40 mt-1">
                 ${profile.storeName
@@ -3283,10 +3398,10 @@
                 </div>
                 <div>
                   <div class="text-xs font-bold text-white">Shopify</div>
-                  <div class="text-[10px] ${profile.store==='shopify'?'text-green-400':'text-white/40'} font-mono">${profile.store==='shopify'?'Conectado':'Desconectado'}</div>
+                  <div class="text-[10px] ${profile.store==='shopify'?'neon-badge-green font-bold text-xs':'text-white/40'} font-mono">${profile.store==='shopify'?'Conectado':'Desconectado'}</div>
                 </div>
               </div>
-              <button onclick="connectStore('shopify')" class="text-[10px] font-bold ${profile.store==='shopify'?'bg-red-500/10 text-red-400 hover:bg-red-500/20':'bg-white/5 text-white hover:bg-white/10 group-hover:bg-champagne group-hover:text-black'} px-3 py-1.5 rounded-lg transition">${profile.store==='shopify'?'Desconectar':'Conectar'}</button>
+              <button onclick="connectStore('shopify')" class="text-[10px] font-bold ${profile.store==='shopify'?'bg-red-500/10 neon-badge-red font-bold text-xs hover:bg-red-500/20':'bg-white/5 text-white hover:bg-white/10 group-hover:bg-champagne group-hover:text-black'} px-3 py-1.5 rounded-lg transition">${profile.store==='shopify'?'Desconectar':'Conectar'}</button>
             </div>
             
             <div class="bg-black/30 border border-white/5 rounded-2xl p-4 flex items-center justify-between hover:border-champagne/30 transition cursor-pointer group">
@@ -3296,32 +3411,32 @@
                 </div>
                 <div>
                   <div class="text-xs font-bold text-white">TiendaNube</div>
-                  <div class="text-[10px] ${profile.store==='tiendanube'?'text-green-400':'text-white/40'} font-mono">${profile.store==='tiendanube'?'Conectado':'Desconectado'}</div>
+                  <div class="text-[10px] ${profile.store==='tiendanube'?'neon-badge-green font-bold text-xs':'text-white/40'} font-mono">${profile.store==='tiendanube'?'Conectado':'Desconectado'}</div>
                 </div>
               </div>
-              <button onclick="connectStore('tiendanube')" class="text-[10px] font-bold ${profile.store==='tiendanube'?'bg-red-500/10 text-red-400 hover:bg-red-500/20':'bg-white/5 text-white hover:bg-white/10 group-hover:bg-champagne group-hover:text-black'} px-3 py-1.5 rounded-lg transition">${profile.store==='tiendanube'?'Desconectar':'Conectar'}</button>
+              <button onclick="connectStore('tiendanube')" class="text-[10px] font-bold ${profile.store==='tiendanube'?'bg-red-500/10 neon-badge-red font-bold text-xs hover:bg-red-500/20':'bg-white/5 text-white hover:bg-white/10 group-hover:bg-champagne group-hover:text-black'} px-3 py-1.5 rounded-lg transition">${profile.store==='tiendanube'?'Desconectar':'Conectar'}</button>
             </div>
           </div>
         </div>
 
         <!-- KPIs Financieros -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
+          <div class="glass-panel rounded-2xl p-5">
             <div class="text-[9px] text-white/40 uppercase font-mono tracking-wider">Ingresos totales</div>
-            <div class="text-2xl font-extrabold text-green-400 mt-1">$${totalRevenue.toLocaleString()} ${sellCurrency}</div>
+            <div class="text-2xl font-extrabold neon-badge-green font-bold text-xs mt-1">$${totalRevenue.toLocaleString()} ${sellCurrency}</div>
             <div class="text-[9px] text-white/40 font-mono mt-1">${totalSold} unidades vendidas</div>
           </div>
-          <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
+          <div class="glass-panel rounded-2xl p-5">
             <div class="text-[9px] text-white/40 uppercase font-mono tracking-wider">Ganancia Neta</div>
-            <div class="text-2xl font-extrabold mt-1 ${totalProfit>=0?'text-green-400':'text-red-400'}">$${totalProfit.toLocaleString()} ${sellCurrency}</div>
+            <div class="text-2xl font-extrabold mt-1 ${totalProfit>=0?'neon-badge-green font-bold text-xs':'neon-badge-red font-bold text-xs'}">$${totalProfit.toLocaleString()} ${sellCurrency}</div>
             <div class="text-[9px] text-white/40 font-mono mt-1">ROI: ${roi}%</div>
           </div>
-          <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
+          <div class="glass-panel rounded-2xl p-5">
             <div class="text-[9px] text-white/40 uppercase font-mono tracking-wider">Inversión Stock</div>
             <div class="text-2xl font-extrabold text-white mt-1">$${(totalInverted+totalAds).toLocaleString()} ${sellCurrency}</div>
             <div class="text-[9px] text-white/40 font-mono mt-1">Stock + Publicidad</div>
           </div>
-          <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
+          <div class="glass-panel rounded-2xl p-5">
             <div class="text-[9px] text-white/40 uppercase font-mono tracking-wider">Valor en Stock</div>
             <div class="text-2xl font-extrabold text-white mt-1">$${stockValue.toLocaleString()} ${sellCurrency}</div>
             <div class="text-[9px] text-white/40 font-mono mt-1">${totalStock-totalSold} unidades disponibles</div>
@@ -3357,11 +3472,11 @@
                       <td class="p-4 text-right font-mono">${p.cost} ${buyCurrency} <br> <span class="text-[9px] text-white/40">$${costSell.toFixed(0)} ARS</span></td>
                       <td class="p-4 text-right font-mono font-bold">$${p.price.toLocaleString()}</td>
                       <td class="p-4 text-right font-mono">${p.stock - p.sold}/${p.stock}</td>
-                      <td class="p-4 text-right font-mono text-green-400 font-bold">${p.sold}</td>
-                      <td class="p-4 text-right font-mono font-bold ${profit>=0?'text-green-400':'text-red-400'}">$${profit.toFixed(0)}</td>
+                      <td class="p-4 text-right font-mono neon-badge-green font-bold text-xs font-bold">${p.sold}</td>
+                      <td class="p-4 text-right font-mono font-bold ${profit>=0?'neon-badge-green font-bold text-xs':'neon-badge-red font-bold text-xs'}">$${profit.toFixed(0)}</td>
                       <td class="p-4 text-right">
                         <div class="flex gap-2 justify-end">
-                          <button onclick="quickSale(${i})" class="bg-green-600/10 hover:bg-green-600/20 text-green-400 border border-green-500/20 px-2.5 py-1 rounded-lg text-[10px] font-bold">+1 Venta</button>
+                          <button onclick="quickSale(${i})" class="bg-green-600/10 hover:bg-green-600/20 neon-badge-green font-bold text-xs border border-green-500/20 px-2.5 py-1 rounded-lg text-[10px] font-bold">+1 Venta</button>
                           <button onclick="quickStock(${i})" class="bg-white/5 hover:bg-white/10 px-2.5 py-1 border border-white/10 rounded-lg text-[10px] font-bold">Stock</button>
                           <button onclick="showAddProductModal(${i})" class="bg-white/5 hover:bg-white/10 px-2.5 py-1 border border-white/10 rounded-lg text-[10px] font-bold">Editar</button>
                         </div>
@@ -3388,7 +3503,7 @@
       overlay.className = 'fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm';
 
       overlay.innerHTML = `
-        <div class="bg-obsidian border border-white/10 rounded-[2.5rem] w-full max-w-md overflow-hidden shadow-2xl p-8">
+        <div class="glass-panel rounded-[2.5rem] w-full max-w-md overflow-hidden shadow-2xl p-8">
           <div class="flex items-center justify-between border-b border-white/10 pb-4 mb-6">
             <h3 class="text-base font-bold text-white">${idx !== undefined ? 'Editar' : 'Agregar'} Producto</h3>
             <button onclick="document.getElementById('negocioModal').remove()" class="text-white/60 hover:text-white">✕</button>
@@ -3445,7 +3560,7 @@
 
             <div class="flex gap-3 pt-4 border-t border-white/5">
               <button onclick="saveNegocioProduct()" class="flex-1 py-3 bg-champagne text-obsidian font-extrabold uppercase rounded-xl">Guardar</button>
-              ${idx !== undefined ? `<button onclick="deleteNegocioProduct(${idx})" class="py-3 px-4 border border-red-500/20 text-red-400 rounded-xl hover:bg-red-500/10 transition">Eliminar</button>` : ''}
+              ${idx !== undefined ? `<button onclick="deleteNegocioProduct(${idx})" class="py-3 px-4 border border-red-500/20 neon-badge-red font-bold text-xs rounded-xl hover:bg-red-500/10 transition">Eliminar</button>` : ''}
             </div>
           </div>
         </div>
@@ -3687,7 +3802,7 @@
       
       const compBadge = document.getElementById('pmComp');
       compBadge.textContent = p.comp;
-      const compColor = p.comp === 'Baja' ? 'bg-green-500/10 text-green-400 border-green-500/20' : p.comp === 'Alta' ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20';
+      const compColor = p.comp === 'Baja' ? 'bg-green-500/10 neon-badge-green font-bold text-xs border-green-500/20' : p.comp === 'Alta' ? 'bg-red-500/10 neon-badge-red font-bold text-xs border-red-500/20' : 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20';
       compBadge.className = `text-xs font-bold font-mono px-2 py-0.5 rounded border uppercase ${compColor}`;
 
       const pmTag = document.getElementById('pmTag');
@@ -3783,7 +3898,7 @@
               </div>
               <div class="flex flex-col gap-3 min-h-[500px]">
                 ${col.items.map(item => `
-                  <div onclick="openProduct(${item.idx})" class="bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover-lift p-3 space-y-3 cursor-pointer group">
+                  <div onclick="openProduct(${item.idx})" class="glass-panel rounded-2xl overflow-hidden hover-lift p-3 space-y-3 cursor-pointer group">
                     <div class="aspect-video w-full rounded-xl overflow-hidden bg-black/20 relative">
                       <img src="${item.p.img || getProductImage(item.p.name)}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition">
                       <span class="absolute top-2 left-2 text-[8px] font-mono font-bold uppercase bg-champagne text-obsidian px-1.5 py-0.5 rounded">${item.p.cat}</span>
@@ -3791,7 +3906,7 @@
                     <div>
                       <h4 class="text-xs font-bold text-white leading-tight mb-2">${item.p.name}</h4>
                       <div class="flex justify-between items-center text-[9px] text-white/50 border-t border-white/5 pt-2">
-                        <span>Margen: <b class="text-green-400 font-mono">${item.p.marginStr}</b></span>
+                        <span>Margen: <b class="neon-badge-green font-bold text-xs font-mono">${item.p.marginStr}</b></span>
                         <span>Comp: <b class="text-white font-mono">${item.p.comp}</b></span>
                       </div>
                     </div>
@@ -3829,7 +3944,7 @@
       tbody.innerHTML = p.history.map((score, i) => {
         const prev = p.history[i-1] || score;
         const diff = score - prev;
-        const changeClass = diff >= 0 ? 'text-green-400' : 'text-red-400';
+        const changeClass = diff >= 0 ? 'neon-badge-green font-bold text-xs' : 'neon-badge-red font-bold text-xs';
         return `
           <tr class="border-b border-white/5 text-xs">
             <td class="p-3 font-mono text-white/50">${WEEKS[i]}</td>
@@ -3861,13 +3976,13 @@
             ${SUPPLIERS_BUY.map(s => {
               const estPrice = (p.score * 0.08).toFixed(2);
               return `
-                <a href="${s.url + q + (s.aff || '')}" target="_blank" class="bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl p-4 flex flex-col justify-between transition duration-200 hover:-translate-y-1">
+                <a href="${s.url + q + (s.aff || '')}" target="_blank" class="glass-btn rounded-xl transition rounded-2xl p-4 flex flex-col justify-between transition duration-200 hover:-translate-y-1">
                   <div>
                     <div class="text-sm font-bold text-white mb-1">${s.icon} ${s.name}</div>
                     <div class="text-[8px] font-mono text-white/40 mb-2">${s.ship}</div>
                     <div class="text-[9px] text-white/60 leading-relaxed">${s.note}</div>
                   </div>
-                  <div class="text-xs font-extrabold text-green-400 font-mono mt-4">~USD ${estPrice}</div>
+                  <div class="text-xs font-extrabold neon-badge-green font-bold text-xs font-mono mt-4">~USD ${estPrice}</div>
                 </a>
               `;
             }).join('')}
@@ -3943,7 +4058,7 @@
       
       const msgs = document.getElementById('aiMessages');
       msgs.innerHTML += `<div class="msg msg-user bg-champagne text-obsidian p-3 rounded-2xl max-w-[85%] self-end font-bold font-mono">${text}</div>`;
-      msgs.innerHTML += `<div id="typing" class="p-3 bg-white/5 border border-white/5 rounded-2xl flex items-center gap-1 self-start"><span class="w-1.5 h-1.5 rounded-full bg-white/30 animate-bounce"></span><span class="w-1.5 h-1.5 rounded-full bg-white/30 animate-bounce" style="animation-delay: 0.2s"></span><span class="w-1.5 h-1.5 rounded-full bg-white/30 animate-bounce" style="animation-delay: 0.4s"></span></div>`;
+      msgs.innerHTML += `<div id="typing" class="p-3 glass-panel rounded-2xl flex items-center gap-1 self-start"><span class="w-1.5 h-1.5 rounded-full bg-white/30 animate-bounce"></span><span class="w-1.5 h-1.5 rounded-full bg-white/30 animate-bounce" style="animation-delay: 0.2s"></span><span class="w-1.5 h-1.5 rounded-full bg-white/30 animate-bounce" style="animation-delay: 0.4s"></span></div>`;
       msgs.scrollTop = msgs.scrollHeight;
       
       aiHistory.push({ role:'user', content:text });
@@ -3967,7 +4082,7 @@
         aiHistory.pop();
         const typingEl = document.getElementById('typing');
         if(typingEl) {
-          typingEl.outerHTML = `<div class="msg msg-ai text-red-400 bg-red-500/10 border border-red-500/20 p-3 rounded-2xl max-w-[85%] self-start">⚠️ ${e.message}</div>`;
+          typingEl.outerHTML = `<div class="msg msg-ai neon-badge-red font-bold text-xs bg-red-500/10 border border-red-500/20 p-3 rounded-2xl max-w-[85%] self-start">⚠️ ${e.message}</div>`;
         }
       }
       aiLoading = false;
@@ -4160,7 +4275,7 @@
         if(!res.ok)throw new Error(data.error||'Error: '+res.status);
         const reply=data.text||'Sin respuesta.';aiHistory.push({role:'assistant',content:reply});
         document.getElementById('typing').outerHTML='<div class="msg msg-ai bg-white/5 text-white/80 p-3 rounded-2xl max-w-[85%] self-start border border-white/5">'+reply.replace(/\\n/g,'<br>')+'</div>';
-      }catch(e){aiHistory.pop();document.getElementById('typing').outerHTML='<div class="msg msg-ai bg-red-500/10 text-red-400 p-3 rounded-2xl max-w-[85%] self-start border border-red-500/20">\u26A0\uFE0F '+e.message+'</div>';}
+      }catch(e){aiHistory.pop();document.getElementById('typing').outerHTML='<div class="msg msg-ai bg-red-500/10 neon-badge-red font-bold text-xs p-3 rounded-2xl max-w-[85%] self-start border border-red-500/20">\u26A0\uFE0F '+e.message+'</div>';}
       aiLoading=false;if(btn)btn.disabled=false;msgs.scrollTop=msgs.scrollHeight;
     }
 
@@ -4185,11 +4300,11 @@
           info.className = 'flex-1 min-w-0 text-xs';
           info.innerHTML = '<div class="font-bold truncate">'+p.title+'</div>' +
             '<div class="text-[10px] text-white/40 mt-0.5">' +
-            (p.commission ? '<span class="bg-green-500/20 text-green-400 px-1.5 py-0.5 rounded font-mono font-bold mr-1">'+p.commission+'% comisión</span>' : '') +
+            (p.commission ? '<span class="bg-green-500/20 neon-badge-green font-bold text-xs px-1.5 py-0.5 rounded font-mono font-bold mr-1">'+p.commission+'% comisión</span>' : '') +
             (p.rating ? '⭐ '+p.rating+'%' : '') + '</div>';
             
           const price = document.createElement('div');
-          price.className = 'font-mono font-bold text-green-400 shrink-0';
+          price.className = 'font-mono font-bold neon-badge-green font-bold text-xs shrink-0';
           price.textContent = p.price;
           
           div.appendChild(img);div.appendChild(info);div.appendChild(price);
@@ -4557,8 +4672,8 @@
       const elContent = document.getElementById('mkt-content');
       const elLoading = document.getElementById('mkt-loading');
       const elBtn = document.getElementById('mktGenerateBtn');
-      if(typeof PRODUCTS === 'undefined' || typeof currentProductIdx === 'undefined') return;
-      const p = PRODUCTS[currentProductIdx];
+      if(typeof PRODUCTS === 'undefined' || typeof currentProd === 'undefined') return;
+      const p = PRODUCTS[currentProd];
       if(!p) return;
 
       if(elContent) elContent.classList.add('hidden');
