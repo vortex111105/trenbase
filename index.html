@@ -59,7 +59,45 @@
     }
 
   </style>
+
+  <style>
+    /* Spotlight Effect */
+    .spotlight-card {
+      position: relative;
+      overflow: hidden;
+    }
+    .spotlight-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(
+        600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+        rgba(255,255,255,0.4), 
+        transparent 40%
+      );
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      pointer-events: none;
+      z-index: 0;
+    }
+    /* Darker spotlight for dark mode cards */
+    .spotlight-dark::before {
+      background: radial-gradient(
+        600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+        rgba(255,255,255,0.06), 
+        transparent 40%
+      );
+    }
+    .spotlight-card:hover::before {
+      opacity: 1;
+    }
+    .spotlight-card > * {
+      position: relative;
+      z-index: 1;
+    }
+  </style>
 </head>
+
 <body class="bg-white text-gray-900 min-h-screen flex flex-col hero-bg relative">
 
   <!-- Floating Navbar -->
@@ -188,7 +226,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         <!-- Card 1 — "Diagnostic Shuffler" -->
-        <div class="bg-gray-50 rounded-[2.5rem] p-8 flex flex-col justify-between h-[500px] border border-gray-200 shadow-xl overflow-hidden relative group">
+        <div class="bg-gray-50 rounded-[2.5rem] p-8 flex flex-col justify-between h-[500px] border border-gray-200 shadow-xl overflow-hidden relative group spotlight-card">
           <div>
             <div class="w-14 h-14 rounded-2xl bg-black flex items-center justify-center text-white mb-6 shadow-lg">
               <i data-lucide="flame"></i>
@@ -226,7 +264,7 @@
         </div>
 
         <!-- Card 2 — "Telemetry Typewriter" -->
-        <div class="bg-gray-50 rounded-[2.5rem] p-8 flex flex-col justify-between h-[500px] border border-gray-200 shadow-xl overflow-hidden relative group">
+        <div class="bg-gray-50 rounded-[2.5rem] p-8 flex flex-col justify-between h-[500px] border border-gray-200 shadow-xl overflow-hidden relative group spotlight-card">
           <div>
             <div class="w-14 h-14 rounded-2xl bg-black flex items-center justify-center text-white mb-6 shadow-lg">
               <i data-lucide="globe"></i>
@@ -259,7 +297,7 @@
         </div>
 
         <!-- Card 3 — "Cursor Protocol Scheduler" -->
-        <div class="bg-gray-50 rounded-[2.5rem] p-8 flex flex-col justify-between h-[500px] border border-gray-200 shadow-xl overflow-hidden relative group">
+        <div class="bg-gray-50 rounded-[2.5rem] p-8 flex flex-col justify-between h-[500px] border border-gray-200 shadow-xl overflow-hidden relative group spotlight-card">
           <div>
             <div class="w-14 h-14 rounded-2xl bg-black flex items-center justify-center text-white mb-6 shadow-lg">
               <i data-lucide="calculator"></i>
@@ -305,7 +343,7 @@
 
       <div class="space-y-16">
         <!-- Step 1 Bubble -->
-        <div class="bg-white/70 backdrop-blur-3xl border border-white/80 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] rounded-[3rem] p-10 md:p-16 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div class="bg-white/70 backdrop-blur-3xl border border-white/80 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] rounded-[3rem] p-10 md:p-16 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center spotlight-card">
           <div class="space-y-6">
             <span class="font-mono text-xs text-gray-900 bg-gray-100/50 border border-gray-200 font-bold px-3 py-1 rounded-full">PASO 01 //</span>
             <h3 class="text-3xl md:text-5xl font-extrabold text-gray-900 tracking-tight">Extracción Multiplataforma</h3>
@@ -325,7 +363,7 @@
         </div>
 
         <!-- Step 2 Bubble -->
-        <div class="bg-white/70 backdrop-blur-3xl border border-white/80 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] rounded-[3rem] p-10 md:p-16 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div class="bg-white/70 backdrop-blur-3xl border border-white/80 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] rounded-[3rem] p-10 md:p-16 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center spotlight-card">
           <div class="order-2 lg:order-1 h-[300px] flex items-center justify-center relative overflow-hidden bg-white rounded-[2rem] border border-gray-100 shadow-sm">
             <div class="relative w-64 h-48 border border-gray-200 rounded-xl overflow-hidden flex flex-col justify-between p-4">
               <div class="grid grid-cols-4 gap-4 h-full">
@@ -346,7 +384,7 @@
         </div>
 
         <!-- Step 3 Bubble -->
-        <div class="bg-white/70 backdrop-blur-3xl border border-white/80 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] rounded-[3rem] p-10 md:p-16 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div class="bg-white/70 backdrop-blur-3xl border border-white/80 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] rounded-[3rem] p-10 md:p-16 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center spotlight-card">
           <div class="space-y-6">
             <span class="font-mono text-xs text-gray-900 bg-gray-100/50 border border-gray-200 font-bold px-3 py-1 rounded-full">PASO 03 //</span>
             <h3 class="text-3xl md:text-5xl font-extrabold text-gray-900 tracking-tight">Validación y Localización</h3>
@@ -474,7 +512,7 @@
       
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8 relative">
         <!-- Dropshipping Column -->
-        <div class="bg-white/70 backdrop-blur-3xl border border-white/80 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] p-10 rounded-[3rem] relative group overflow-hidden">
+        <div class="bg-white/70 backdrop-blur-3xl border border-white/80 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] p-10 rounded-[3rem] relative group overflow-hidden spotlight-card">
           <div class="absolute inset-0 bg-gradient-to-br from-gray-100 to-transparent opacity-0 group-hover:opacity-100 transition duration-500"></div>
           <div class="relative z-10">
             <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
@@ -502,7 +540,7 @@
         </div>
 
         <!-- Ecommerce Column -->
-        <div class="bg-white/70 backdrop-blur-3xl border border-white/80 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] p-10 rounded-[3rem] relative group overflow-hidden">
+        <div class="bg-white/70 backdrop-blur-3xl border border-white/80 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] p-10 rounded-[3rem] relative group overflow-hidden spotlight-card">
           <div class="absolute inset-0 bg-gradient-to-bl from-gray-100 to-transparent opacity-0 group-hover:opacity-100 transition duration-500"></div>
           <div class="relative z-10">
             <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
@@ -542,7 +580,7 @@
       
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <!-- Card 1 -->
-        <div class="bg-white shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] border border-white/80 rounded-[2.5rem] p-10 relative">
+        <div class="bg-white shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] border border-white/80 rounded-[2.5rem] p-10 relative spotlight-card">
           <div class="flex text-yellow-400 mb-6"><i data-lucide="star" class="w-5 h-5 fill-current"></i><i data-lucide="star" class="w-5 h-5 fill-current"></i><i data-lucide="star" class="w-5 h-5 fill-current"></i><i data-lucide="star" class="w-5 h-5 fill-current"></i><i data-lucide="star" class="w-5 h-5 fill-current"></i></div>
           <p class="text-gray-600 font-medium text-sm italic mb-8 leading-relaxed">"Encontré mi producto ganador al segundo día de usar la plataforma. Los datos de Latam son brutales y 100% reales. Pagué la suscripción con mi primera venta."</p>
           <div class="flex items-center gap-4">
@@ -554,7 +592,7 @@
           </div>
         </div>
         <!-- Card 2 -->
-        <div class="bg-white shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] border border-white/80 rounded-[2.5rem] p-10 relative transform md:-translate-y-4">
+        <div class="bg-white shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] border border-white/80 rounded-[2.5rem] p-10 relative transform md:-translate-y-4 spotlight-card">
           <div class="flex text-yellow-400 mb-6"><i data-lucide="star" class="w-5 h-5 fill-current"></i><i data-lucide="star" class="w-5 h-5 fill-current"></i><i data-lucide="star" class="w-5 h-5 fill-current"></i><i data-lucide="star" class="w-5 h-5 fill-current"></i><i data-lucide="star" class="w-5 h-5 fill-current"></i></div>
           <p class="text-gray-600 font-medium text-sm italic mb-8 leading-relaxed">"Me ahorró cientos de dólares en Facebook Ads. Ya no testeo productos al azar. Ver qué tiendas venden en mi país me cambió las reglas del juego."</p>
           <div class="flex items-center gap-4">
@@ -566,7 +604,7 @@
           </div>
         </div>
         <!-- Card 3 -->
-        <div class="bg-white shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] border border-white/80 rounded-[2.5rem] p-10 relative">
+        <div class="bg-white shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] border border-white/80 rounded-[2.5rem] p-10 relative spotlight-card">
           <div class="flex text-yellow-400 mb-6"><i data-lucide="star" class="w-5 h-5 fill-current"></i><i data-lucide="star" class="w-5 h-5 fill-current"></i><i data-lucide="star" class="w-5 h-5 fill-current"></i><i data-lucide="star" class="w-5 h-5 fill-current"></i><i data-lucide="star" class="w-5 h-5 fill-current"></i></div>
           <p class="text-gray-600 font-medium text-sm italic mb-8 leading-relaxed">"La interfaz es increíblemente rápida y el diseño es hermoso. Lo mejor que me pasó este año fue descubrir TrendBase. Ojalá lo hubiese tenido antes."</p>
           <div class="flex items-center gap-4">
@@ -768,5 +806,19 @@
     </div>
   </footer>
 
+
+  <!-- Spotlight JS -->
+  <script>
+    document.querySelectorAll('.spotlight-card').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty('--mouse-x', `${x}px`);
+        card.style.setProperty('--mouse-y', `${y}px`);
+      });
+    });
+  </script>
 </body>
+
 </html>
