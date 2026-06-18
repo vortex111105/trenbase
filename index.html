@@ -63,7 +63,16 @@
       animation: marquee 25s linear infinite;
     }
 
-  </style>
+  
+    .bg-dot-pattern {
+      background-image: radial-gradient(rgba(0, 0, 0, 0.04) 1.5px, transparent 1.5px);
+      background-size: 32px 32px;
+    }
+    .bg-dot-pattern-dark {
+      background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1.5px, transparent 1.5px);
+      background-size: 32px 32px;
+    }
+\n  </style>
 
   <style>
     /* Spotlight Effect */
@@ -241,7 +250,7 @@
 
   
   <!-- Features Section -->
-  <section id="features" class="py-32 bg-white relative z-20 overflow-hidden">
+  <section id="features" class="py-32 bg-white bg-dot-pattern relative z-20 overflow-hidden">
     <div class="max-w-7xl mx-auto px-6 md:px-12">
       <div class="mb-20 text-center">
         <div class="inline-block border border-white/40 bg-white/40 backdrop-blur-xl rounded-full px-5 py-2 mb-8 shadow-[0_10px_20px_-10px_rgba(0,0,0,0.1),inset_0_2px_4px_rgba(255,255,255,0.8),inset_0_-2px_4px_rgba(0,0,0,0.05)] transform hover:scale-105 transition-all"><span class="text-[10px] font-bold text-gray-800 font-extrabold uppercase tracking-widest flex items-center gap-2"><i data-lucide="crosshair" class="w-3 h-3"></i> Métrica y Precisión</span></div>
@@ -360,7 +369,7 @@
   </section>
 
 <!-- Protocol Section -->
-  <section id="protocol" class="py-32 bg-[#E4E5E9] relative z-20 overflow-hidden">
+  <section id="protocol" class="py-32 bg-[#F8F9FA] bg-dot-pattern relative z-20 overflow-hidden">
     <div class="max-w-7xl mx-auto px-6 md:px-12">
       <div class="mb-24 text-center">
         <span class="text-[10px] font-mono text-gray-400 font-bold uppercase tracking-widest block mb-4">Cómo Funciona</span>
@@ -530,7 +539,7 @@
   
   
 <!-- NEW ECOMMERCE VS DROPSHIPPING SECTION -->
-  <section class="py-32 bg-[#E4E5E9] relative z-20 overflow-hidden">
+  <section class="py-32 bg-[#F8F9FA] bg-dot-pattern relative z-20 overflow-hidden">
     <div class="max-w-7xl mx-auto px-6 md:px-12">
       <div class="text-center mb-16">
         <div class="inline-block border border-white/40 bg-white/40 backdrop-blur-xl rounded-full px-5 py-2 mb-8 shadow-[0_10px_20px_-10px_rgba(0,0,0,0.1),inset_0_2px_4px_rgba(255,255,255,0.8),inset_0_-2px_4px_rgba(0,0,0,0.05)] transform hover:scale-105 transition-all"><span class="text-[10px] font-mono text-gray-800 font-extrabold uppercase tracking-widest flex items-center gap-2"><i data-lucide="git-branch" class="w-3 h-3"></i> Un Software, Dos Caminos</span></div>
@@ -603,7 +612,7 @@
 
   
 <!-- Trust Element: Wall of Love -->
-  <section id="wall-of-love" class="py-24 bg-[#E4E5E9] relative z-20 overflow-hidden">
+  <section id="wall-of-love" class="py-24 bg-[#F8F9FA] bg-dot-pattern relative z-20 overflow-hidden">
     <div class="max-w-7xl mx-auto px-6">
       <div class="text-center mb-16">
         <h2 class="text-3xl md:text-5xl font-black text-gray-900 tracking-tight mb-4">Dropshippers que ya no testean a ciegas</h2>
@@ -675,7 +684,7 @@
   </section>
 
 <!-- Manifesto Section (Transition to dark) -->
-  <section id="philosophy" class="py-32 bg-[#0A0A0C] relative z-20 border-t border-white/5">
+  <section id="philosophy" class="py-32 bg-[#0A0A0C] bg-dot-pattern-dark relative z-20 border-t border-white/5 overflow-hidden">
     <div class="max-w-4xl mx-auto px-6 text-center">
       <div class="inline-block border border-white/10 bg-[#18181B]/80 backdrop-blur-xl rounded-full px-5 py-2 mb-8 shadow-[0_10px_20px_-10px_rgba(0,0,0,0.5),inset_0_2px_4px_rgba(255,255,255,0.1),inset_0_-2px_4px_rgba(0,0,0,0.4)] transform hover:scale-105 transition-all"><span class="text-[10px] font-bold text-gray-300 font-extrabold uppercase tracking-widest flex items-center gap-2"><i data-lucide="scroll-text" class="w-3 h-3"></i> El Manifiesto TrendBase</span></div>
       
@@ -738,7 +747,7 @@
     </div>
   </section>
 <!-- Pricing Section (Dark Glassmorphism) -->
-  <section id="pricing" class="bg-[#0A0A0C] w-full py-40 relative overflow-hidden flex flex-col items-center justify-center min-h-screen border-t border-white/5">
+  <section id="pricing" class="bg-[#0A0A0C] bg-dot-pattern-dark w-full py-40 relative overflow-hidden flex flex-col items-center justify-center min-h-screen border-t border-white/5">
     
     <!-- Subtle Grid -->
     <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSA0MCAwIEwgMCAwIDAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsIDI1NSwgMjU1LCAwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] z-0 pointer-events-none [mask-image:linear-gradient(to_bottom,transparent,black,transparent)]"></div>
