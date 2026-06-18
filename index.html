@@ -4599,7 +4599,7 @@
             <td class="p-3 text-white/70">${LEADERS[i % LEADERS.length]}</td>
           </tr>
         `;
-      }).join(\'\');
+      }).join('');
 
       // Init or update History Chart
       const ctx = document.getElementById('historyChart');
@@ -4626,7 +4626,6 @@
           options: {
             responsive: true,
             maintainAspectRatio: false,
-            layout: { padding: { bottom: 20 } },
             layout: { padding: { bottom: 20 } },
             plugins: { legend: { display: false } },
             scales: {
