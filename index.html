@@ -34,8 +34,7 @@
     body { font-family: 'Inter', sans-serif; }
     
     .saas-shadow {
-      box-shadow: 0 0 30px rgba(0,0,0,0.06), 0 4px 6px -1px rgba(0,0,0,0.05);
-      border: 1px solid rgba(0,0,0,0.04);
+      box-shadow: 0 20px 40px -10px rgba(0,0,0,0.08), 0 0 20px rgba(0,0,0,0.02);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
@@ -122,9 +121,9 @@
 </main>
 
   <!-- Trust Element: Integration Banner -->
-  <section class="py-12 bg-white border-y border-gray-100 overflow-hidden relative z-20">
-    <div class="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none"></div>
-    <div class="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none"></div>
+  <section class="py-12 overflow-hidden relative z-20">
+    <div class="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-bgmain to-transparent z-10 pointer-events-none"></div>
+    <div class="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-bgmain to-transparent z-10 pointer-events-none"></div>
     
     <div class="max-w-7xl mx-auto px-6 mb-6 text-center">
       <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">TrendBase escanea el ecosistema de</span>
@@ -151,21 +150,21 @@
   </section>
 
   <!-- Stats Bar -->
-  <section class="py-16 bg-bgmain relative z-20">
+  <section class="py-16 relative z-20">
     <div class="max-w-6xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-      <div class="bg-white rounded-3xl p-8 saas-shadow border border-gray-100 hover:-translate-y-1 transition-transform">
+      <div class="bg-white rounded-[2.5rem] p-8 saas-shadow border-none hover:-translate-y-1 transition-transform">
         <div class="text-4xl font-extrabold text-gray-900">47K+</div>
         <div class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mt-2">Productos Analizados</div>
       </div>
-      <div class="bg-white rounded-3xl p-8 saas-shadow border border-gray-100 hover:-translate-y-1 transition-transform">
+      <div class="bg-white rounded-[2.5rem] p-8 saas-shadow border-none hover:-translate-y-1 transition-transform">
         <div class="text-4xl font-extrabold text-gray-900">9</div>
         <div class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mt-2">Plataformas</div>
       </div>
-      <div class="bg-white rounded-3xl p-8 saas-shadow border border-gray-100 hover:-translate-y-1 transition-transform">
+      <div class="bg-white rounded-[2.5rem] p-8 saas-shadow border-none hover:-translate-y-1 transition-transform">
         <div class="text-4xl font-extrabold text-gray-900">3</div>
         <div class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mt-2">Países LATAM</div>
       </div>
-      <div class="bg-white rounded-3xl p-8 saas-shadow border border-gray-100 hover:-translate-y-1 transition-transform">
+      <div class="bg-white rounded-[2.5rem] p-8 saas-shadow border-none hover:-translate-y-1 transition-transform">
         <div class="text-4xl font-extrabold text-green-500 font-mono">100%</div>
         <div class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mt-2">Uptime Garantizado</div>
       </div>
@@ -174,7 +173,7 @@
 
   
   <!-- Features Section -->
-  <section id="features" class="py-24 bg-white relative z-20">
+  <section id="features" class="py-24 relative z-20">
     <div class="max-w-7xl mx-auto px-6 md:px-12">
       <div class="mb-16 text-center">
         <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-4">Métrica y Precisión</span>
@@ -184,9 +183,9 @@
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         <!-- Feature 1 -->
-        <div class="bg-gray-50 rounded-[2.5rem] p-10 flex flex-col justify-between hover:-translate-y-2 transition-transform duration-300 border border-gray-100 saas-shadow">
+        <div class="bg-white rounded-[2.5rem] p-10 flex flex-col justify-between hover:-translate-y-2 transition-transform duration-300 border-none saas-shadow">
           <div>
-            <div class="w-14 h-14 rounded-2xl bg-white saas-shadow flex items-center justify-center mb-8">
+            <div class="w-14 h-14 rounded-[1.2rem] bg-gray-50 flex items-center justify-center mb-8">
               <i data-lucide="flame" class="w-6 h-6 text-black"></i>
             </div>
             <h3 class="text-2xl font-bold text-gray-900 mb-4">Monitoreo en tiempo real</h3>
@@ -197,9 +196,9 @@
         </div>
 
         <!-- Feature 2 -->
-        <div class="bg-gray-50 rounded-[2.5rem] p-10 flex flex-col justify-between hover:-translate-y-2 transition-transform duration-300 border border-gray-100 saas-shadow">
+        <div class="bg-white rounded-[2.5rem] p-10 flex flex-col justify-between hover:-translate-y-2 transition-transform duration-300 border-none saas-shadow">
           <div>
-            <div class="w-14 h-14 rounded-2xl bg-white saas-shadow flex items-center justify-center mb-8">
+            <div class="w-14 h-14 rounded-[1.2rem] bg-gray-50 flex items-center justify-center mb-8">
               <i data-lucide="globe" class="w-6 h-6 text-black"></i>
             </div>
             <h3 class="text-2xl font-bold text-gray-900 mb-4">Precios localizados</h3>
@@ -210,9 +209,9 @@
         </div>
 
         <!-- Feature 3 -->
-        <div class="bg-gray-50 rounded-[2.5rem] p-10 flex flex-col justify-between hover:-translate-y-2 transition-transform duration-300 border border-gray-100 saas-shadow">
+        <div class="bg-white rounded-[2.5rem] p-10 flex flex-col justify-between hover:-translate-y-2 transition-transform duration-300 border-none saas-shadow">
           <div>
-            <div class="w-14 h-14 rounded-2xl bg-white saas-shadow flex items-center justify-center mb-8">
+            <div class="w-14 h-14 rounded-[1.2rem] bg-gray-50 flex items-center justify-center mb-8">
               <i data-lucide="calculator" class="w-6 h-6 text-black"></i>
             </div>
             <h3 class="text-2xl font-bold text-gray-900 mb-4">Filtros de rentabilidad</h3>
@@ -227,7 +226,7 @@
   </section>
 
   <!-- Protocol Section -->
-  <section id="protocol" class="py-24 bg-bgmain border-y border-gray-100 relative z-20">
+  <section id="protocol" class="py-24 relative z-20">
     <div class="max-w-5xl mx-auto px-6 md:px-12">
       <div class="mb-20 text-center">
         <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-4">Cómo Funciona</span>
@@ -243,7 +242,7 @@
           <div class="w-16 h-16 rounded-full bg-white border border-gray-200 saas-shadow flex items-center justify-center flex-shrink-0 relative">
             <span class="font-black text-xl text-gray-900">01</span>
           </div>
-          <div class="bg-white rounded-[2rem] p-8 saas-shadow border border-gray-100 flex-1 hover:-translate-y-1 transition-transform">
+          <div class="bg-white rounded-[2.5rem] p-8 saas-shadow border-none flex-1 hover:-translate-y-1 transition-transform">
             <h3 class="text-2xl font-bold text-gray-900 mb-3">Extracción Multiplataforma</h3>
             <p class="text-gray-500 font-medium leading-relaxed">
               Nuestros motores analizan millones de señales de comportamiento de usuario en TikTok, Amazon, Instagram y Mercado Libre cada hora. Almacenamos métricas de volumen y viralidad crudas listas para su evaluación estadística.
@@ -256,7 +255,7 @@
           <div class="w-16 h-16 rounded-full bg-black border-4 border-gray-100 shadow-xl flex items-center justify-center flex-shrink-0 relative">
             <span class="font-black text-xl text-white">02</span>
           </div>
-          <div class="bg-white rounded-[2rem] p-8 saas-shadow border border-gray-100 flex-1 hover:-translate-y-1 transition-transform transform md:scale-105 z-20 shadow-xl">
+          <div class="bg-white rounded-[2.5rem] p-8 saas-shadow border-none flex-1 hover:-translate-y-1 transition-transform transform md:scale-105 z-20 shadow-xl">
             <h3 class="text-2xl font-bold text-gray-900 mb-3">Algoritmo de Tendencia</h3>
             <p class="text-gray-500 font-medium leading-relaxed">
               Combinamos datos de volumen de búsqueda, tasa de interacción (engagement) en redes sociales, nivel de competencia publicitaria y volumen de ventas históricas para generar un <strong class="text-black">TrendScore</strong> exacto que define el potencial de rentabilidad de cada producto.
@@ -269,7 +268,7 @@
           <div class="w-16 h-16 rounded-full bg-white border border-gray-200 saas-shadow flex items-center justify-center flex-shrink-0 relative">
             <span class="font-black text-xl text-gray-900">03</span>
           </div>
-          <div class="bg-white rounded-[2rem] p-8 saas-shadow border border-gray-100 flex-1 hover:-translate-y-1 transition-transform">
+          <div class="bg-white rounded-[2.5rem] p-8 saas-shadow border-none flex-1 hover:-translate-y-1 transition-transform">
             <h3 class="text-2xl font-bold text-gray-900 mb-3">Validación y Localización</h3>
             <p class="text-gray-500 font-medium leading-relaxed">
               Convertimos todas las métricas al ecosistema LATAM. Te brindamos enlaces directos de proveedores validados (Dropshipping, Mayoristas o AliExpress) para que puedas importar el producto a tu tienda en 1 clic.
@@ -283,7 +282,7 @@
 
   
   <!-- Leaderboard Section -->
-  <section id="leaderboard" class="py-24 bg-white relative z-20">
+  <section id="leaderboard" class="py-24 relative z-20">
     <div class="max-w-7xl mx-auto px-6 md:px-12">
       <div class="text-center mb-16">
         <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-4">Comunidad Activa</span>
@@ -295,15 +294,15 @@
 
       <!-- Live Stats -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-16 text-center">
-        <div class="bg-gray-50 border border-gray-100 rounded-3xl p-8 saas-shadow hover:-translate-y-1 transition-transform">
+        <div class="bg-white border-none rounded-[2.5rem] p-8 saas-shadow hover:-translate-y-1 transition-transform">
           <div class="text-4xl font-extrabold text-gray-900 mb-2">12,450</div>
           <div class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Ventas registradas hoy</div>
         </div>
-        <div class="bg-gray-50 border border-gray-100 rounded-3xl p-8 saas-shadow hover:-translate-y-1 transition-transform">
+        <div class="bg-white border-none rounded-[2.5rem] p-8 saas-shadow hover:-translate-y-1 transition-transform">
           <div class="text-4xl font-extrabold text-gray-900 mb-2">842</div>
           <div class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Vendedores activos</div>
         </div>
-        <div class="bg-gray-50 border border-gray-100 rounded-3xl p-8 saas-shadow hover:-translate-y-1 transition-transform">
+        <div class="bg-white border-none rounded-[2.5rem] p-8 saas-shadow hover:-translate-y-1 transition-transform">
           <div class="text-xl font-black text-gray-900 mt-2 mb-3">Cortador Invisible</div>
           <div class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Producto estrella (24hs)</div>
         </div>
@@ -313,7 +312,7 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         
         <!-- Prod 1 -->
-        <div class="bg-white border border-gray-100 rounded-3xl overflow-hidden saas-shadow hover:-translate-y-2 transition-transform duration-300">
+        <div class="bg-white border-none rounded-[2rem] overflow-hidden saas-shadow hover:-translate-y-2 transition-transform duration-300">
           <div class="h-40 bg-gray-100 flex items-center justify-center relative">
             <span class="absolute top-3 right-3 bg-pink-100 text-pink-700 text-[10px] font-bold px-2 py-1 rounded-lg">Score: 99</span>
             <i data-lucide="image" class="w-8 h-8 text-gray-300"></i>
@@ -329,7 +328,7 @@
         </div>
 
         <!-- Prod 2 -->
-        <div class="bg-white border border-gray-100 rounded-3xl overflow-hidden saas-shadow hover:-translate-y-2 transition-transform duration-300">
+        <div class="bg-white border-none rounded-[2rem] overflow-hidden saas-shadow hover:-translate-y-2 transition-transform duration-300">
           <div class="h-40 bg-gray-100 flex items-center justify-center relative">
             <span class="absolute top-3 right-3 bg-pink-100 text-pink-700 text-[10px] font-bold px-2 py-1 rounded-lg">Score: 99</span>
             <i data-lucide="image" class="w-8 h-8 text-gray-300"></i>
@@ -345,7 +344,7 @@
         </div>
 
         <!-- Prod 3 -->
-        <div class="bg-white border border-gray-100 rounded-3xl overflow-hidden saas-shadow hover:-translate-y-2 transition-transform duration-300">
+        <div class="bg-white border-none rounded-[2rem] overflow-hidden saas-shadow hover:-translate-y-2 transition-transform duration-300">
           <div class="h-40 bg-gray-100 flex items-center justify-center relative">
             <span class="absolute top-3 right-3 bg-gray-100 text-gray-600 text-[10px] font-bold px-2 py-1 rounded-lg">Score: 98</span>
             <i data-lucide="image" class="w-8 h-8 text-gray-300"></i>
@@ -361,7 +360,7 @@
         </div>
 
         <!-- Prod 4 -->
-        <div class="bg-white border border-gray-100 rounded-3xl overflow-hidden saas-shadow hover:-translate-y-2 transition-transform duration-300">
+        <div class="bg-white border-none rounded-[2rem] overflow-hidden saas-shadow hover:-translate-y-2 transition-transform duration-300">
           <div class="h-40 bg-gray-100 flex items-center justify-center relative">
             <span class="absolute top-3 right-3 bg-gray-100 text-gray-600 text-[10px] font-bold px-2 py-1 rounded-lg">Score: 98</span>
             <i data-lucide="image" class="w-8 h-8 text-gray-300"></i>
@@ -381,7 +380,7 @@
   </section>
 
   <!-- Manifesto Section (Transition to dark) -->
-  <section id="philosophy" class="py-32 bg-gray-100 relative z-20 border-b border-gray-200">
+  <section id="philosophy" class="py-32 relative z-20">
     <div class="max-w-4xl mx-auto px-6 text-center">
       <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-8">El Manifiesto TrendBase</span>
       
