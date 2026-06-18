@@ -442,7 +442,7 @@
 
         <!-- History Tab -->
         <div id="tab-history" class="modal-tab-content hidden space-y-4">
-          <div class="h-72 relative w-full">
+          <div class="h-[300px] relative w-full">
             <canvas id="historyChart"></canvas>
           </div>
           <div class="overflow-x-auto rounded-xl border border-white/10">
@@ -1630,7 +1630,7 @@
             <div class="lg:col-span-2 bg-white/5 border border-white/10 rounded-[2rem] p-6 space-y-4">
               <h3 class="text-xs font-mono text-champagne uppercase tracking-widest border-b border-white/5 pb-2">Historial de TrendScore 90 días</h3>
               <select id="analysisProductSel" onchange="renderAnalysisHistory()" class="w-full bg-obsidian border border-white/10 rounded-xl px-4 py-2 text-xs text-white outline-none focus:border-champagne"></select>
-              <div class="h-96 relative w-full mt-4">
+              <div class="h-[350px] relative w-full mt-4">
                 <canvas id="analysisChart"></canvas>
               </div>
               <div class="overflow-x-auto rounded-xl border border-white/10 mt-4">
@@ -2204,6 +2204,50 @@
           { name: "Organizador de Cables Magnético", cat: "Tecnología", score: 76, change: "up", change_num: 2.1, margin: 55, price_min: 8, price_str: "$8 - $15", hot: false, comp: "Baja", plts: ["Pinterest"], regions: ["US", "MX"], history: [60, 65, 70, 76], rank: 18, suppliers: [{name:"AliExpress", price: 3}] },
           { name: "Fuente de Agua para Mascotas", cat: "Mascotas", score: 90, change: "up", change_num: 16.4, margin: 62, price_min: 30, price_str: "$30 - $45", hot: true, comp: "Media", plts: ["TikTok"], regions: ["BR", "CO"], history: [50, 65, 80, 90], rank: 19, suppliers: [{name:"AliExpress", price: 11}] },
           { name: "Lámpara Atrapamosquitos UV", cat: "Hogar", score: 88, change: "up", change_num: 10.5, margin: 58, price_min: 25, price_str: "$25 - $40", hot: false, comp: "Media", plts: ["Facebook"], regions: ["MX", "AR"], history: [60, 70, 80, 88], rank: 20, suppliers: [{name:"AliExpress", price: 10}] }
+        ,
+
+          { name: "Nuevo Cama Relajante para Mascotas", cat: "Mascotas", score: 98, change: "up", change_num: 25.4, margin: 65, price_min: 35, price_str: "$35 - $50", hot: true, comp: "Baja", plts: ["TikTok", "Facebook"], regions: ["MX", "CO", "AR"], history: [40, 55, 70, 98], rank: 1, suppliers: [{name:"AliExpress", price: 12}] },
+          { name: "Nuevo Cepillo Quita Pelos Mágico", cat: "Mascotas", score: 95, change: "up", change_num: 18.2, margin: 70, price_min: 25, price_str: "$25 - $30", hot: true, comp: "Media", plts: ["TikTok", "Instagram"], regions: ["BR", "CO"], history: [30, 60, 80, 95], rank: 2, suppliers: [{name:"AliExpress", price: 6}] },
+          { name: "Nuevo Proyector Galaxia Inteligente", cat: "Tecnología", score: 92, change: "up", change_num: 12.5, margin: 55, price_min: 45, price_str: "$45 - $60", hot: false, comp: "Alta", plts: ["TikTok", "Amazon"], regions: ["US", "MX"], history: [80, 85, 90, 92], rank: 3, suppliers: [{name:"AliExpress", price: 18}] },
+          { name: "Nuevo Rizador de Pelo Automático", cat: "Belleza", score: 88, change: "up", change_num: 8.4, margin: 60, price_min: 40, price_str: "$40 - $55", hot: false, comp: "Media", plts: ["Instagram", "Pinterest"], regions: ["AR", "CL"], history: [50, 65, 75, 88], rank: 4, suppliers: [{name:"AliExpress", price: 15}] },
+          { name: "Nuevo Humidificador Anti-gravedad", cat: "Hogar", score: 85, change: "down", change_num: -2.1, margin: 50, price_min: 30, price_str: "$30 - $45", hot: false, comp: "Muy Alta", plts: ["TikTok", "Shopee"], regions: ["BR", "MX"], history: [95, 90, 88, 85], rank: 5, suppliers: [{name:"AliExpress", price: 14}] },
+          { name: "Nuevo Collar GPS para Perros", cat: "Mascotas", score: 97, change: "up", change_num: 32.1, margin: 75, price_min: 60, price_str: "$60 - $80", hot: true, comp: "Baja", plts: ["Facebook", "TikTok"], regions: ["CO", "CL", "MX"], history: [20, 45, 80, 97], rank: 6, suppliers: [{name:"AliExpress", price: 15}] },
+          { name: "Nuevo Rascador para Gatos de Pared", cat: "Mascotas", score: 84, change: "up", change_num: 15.0, margin: 55, price_min: 20, price_str: "$20 - $35", hot: false, comp: "Baja", plts: ["Instagram"], regions: ["AR", "MX"], history: [50, 60, 70, 84], rank: 7, suppliers: [{name:"AliExpress", price: 9}] },
+          { name: "Nuevo Luz LED Inteligente WiFi", cat: "Tecnología", score: 82, change: "up", change_num: 5.5, margin: 45, price_min: 15, price_str: "$15 - $25", hot: false, comp: "Alta", plts: ["TikTok"], regions: ["US", "BR"], history: [75, 78, 80, 82], rank: 8, suppliers: [{name:"AliExpress", price: 8}] },
+          { name: "Nuevo Limpiador Facial Ultrasónico", cat: "Belleza", score: 91, change: "up", change_num: 21.0, margin: 80, price_min: 35, price_str: "$35 - $60", hot: true, comp: "Media", plts: ["TikTok", "Pinterest"], regions: ["MX", "CO"], history: [40, 60, 85, 91], rank: 9, suppliers: [{name:"AliExpress", price: 7}] },
+          { name: "Nuevo Dispensador de Agua Automático", cat: "Hogar", score: 79, change: "down", change_num: -5.0, margin: 40, price_min: 12, price_str: "$12 - $20", hot: false, comp: "Muy Alta", plts: ["Facebook"], regions: ["CL", "AR"], history: [85, 82, 80, 79], rank: 10, suppliers: [{name:"AliExpress", price: 6}] },
+          { name: "Nuevo Juguete Interactivo para Gatos", cat: "Mascotas", score: 94, change: "up", change_num: 19.5, margin: 68, price_min: 18, price_str: "$18 - $30", hot: true, comp: "Media", plts: ["TikTok"], regions: ["MX", "BR", "CO"], history: [30, 50, 80, 94], rank: 11, suppliers: [{name:"AliExpress", price: 5}] },
+          { name: "Nuevo Cámara de Seguridad Mini", cat: "Tecnología", score: 89, change: "up", change_num: 11.2, margin: 50, price_min: 25, price_str: "$25 - $40", hot: false, comp: "Alta", plts: ["Facebook"], regions: ["AR", "MX"], history: [70, 75, 80, 89], rank: 12, suppliers: [{name:"AliExpress", price: 12}] },
+          { name: "Nuevo Rodillo de Masaje Facial", cat: "Belleza", score: 86, change: "up", change_num: 7.1, margin: 75, price_min: 15, price_str: "$15 - $25", hot: false, comp: "Media", plts: ["Instagram"], regions: ["CL", "CO"], history: [60, 70, 80, 86], rank: 13, suppliers: [{name:"AliExpress", price: 3}] },
+          { name: "Nuevo Aspiradora Inalámbrica Portátil", cat: "Hogar", score: 93, change: "up", change_num: 14.8, margin: 45, price_min: 45, price_str: "$45 - $70", hot: true, comp: "Alta", plts: ["TikTok"], regions: ["BR", "MX"], history: [60, 75, 85, 93], rank: 14, suppliers: [{name:"AliExpress", price: 25}] },
+          { name: "Nuevo Correa Retráctil con Linterna", cat: "Mascotas", score: 87, change: "up", change_num: 9.3, margin: 60, price_min: 22, price_str: "$22 - $35", hot: false, comp: "Baja", plts: ["Facebook"], regions: ["AR", "CO"], history: [55, 65, 75, 87], rank: 15, suppliers: [{name:"AliExpress", price: 8}] },
+          { name: "Nuevo Auriculares Bluetooth Invisibles", cat: "Tecnología", score: 81, change: "down", change_num: -1.5, margin: 40, price_min: 18, price_str: "$18 - $28", hot: false, comp: "Muy Alta", plts: ["TikTok"], regions: ["MX", "BR"], history: [85, 83, 82, 81], rank: 16, suppliers: [{name:"AliExpress", price: 10}] },
+          { name: "Nuevo Depiladora Láser Casera", cat: "Belleza", score: 96, change: "up", change_num: 28.5, margin: 85, price_min: 65, price_str: "$65 - $100", hot: true, comp: "Baja", plts: ["TikTok", "Instagram"], regions: ["AR", "MX", "CL"], history: [35, 60, 80, 96], rank: 17, suppliers: [{name:"AliExpress", price: 20}] },
+          { name: "Nuevo Organizador de Cables Magnético", cat: "Tecnología", score: 76, change: "up", change_num: 2.1, margin: 55, price_min: 8, price_str: "$8 - $15", hot: false, comp: "Baja", plts: ["Pinterest"], regions: ["US", "MX"], history: [60, 65, 70, 76], rank: 18, suppliers: [{name:"AliExpress", price: 3}] },
+          { name: "Nuevo Fuente de Agua para Mascotas", cat: "Mascotas", score: 90, change: "up", change_num: 16.4, margin: 62, price_min: 30, price_str: "$30 - $45", hot: true, comp: "Media", plts: ["TikTok"], regions: ["BR", "CO"], history: [50, 65, 80, 90], rank: 19, suppliers: [{name:"AliExpress", price: 11}] },
+          { name: "Nuevo Lámpara Atrapamosquitos UV", cat: "Hogar", score: 88, change: "up", change_num: 10.5, margin: 58, price_min: 25, price_str: "$25 - $40", hot: false, comp: "Media", plts: ["Facebook"], regions: ["MX", "AR"], history: [60, 70, 80, 88], rank: 20, suppliers: [{name:"AliExpress", price: 10}] }
+        ,
+
+          { name: "Pro Cama Relajante para Mascotas", cat: "Mascotas", score: 98, change: "up", change_num: 25.4, margin: 65, price_min: 35, price_str: "$35 - $50", hot: true, comp: "Baja", plts: ["TikTok", "Facebook"], regions: ["MX", "CO", "AR"], history: [40, 55, 70, 98], rank: 1, suppliers: [{name:"AliExpress", price: 12}] },
+          { name: "Pro Cepillo Quita Pelos Mágico", cat: "Mascotas", score: 95, change: "up", change_num: 18.2, margin: 70, price_min: 25, price_str: "$25 - $30", hot: true, comp: "Media", plts: ["TikTok", "Instagram"], regions: ["BR", "CO"], history: [30, 60, 80, 95], rank: 2, suppliers: [{name:"AliExpress", price: 6}] },
+          { name: "Pro Proyector Galaxia Inteligente", cat: "Tecnología", score: 92, change: "up", change_num: 12.5, margin: 55, price_min: 45, price_str: "$45 - $60", hot: false, comp: "Alta", plts: ["TikTok", "Amazon"], regions: ["US", "MX"], history: [80, 85, 90, 92], rank: 3, suppliers: [{name:"AliExpress", price: 18}] },
+          { name: "Pro Rizador de Pelo Automático", cat: "Belleza", score: 88, change: "up", change_num: 8.4, margin: 60, price_min: 40, price_str: "$40 - $55", hot: false, comp: "Media", plts: ["Instagram", "Pinterest"], regions: ["AR", "CL"], history: [50, 65, 75, 88], rank: 4, suppliers: [{name:"AliExpress", price: 15}] },
+          { name: "Pro Humidificador Anti-gravedad", cat: "Hogar", score: 85, change: "down", change_num: -2.1, margin: 50, price_min: 30, price_str: "$30 - $45", hot: false, comp: "Muy Alta", plts: ["TikTok", "Shopee"], regions: ["BR", "MX"], history: [95, 90, 88, 85], rank: 5, suppliers: [{name:"AliExpress", price: 14}] },
+          { name: "Pro Collar GPS para Perros", cat: "Mascotas", score: 97, change: "up", change_num: 32.1, margin: 75, price_min: 60, price_str: "$60 - $80", hot: true, comp: "Baja", plts: ["Facebook", "TikTok"], regions: ["CO", "CL", "MX"], history: [20, 45, 80, 97], rank: 6, suppliers: [{name:"AliExpress", price: 15}] },
+          { name: "Pro Rascador para Gatos de Pared", cat: "Mascotas", score: 84, change: "up", change_num: 15.0, margin: 55, price_min: 20, price_str: "$20 - $35", hot: false, comp: "Baja", plts: ["Instagram"], regions: ["AR", "MX"], history: [50, 60, 70, 84], rank: 7, suppliers: [{name:"AliExpress", price: 9}] },
+          { name: "Pro Luz LED Inteligente WiFi", cat: "Tecnología", score: 82, change: "up", change_num: 5.5, margin: 45, price_min: 15, price_str: "$15 - $25", hot: false, comp: "Alta", plts: ["TikTok"], regions: ["US", "BR"], history: [75, 78, 80, 82], rank: 8, suppliers: [{name:"AliExpress", price: 8}] },
+          { name: "Pro Limpiador Facial Ultrasónico", cat: "Belleza", score: 91, change: "up", change_num: 21.0, margin: 80, price_min: 35, price_str: "$35 - $60", hot: true, comp: "Media", plts: ["TikTok", "Pinterest"], regions: ["MX", "CO"], history: [40, 60, 85, 91], rank: 9, suppliers: [{name:"AliExpress", price: 7}] },
+          { name: "Pro Dispensador de Agua Automático", cat: "Hogar", score: 79, change: "down", change_num: -5.0, margin: 40, price_min: 12, price_str: "$12 - $20", hot: false, comp: "Muy Alta", plts: ["Facebook"], regions: ["CL", "AR"], history: [85, 82, 80, 79], rank: 10, suppliers: [{name:"AliExpress", price: 6}] },
+          { name: "Pro Juguete Interactivo para Gatos", cat: "Mascotas", score: 94, change: "up", change_num: 19.5, margin: 68, price_min: 18, price_str: "$18 - $30", hot: true, comp: "Media", plts: ["TikTok"], regions: ["MX", "BR", "CO"], history: [30, 50, 80, 94], rank: 11, suppliers: [{name:"AliExpress", price: 5}] },
+          { name: "Pro Cámara de Seguridad Mini", cat: "Tecnología", score: 89, change: "up", change_num: 11.2, margin: 50, price_min: 25, price_str: "$25 - $40", hot: false, comp: "Alta", plts: ["Facebook"], regions: ["AR", "MX"], history: [70, 75, 80, 89], rank: 12, suppliers: [{name:"AliExpress", price: 12}] },
+          { name: "Pro Rodillo de Masaje Facial", cat: "Belleza", score: 86, change: "up", change_num: 7.1, margin: 75, price_min: 15, price_str: "$15 - $25", hot: false, comp: "Media", plts: ["Instagram"], regions: ["CL", "CO"], history: [60, 70, 80, 86], rank: 13, suppliers: [{name:"AliExpress", price: 3}] },
+          { name: "Pro Aspiradora Inalámbrica Portátil", cat: "Hogar", score: 93, change: "up", change_num: 14.8, margin: 45, price_min: 45, price_str: "$45 - $70", hot: true, comp: "Alta", plts: ["TikTok"], regions: ["BR", "MX"], history: [60, 75, 85, 93], rank: 14, suppliers: [{name:"AliExpress", price: 25}] },
+          { name: "Pro Correa Retráctil con Linterna", cat: "Mascotas", score: 87, change: "up", change_num: 9.3, margin: 60, price_min: 22, price_str: "$22 - $35", hot: false, comp: "Baja", plts: ["Facebook"], regions: ["AR", "CO"], history: [55, 65, 75, 87], rank: 15, suppliers: [{name:"AliExpress", price: 8}] },
+          { name: "Pro Auriculares Bluetooth Invisibles", cat: "Tecnología", score: 81, change: "down", change_num: -1.5, margin: 40, price_min: 18, price_str: "$18 - $28", hot: false, comp: "Muy Alta", plts: ["TikTok"], regions: ["MX", "BR"], history: [85, 83, 82, 81], rank: 16, suppliers: [{name:"AliExpress", price: 10}] },
+          { name: "Pro Depiladora Láser Casera", cat: "Belleza", score: 96, change: "up", change_num: 28.5, margin: 85, price_min: 65, price_str: "$65 - $100", hot: true, comp: "Baja", plts: ["TikTok", "Instagram"], regions: ["AR", "MX", "CL"], history: [35, 60, 80, 96], rank: 17, suppliers: [{name:"AliExpress", price: 20}] },
+          { name: "Pro Organizador de Cables Magnético", cat: "Tecnología", score: 76, change: "up", change_num: 2.1, margin: 55, price_min: 8, price_str: "$8 - $15", hot: false, comp: "Baja", plts: ["Pinterest"], regions: ["US", "MX"], history: [60, 65, 70, 76], rank: 18, suppliers: [{name:"AliExpress", price: 3}] },
+          { name: "Pro Fuente de Agua para Mascotas", cat: "Mascotas", score: 90, change: "up", change_num: 16.4, margin: 62, price_min: 30, price_str: "$30 - $45", hot: true, comp: "Media", plts: ["TikTok"], regions: ["BR", "CO"], history: [50, 65, 80, 90], rank: 19, suppliers: [{name:"AliExpress", price: 11}] },
+          { name: "Pro Lámpara Atrapamosquitos UV", cat: "Hogar", score: 88, change: "up", change_num: 10.5, margin: 58, price_min: 25, price_str: "$25 - $40", hot: false, comp: "Media", plts: ["Facebook"], regions: ["MX", "AR"], history: [60, 70, 80, 88], rank: 20, suppliers: [{name:"AliExpress", price: 10}] }
         ],
         count: 47250
       };
@@ -2291,7 +2335,43 @@
             </div>
           </div>
         `;
-      }).join('');
+      }).join(\'\');
+
+      // Init or update History Chart
+      const ctx = document.getElementById('historyChart');
+      if(ctx) {
+        if(histChart) histChart.destroy();
+        const labels = WEEKS.slice(0, p.history.length);
+        histChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'TrendScore',
+              data: p.history,
+              borderColor: '#C9A84C',
+              backgroundColor: 'rgba(201, 168, 76, 0.1)',
+              fill: true,
+              tension: 0.4,
+              borderWidth: 2,
+              pointBackgroundColor: '#C9A84C',
+              pointBorderColor: '#000',
+              pointRadius: 4,
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: { padding: { bottom: 20 } },
+            layout: { padding: { bottom: 20 } },
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { display: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'rgba(255,255,255,0.5)', font: { family: 'monospace', size: 10 } } },
+              y: { display: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'rgba(255,255,255,0.5)', font: { family: 'monospace', size: 10 } } }
+            }
+          }
+        });
+      }
     }
 
     function renderProducts(resetPage=false) {
@@ -2579,7 +2659,43 @@
             <div class="text-[8px] text-white/40 uppercase font-mono mt-0.5">${r.count} productos</div>
           </div>
         `;
-      }).join('');
+      }).join(\'\');
+
+      // Init or update History Chart
+      const ctx = document.getElementById('historyChart');
+      if(ctx) {
+        if(histChart) histChart.destroy();
+        const labels = WEEKS.slice(0, p.history.length);
+        histChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'TrendScore',
+              data: p.history,
+              borderColor: '#C9A84C',
+              backgroundColor: 'rgba(201, 168, 76, 0.1)',
+              fill: true,
+              tension: 0.4,
+              borderWidth: 2,
+              pointBackgroundColor: '#C9A84C',
+              pointBorderColor: '#000',
+              pointRadius: 4,
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: { padding: { bottom: 20 } },
+            layout: { padding: { bottom: 20 } },
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { display: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'rgba(255,255,255,0.5)', font: { family: 'monospace', size: 10 } } },
+              y: { display: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'rgba(255,255,255,0.5)', font: { family: 'monospace', size: 10 } } }
+            }
+          }
+        });
+      }
     }
 
     function renderTopMargin() {
@@ -2621,7 +2737,43 @@
             </div>
           </div>
         `;
-      }).join('');
+      }).join(\'\');
+
+      // Init or update History Chart
+      const ctx = document.getElementById('historyChart');
+      if(ctx) {
+        if(histChart) histChart.destroy();
+        const labels = WEEKS.slice(0, p.history.length);
+        histChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'TrendScore',
+              data: p.history,
+              borderColor: '#C9A84C',
+              backgroundColor: 'rgba(201, 168, 76, 0.1)',
+              fill: true,
+              tension: 0.4,
+              borderWidth: 2,
+              pointBackgroundColor: '#C9A84C',
+              pointBorderColor: '#000',
+              pointRadius: 4,
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: { padding: { bottom: 20 } },
+            layout: { padding: { bottom: 20 } },
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { display: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'rgba(255,255,255,0.5)', font: { family: 'monospace', size: 10 } } },
+              y: { display: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'rgba(255,255,255,0.5)', font: { family: 'monospace', size: 10 } } }
+            }
+          }
+        });
+      }
     }
 
     function populateAnalysisSelect() {
@@ -2903,8 +3055,44 @@
             return `<span class="px-2 py-1 bg-champagne/20 border border-champagne/50 rounded text-[10px] font-mono text-champagne font-bold">${a}</span>`;
           }
           return `<span class="px-2 py-1 bg-white/10 rounded text-[10px] font-mono text-white">${a}</span>`;
-        }).join('');
+        }).join(\'\');
+
+      // Init or update History Chart
+      const ctx = document.getElementById('historyChart');
+      if(ctx) {
+        if(histChart) histChart.destroy();
+        const labels = WEEKS.slice(0, p.history.length);
+        histChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'TrendScore',
+              data: p.history,
+              borderColor: '#C9A84C',
+              backgroundColor: 'rgba(201, 168, 76, 0.1)',
+              fill: true,
+              tension: 0.4,
+              borderWidth: 2,
+              pointBackgroundColor: '#C9A84C',
+              pointBorderColor: '#000',
+              pointRadius: 4,
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: { padding: { bottom: 20 } },
+            layout: { padding: { bottom: 20 } },
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { display: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'rgba(255,255,255,0.5)', font: { family: 'monospace', size: 10 } } },
+              y: { display: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'rgba(255,255,255,0.5)', font: { family: 'monospace', size: 10 } } }
+            }
+          }
+        });
       }
+    }
 
       const vViews = ["1.2M", "850K", "2.4M", "500K", "3.1M"];
       const elView1 = document.getElementById('adView1');
@@ -2966,6 +3154,7 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
+            layout: { padding: { bottom: 20 } },
           plugins: {
             legend: { display: false }
           },
@@ -3069,8 +3258,44 @@
               </div>
             </div>
           `;
-        }).join('');
-      } catch(e) {
+        }).join(\'\');
+
+      // Init or update History Chart
+      const ctx = document.getElementById('historyChart');
+      if(ctx) {
+        if(histChart) histChart.destroy();
+        const labels = WEEKS.slice(0, p.history.length);
+        histChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'TrendScore',
+              data: p.history,
+              borderColor: '#C9A84C',
+              backgroundColor: 'rgba(201, 168, 76, 0.1)',
+              fill: true,
+              tension: 0.4,
+              borderWidth: 2,
+              pointBackgroundColor: '#C9A84C',
+              pointBorderColor: '#000',
+              pointRadius: 4,
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: { padding: { bottom: 20 } },
+            layout: { padding: { bottom: 20 } },
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { display: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'rgba(255,255,255,0.5)', font: { family: 'monospace', size: 10 } } },
+              y: { display: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'rgba(255,255,255,0.5)', font: { family: 'monospace', size: 10 } } }
+            }
+          }
+        });
+      }
+    } catch(e) {
         if(el) el.innerHTML = '<div class="col-span-3 text-center py-6 text-white/40 text-xs font-mono">Registrá ventas para activar el Leaderboard 🚀</div>';
       }
     }
@@ -3938,7 +4163,43 @@
             <td class="p-3 text-white/70">${LEADERS[i % LEADERS.length]}</td>
           </tr>
         `;
-      }).join('');
+      }).join(\'\');
+
+      // Init or update History Chart
+      const ctx = document.getElementById('historyChart');
+      if(ctx) {
+        if(histChart) histChart.destroy();
+        const labels = WEEKS.slice(0, p.history.length);
+        histChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'TrendScore',
+              data: p.history,
+              borderColor: '#C9A84C',
+              backgroundColor: 'rgba(201, 168, 76, 0.1)',
+              fill: true,
+              tension: 0.4,
+              borderWidth: 2,
+              pointBackgroundColor: '#C9A84C',
+              pointBorderColor: '#000',
+              pointRadius: 4,
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: { padding: { bottom: 20 } },
+            layout: { padding: { bottom: 20 } },
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { display: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'rgba(255,255,255,0.5)', font: { family: 'monospace', size: 10 } } },
+              y: { display: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'rgba(255,255,255,0.5)', font: { family: 'monospace', size: 10 } } }
+            }
+          }
+        });
+      }
     }
 
     const SUPPLIERS_BUY = [
