@@ -32,6 +32,16 @@ add_chart.py
 # Node
 node_modules/
 
+# API files not used in frontend (reduces serverless function count for Hobby plan)
+api/admin.js
+api/aliexpress.js
+api/export.js
+api/imgproxy.js
+api/mercadolibre.js
+api/panel.js
+api/refresh.js
+api/store-sync.js
+
 # Dev docs
 TODO_MANANA.md
 GEMINI.md
