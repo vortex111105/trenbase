@@ -1,43 +1,49 @@
-import requests
-import json
 import os
+import json
+import requests
 
-# --- TIKTOK CREATIVE CENTER API / APIFY INTEGRATION ---
-# Scraping TikTok directly is heavily blocked.
-# The standard approach is to use Apify's "TikTok Scraper" or "TikTok Ads Scraper"
-# or connect directly to the TikTok Marketing API if you have an approved developer account.
+APIFY_API_TOKEN = os.environ.get("APIFY_API_TOKEN")
+# Free actor: clockworks/free-tiktok-scraper
+# Paid / more results: clockworks/tiktok-scraper
+APIFY_ACTOR_ID = os.environ.get("APIFY_ACTOR_ID", "clockworks/free-tiktok-scraper")
 
-APIFY_API_TOKEN = os.environ.get("APIFY_API_TOKEN", "YOUR_APIFY_TOKEN")
-APIFY_ACTOR_ID = "apify/tiktok-scraper" # Example actor
 
-def fetch_tiktok_ads(keyword):
+def fetch_tiktok_ads(keyword, max_videos=5):
     """
-    Simulates fetching top TikTok ads for a given keyword.
-    In production, this would make a request to Apify or TikTok Marketing API.
+    Fetch top TikTok videos for a keyword using Apify.
+    Returns a list of dicts: [{id, views, likes, url}]
+    Returns [] if APIFY_API_TOKEN is not set.
     """
-    print(f"Requesting TikTok ads data for keyword: '{keyword}'...")
-    
-    # Example Apify API call (commented out until token is provided)
-    """
-    url = f"https://api.apify.com/v2/acts/{APIFY_ACTOR_ID}/runs?token={APIFY_API_TOKEN}"
-    payload = {
-        "hashtags": [keyword.replace(' ', '')],
-        "resultsPerPage": 5
-    }
-    response = requests.post(url, json=payload)
-    data = response.json()
-    return data
-    """
-    
-    # Mocking the response structure that the frontend expects
-    # In production, replace this with the real parsed data from the API
-    mock_results = [
-        {"id": "ad_123", "views": "1.2M", "likes": "150K", "url": f"https://tiktok.com/tag/{keyword.replace(' ', '')}"},
-        {"id": "ad_124", "views": "850K", "likes": "45K", "url": f"https://tiktok.com/tag/{keyword.replace(' ', '')}"},
-        {"id": "ad_125", "views": "500K", "likes": "20K", "url": f"https://tiktok.com/tag/{keyword.replace(' ', '')}"}
-    ]
-    
-    return mock_results
+    if not APIFY_API_TOKEN:
+        print(f"[tiktok] APIFY_API_TOKEN not set — skipping '{keyword}'")
+        return []
+
+    try:
+        url = f"https://api.apify.com/v2/acts/{APIFY_ACTOR_ID}/run-sync-get-dataset-items"
+        params = {"token": APIFY_API_TOKEN, "timeout": 120}
+        payload = {
+            "hashtags": [keyword.replace(" ", "")],
+            "resultsPerPage": max_videos,
+            "proxyConfig": {"useApifyProxy": True},
+        }
+        res = requests.post(url, json=payload, params=params, timeout=130)
+        res.raise_for_status()
+        items = res.json()
+
+        return [
+            {
+                "id": str(item.get("id", "")),
+                "views": item.get("playCount", 0),
+                "likes": item.get("diggCount", 0),
+                "url": item.get("webVideoUrl", ""),
+            }
+            for item in items[:max_videos]
+            if item.get("webVideoUrl")
+        ]
+    except Exception as e:
+        print(f"[tiktok] Error fetching '{keyword}': {e}")
+        return []
+
 
 if __name__ == "__main__":
     ads = fetch_tiktok_ads("masajeador facial")

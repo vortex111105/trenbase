@@ -1,0 +1,14 @@
+services:
+  - type: cron
+    name: trendbase-pipeline
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    schedule: "0 4 * * *"   # 4am UTC = 1am AR / midnight UY
+    startCommand: python worker.py
+    envVars:
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+      - key: APIFY_API_TOKEN
+        sync: false

@@ -493,15 +493,15 @@
       <!-- Live Stats -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-16 text-center">
         <div class="bg-white border-none rounded-[2.5rem] p-8 saas-shadow hover:-translate-y-1 transition-transform">
-          <div class="text-4xl font-extrabold text-gray-900 mb-2">12,450</div>
+          <div class="text-4xl font-extrabold text-gray-900 mb-2" id="stat-sales">—</div>
           <div class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Ventas registradas hoy</div>
         </div>
         <div class="bg-white border-none rounded-[2.5rem] p-8 saas-shadow hover:-translate-y-1 transition-transform">
-          <div class="text-4xl font-extrabold text-gray-900 mb-2">842</div>
+          <div class="text-4xl font-extrabold text-gray-900 mb-2" id="stat-sellers">—</div>
           <div class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Vendedores activos</div>
         </div>
         <div class="bg-white border-none rounded-[2.5rem] p-8 saas-shadow hover:-translate-y-1 transition-transform">
-          <div class="text-xl font-black text-emerald-500 mt-2 mb-3">Cortador Invisible</div>
+          <div class="text-xl font-black text-emerald-500 mt-2 mb-3 truncate" id="stat-top">—</div>
           <div class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Producto estrella (24hs)</div>
         </div>
       </div>
@@ -511,9 +511,9 @@
         
         <!-- Prod 1 -->
         <div class="bg-white border-none rounded-[2rem] overflow-hidden saas-shadow hover:-translate-y-2 transition-transform duration-300">
-          <div class="h-40 bg-gray-100 flex items-center justify-center relative">
-            <span class="absolute top-3 right-3 bg-pink-100 text-pink-700 text-[10px] font-bold px-2 py-1 rounded-lg">Score: 99</span>
-            <i data-lucide="image" class="w-8 h-8 text-pink-300"></i>
+          <div class="h-40 bg-gray-100 relative overflow-hidden">
+            <span class="absolute top-3 right-3 z-10 bg-pink-100 text-pink-700 text-[10px] font-bold px-2 py-1 rounded-lg">Score: 99</span>
+            <img src="https://picsum.photos/seed/cortador/400/160" alt="Cortador de Verduras" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML+='<i data-lucide=\'image\' class=\'w-8 h-8 text-pink-300 absolute inset-0 m-auto\'></i>'; this.remove()">
           </div>
           <div class="p-5">
             <div class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Hogar</div>
@@ -527,9 +527,9 @@
 
         <!-- Prod 2 -->
         <div class="bg-white border-none rounded-[2rem] overflow-hidden saas-shadow hover:-translate-y-2 transition-transform duration-300">
-          <div class="h-40 bg-gray-100 flex items-center justify-center relative">
-            <span class="absolute top-3 right-3 bg-pink-100 text-pink-700 text-[10px] font-bold px-2 py-1 rounded-lg">Score: 99</span>
-            <i data-lucide="image" class="w-8 h-8 text-pink-300"></i>
+          <div class="h-40 bg-gray-100 relative overflow-hidden">
+            <span class="absolute top-3 right-3 z-10 bg-pink-100 text-pink-700 text-[10px] font-bold px-2 py-1 rounded-lg">Score: 99</span>
+            <img src="https://picsum.photos/seed/teclado/400/160" alt="Teclado Ultra HD" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML+='<i data-lucide=\'image\' class=\'w-8 h-8 text-pink-300 absolute inset-0 m-auto\'></i>'; this.remove()">
           </div>
           <div class="p-5">
             <div class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Tecnología</div>
@@ -543,9 +543,9 @@
 
         <!-- Prod 3 -->
         <div class="bg-white border-none rounded-[2rem] overflow-hidden saas-shadow hover:-translate-y-2 transition-transform duration-300">
-          <div class="h-40 bg-gray-100 flex items-center justify-center relative">
-            <span class="absolute top-3 right-3 bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2 py-1 rounded-lg">Score: 98</span>
-            <i data-lucide="image" class="w-8 h-8 text-emerald-300"></i>
+          <div class="h-40 bg-gray-100 relative overflow-hidden">
+            <span class="absolute top-3 right-3 z-10 bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2 py-1 rounded-lg">Score: 98</span>
+            <img src="https://picsum.photos/seed/cables/400/160" alt="Organizador de Cables" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML+='<i data-lucide=\'image\' class=\'w-8 h-8 text-emerald-300 absolute inset-0 m-auto\'></i>'; this.remove()">
           </div>
           <div class="p-5">
             <div class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Tecnología</div>
@@ -559,9 +559,9 @@
 
         <!-- Prod 4 -->
         <div class="bg-white border-none rounded-[2rem] overflow-hidden saas-shadow hover:-translate-y-2 transition-transform duration-300">
-          <div class="h-40 bg-gray-100 flex items-center justify-center relative">
-            <span class="absolute top-3 right-3 bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-1 rounded-lg">Score: 98</span>
-            <i data-lucide="image" class="w-8 h-8 text-blue-300"></i>
+          <div class="h-40 bg-gray-100 relative overflow-hidden">
+            <span class="absolute top-3 right-3 z-10 bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-1 rounded-lg">Score: 98</span>
+            <img src="https://picsum.photos/seed/natacion/400/160" alt="Gorro Natación Avanzado" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML+='<i data-lucide=\'image\' class=\'w-8 h-8 text-blue-300 absolute inset-0 m-auto\'></i>'; this.remove()">
           </div>
           <div class="p-5">
             <div class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Deportes</div>
@@ -705,10 +705,7 @@
   <section id="founder-note" class="py-24 bg-[#E4E5E9] relative z-20">
     <div class="max-w-4xl mx-auto px-6 text-center">
       <div class="inline-block p-2 rounded-full bg-white saas-shadow mb-8">
-        <div class="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center text-gray-400 font-bold text-xl">
-          <!-- Placeholder until real image is loaded -->
-          IG
-        </div>
+        <img src="./founder.png" alt="Ignacio - Fundador de TrendBase" class="w-24 h-24 rounded-full object-cover object-top">
       </div>
       
       <h3 class="text-3xl font-black text-gray-900 mb-6">"Construí la herramienta que me hubiese gustado tener"</h3>
@@ -814,7 +811,7 @@
             <li class="flex items-center gap-3 text-sm text-white/60"><i data-lucide="check" class="w-4 h-4 text-white/40"></i> Soporte por email</li>
           </ul>
           
-          <button class="w-full py-4 rounded-2xl bg-white/5 text-white text-sm font-bold border border-white/10 hover:bg-white/10 transition">Empezar Gratis</button>
+          <button onclick="openAuthModal('signup')" class="w-full py-4 rounded-2xl bg-white/5 text-white text-sm font-bold border border-white/10 hover:bg-white/10 transition">Empezar Gratis</button>
         </div>
 
         <!-- Elite Plan -->
@@ -828,7 +825,7 @@
             <li class="flex items-center gap-3 text-sm text-white/60"><i data-lucide="check" class="w-4 h-4 text-white/40"></i> Integración con Shopify</li>
           </ul>
           
-          <button class="w-full py-4 rounded-2xl bg-white/5 text-white text-sm font-bold border border-white/10 hover:bg-white/10 transition">Contactar Ventas</button>
+          <button onclick="openAuthModal('login')" class="w-full py-4 rounded-2xl bg-white/5 text-white text-sm font-bold border border-white/10 hover:bg-white/10 transition">Contactar Ventas</button>
         </div>
 
       </div>
@@ -851,12 +848,148 @@
             <li class="flex items-center gap-4 text-sm text-white/90"><div class="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center"><i data-lucide="check" class="w-3 h-3 text-white"></i></div> Proveedores exclusivos</li>
           </ul>
           
-          <button class="w-full py-4 rounded-2xl bg-white text-black font-extrabold hover:scale-105 transition shadow-[0_0_30px_rgba(255,255,255,0.2)] relative z-10">Obtener Pro</button>
+          <button onclick="openAuthModal('signup')" class="w-full py-4 rounded-2xl bg-white text-black font-extrabold hover:scale-105 transition shadow-[0_0_30px_rgba(255,255,255,0.2)] relative z-10">Obtener Pro</button>
         </div>
       </div>
 
     </div>
   </section>
+<!-- AUTH MODAL -->
+<div id="authModal" class="fixed inset-0 z-[999] hidden items-center justify-center bg-black/60 backdrop-blur-sm">
+  <div class="bg-white rounded-[2rem] p-8 w-full max-w-md mx-4 saas-shadow relative">
+    <button onclick="closeAuthModal()" class="absolute top-5 right-5 text-gray-400 hover:text-gray-700 transition">
+      <i data-lucide="x" class="w-5 h-5"></i>
+    </button>
+
+    <!-- Tabs -->
+    <div class="flex gap-1 bg-gray-100 rounded-xl p-1 mb-6">
+      <button id="tabLogin" onclick="switchAuthTab('login')" class="flex-1 py-2 rounded-lg text-sm font-bold transition bg-white text-gray-900 saas-shadow">Iniciar Sesión</button>
+      <button id="tabSignup" onclick="switchAuthTab('signup')" class="flex-1 py-2 rounded-lg text-sm font-bold transition text-gray-500 hover:text-gray-900">Crear Cuenta</button>
+    </div>
+
+    <!-- Login form -->
+    <div id="formLogin">
+      <h2 class="text-xl font-extrabold text-gray-900 mb-1">Bienvenido de vuelta</h2>
+      <p class="text-xs text-gray-400 mb-5">Ingresá con tu cuenta de TrendBase.</p>
+      <input id="loginEmail" type="email" placeholder="Email" onkeydown="if(event.key==='Enter')doLogin()"
+        class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm mb-3 outline-none focus:border-gray-400 transition">
+      <input id="loginPassword" type="password" placeholder="Contraseña" onkeydown="if(event.key==='Enter')doLogin()"
+        class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm mb-2 outline-none focus:border-gray-400 transition">
+      <div class="text-right mb-5">
+        <button onclick="doForgotPassword()" class="text-xs text-gray-400 hover:text-gray-700 font-medium transition">¿Olvidaste tu contraseña?</button>
+      </div>
+      <div id="loginError" class="hidden text-xs text-red-500 mb-3 font-medium"></div>
+      <button onclick="doLogin()" class="w-full py-3.5 bg-black text-white rounded-xl font-bold text-sm hover:bg-gray-800 transition">Entrar</button>
+    </div>
+
+    <!-- Signup form -->
+    <div id="formSignup" class="hidden">
+      <h2 class="text-xl font-extrabold text-gray-900 mb-1">Crear cuenta gratis</h2>
+      <p class="text-xs text-gray-400 mb-5">Empezá a descubrir productos ganadores.</p>
+      <input id="signupEmail" type="email" placeholder="Email" onkeydown="if(event.key==='Enter')doSignup()"
+        class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm mb-3 outline-none focus:border-gray-400 transition">
+      <input id="signupPassword" type="password" placeholder="Contraseña" onkeydown="if(event.key==='Enter')doSignup()"
+        class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm mb-5 outline-none focus:border-gray-400 transition">
+      <div id="signupError" class="hidden text-xs text-red-500 mb-3 font-medium"></div>
+      <button onclick="doSignup()" class="w-full py-3.5 bg-black text-white rounded-xl font-bold text-sm hover:bg-gray-800 transition">Crear Cuenta</button>
+    </div>
+
+    <!-- Forgot password form -->
+    <div id="formForgot" class="hidden">
+      <h2 class="text-xl font-extrabold text-gray-900 mb-1">Recuperar contraseña</h2>
+      <p class="text-xs text-gray-400 mb-5">Te enviamos un link de recuperación a tu email.</p>
+      <input id="forgotEmail" type="email" placeholder="Email" onkeydown="if(event.key==='Enter')doForgotPassword()"
+        class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm mb-5 outline-none focus:border-gray-400 transition">
+      <div id="forgotMsg" class="hidden text-xs text-green-600 mb-3 font-medium"></div>
+      <div id="forgotError" class="hidden text-xs text-red-500 mb-3 font-medium"></div>
+      <button onclick="sendForgotPassword()" class="w-full py-3.5 bg-black text-white rounded-xl font-bold text-sm hover:bg-gray-800 transition">Enviar Link</button>
+      <button onclick="switchAuthTab('login')" class="w-full py-2 text-xs text-gray-400 hover:text-gray-700 mt-2 transition">← Volver al login</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function openAuthModal(tab) {
+  document.getElementById('authModal').classList.remove('hidden');
+  document.getElementById('authModal').classList.add('flex');
+  switchAuthTab(tab || 'login');
+  lucide.createIcons();
+}
+function closeAuthModal() {
+  document.getElementById('authModal').classList.add('hidden');
+  document.getElementById('authModal').classList.remove('flex');
+}
+function switchAuthTab(tab) {
+  ['login','signup','forgot'].forEach(t => {
+    document.getElementById('form' + t.charAt(0).toUpperCase() + t.slice(1)).classList.add('hidden');
+  });
+  document.getElementById('form' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.remove('hidden');
+  document.getElementById('tabLogin').className = 'flex-1 py-2 rounded-lg text-sm font-bold transition ' + (tab==='login' ? 'bg-white text-gray-900 saas-shadow' : 'text-gray-500 hover:text-gray-900');
+  document.getElementById('tabSignup').className = 'flex-1 py-2 rounded-lg text-sm font-bold transition ' + (tab==='signup' ? 'bg-white text-gray-900 saas-shadow' : 'text-gray-500 hover:text-gray-900');
+}
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const errEl = document.getElementById('loginError');
+  errEl.classList.add('hidden');
+  if(!email || !password) { errEl.textContent = 'Completá todos los campos.'; errEl.classList.remove('hidden'); return; }
+  try {
+    const res = await fetch('/api/auth?action=login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email, password}) });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error || 'Error al iniciar sesión');
+    localStorage.setItem('tb_session', JSON.stringify(data.session || data));
+    localStorage.setItem('tb_plan', data.plan || 'free');
+    window.location.href = '/dashboard.html';
+  } catch(e) {
+    errEl.textContent = e.message;
+    errEl.classList.remove('hidden');
+  }
+}
+async function doSignup() {
+  const email = document.getElementById('signupEmail').value.trim();
+  const password = document.getElementById('signupPassword').value;
+  const errEl = document.getElementById('signupError');
+  errEl.classList.add('hidden');
+  if(!email || !password) { errEl.textContent = 'Completá todos los campos.'; errEl.classList.remove('hidden'); return; }
+  try {
+    const res = await fetch('/api/auth?action=signup', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email, password}) });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error || 'Error al registrarse');
+    localStorage.setItem('tb_session', JSON.stringify(data.session || data));
+    localStorage.setItem('tb_plan', 'free');
+    window.location.href = '/dashboard.html';
+  } catch(e) {
+    errEl.textContent = e.message;
+    errEl.classList.remove('hidden');
+  }
+}
+function doForgotPassword() {
+  switchAuthTab('forgot');
+  const loginEmail = document.getElementById('loginEmail').value.trim();
+  if(loginEmail) document.getElementById('forgotEmail').value = loginEmail;
+}
+async function sendForgotPassword() {
+  const email = document.getElementById('forgotEmail').value.trim();
+  const msgEl = document.getElementById('forgotMsg');
+  const errEl = document.getElementById('forgotError');
+  msgEl.classList.add('hidden'); errEl.classList.add('hidden');
+  if(!email) { errEl.textContent = 'Ingresá tu email.'; errEl.classList.remove('hidden'); return; }
+  try {
+    const res = await fetch('/api/auth?action=reset', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email}) });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error || 'Error');
+    msgEl.textContent = '¡Revisá tu bandeja de entrada!';
+    msgEl.classList.remove('hidden');
+  } catch(e) {
+    errEl.textContent = e.message;
+    errEl.classList.remove('hidden');
+  }
+}
+document.getElementById('authModal').addEventListener('click', function(e) {
+  if(e.target === this) closeAuthModal();
+});
+</script>
+
 <!-- Footer Section -->
   <footer class="bg-[#0A0A0C] text-gray-400 py-12 border-t border-white/10 w-full flex flex-col items-center">
     <div class="max-w-7xl mx-auto px-6 w-full flex flex-col md:flex-row justify-between items-center gap-6">
@@ -891,6 +1024,25 @@
     });
   </script>
   <script>lucide.createIcons();</script>
+  <script>
+    // Cargar estadísticas reales desde la API
+    (async function loadStats() {
+      try {
+        const res = await fetch('/api/stats');
+        if (!res.ok) return;
+        const data = await res.json();
+        const fmtNum = n => n > 0 ? n.toLocaleString('es-AR') : '—';
+        const salesEl = document.getElementById('stat-sales');
+        const sellersEl = document.getElementById('stat-sellers');
+        const topEl = document.getElementById('stat-top');
+        if (salesEl) salesEl.textContent = fmtNum(data.sales_today);
+        if (sellersEl) sellersEl.textContent = fmtNum(data.active_sellers);
+        if (topEl) topEl.textContent = data.top_product || '—';
+      } catch(e) {
+        // Silently fail — fallback hardcoded values remain from HTML defaults
+      }
+    })();
+  </script>
 </body>
 
 </html>

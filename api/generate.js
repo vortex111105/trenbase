@@ -51,7 +51,7 @@ function searchUrl(platform, name) {
   return map[platform] || `https://www.aliexpress.com/wholesale?SearchText=${q}&af=trendbase`;
 }
 
-async function generateBatch(apiKey, label, count) {
+async function generateBatch(apiKey, label, count, customPrompt = null) {
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -62,7 +62,7 @@ async function generateBatch(apiKey, label, count) {
     body: JSON.stringify({
       model: 'claude-haiku-4-5-20251001',
       max_tokens: 8000,
-      messages: [{ role: 'user', content: makePrompt(label, count) }]
+      messages: [{ role: 'user', content: customPrompt || makePrompt(label, count) }]
     })
   });
 
@@ -98,6 +98,7 @@ async function generateBatch(apiKey, label, count) {
 }
 
 async function saveToSupabase(products) {
+  const now = new Date().toISOString();
   const rows = products.map((p, idx) => ({
     name: p.name,
     cat: p.cat,
@@ -116,22 +117,10 @@ async function saveToSupabase(products) {
     img_kw: p.img_kw || '',
     rank: idx + 1,
     suppliers: SUPPLIERS.map((s, si) => ({ ...s, url: searchUrl(s.name, p.name), price: `USD ${(p.priceMin * (0.18 + si * 0.03 + (idx % 4) * 0.02)).toFixed(2)}` })),
-    updated_at: new Date().toISOString(),
+    updated_at: now,
   }));
 
-  // Delete old products and insert new ones
-  await fetch(`${SUPABASE_URL}/rest/v1/products`, {
-    method: 'DELETE',
-    headers: {
-      'apikey': SUPABASE_KEY,
-      'Authorization': `Bearer ${SUPABASE_KEY}`,
-      'Content-Type': 'application/json',
-      'Prefer': 'return=minimal',
-    },
-    body: JSON.stringify({})
-  });
-
-  // Insert in batches of 50
+  // INSERT all new products first — if any batch fails, old data is preserved
   for (let i = 0; i < rows.length; i += 50) {
     const batch = rows.slice(i, i + 50);
     const insertRes = await fetch(`${SUPABASE_URL}/rest/v1/products`, {
@@ -149,6 +138,16 @@ async function saveToSupabase(products) {
       throw new Error(`Supabase insert error: ${err.slice(0, 200)}`);
     }
   }
+
+  // Only after ALL inserts succeed, delete products from previous runs
+  await fetch(`${SUPABASE_URL}/rest/v1/products?updated_at=lt.${encodeURIComponent(now)}`, {
+    method: 'DELETE',
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Prefer': 'return=minimal',
+    },
+  });
 }
 
 export default async function handler(req, res) {
@@ -167,6 +166,40 @@ export default async function handler(req, res) {
   if (!SUPABASE_KEY) return res.status(500).json({ error: 'SUPABASE_SERVICE_KEY no configurada' });
 
   try {
+    // ── Modo keyword: genera un solo producto para un término trending nuevo ──
+    const keyword = req.query?.keyword;
+    if (keyword) {
+      console.log(`Generating single product for keyword: "${keyword}"`);
+      const singlePrompt = `Generá 1 producto viral de dropshipping para LATAM (AR/UY/CL) basado en la tendencia de búsqueda: "${keyword}". Solo JSON array con 1 objeto, sin markdown.
+Formato: {"name":"Nombre comercial del producto","cat":"Tecnología","score":88,"change":"+12%","changeNum":12,"plts":["TT","IG"],"margin":48,"marginStr":"40-55%","hot":true,"regions":["AR","UY"],"comp":"Media","priceMin":25,"priceStr":"$25-$60","history":[60,63,67,65,70,74,72,77,80,78,83,86,84,89,92,88],"img_kw":"keyword1 keyword2 keyword3"}
+Reglas: cat∈[Tecnología,Belleza,Hogar,Moda,Deportes] | score 70-98 | history=16 nums | plts⊂[TT,IG,YT,PT,FB,AM,ML] | regions⊂[AR,UY,CL] | comp∈[Baja,Media,Alta]`;
+
+      const products = await generateBatch(apiKey, keyword, 1, singlePrompt);
+      if (!products || !products.length) {
+        return res.status(500).json({ error: 'No se pudo generar el producto' });
+      }
+
+      // INSERT solo este producto nuevo (sin borrar los existentes)
+      const now = new Date().toISOString();
+      const p = products[0];
+      const row = {
+        name: p.name, cat: p.cat, score: p.score, change: p.change, change_num: p.changeNum,
+        plts: p.plts, margin: p.margin, margin_str: p.marginStr, hot: p.hot, regions: p.regions,
+        comp: p.comp, price_min: p.priceMin, price_str: p.priceStr, history: p.history,
+        img_kw: p.img_kw || '', rank: 0,
+        suppliers: SUPPLIERS.map((s, si) => ({ ...s, url: searchUrl(s.name, p.name), price: `USD ${(p.priceMin * (0.2 + si * 0.03)).toFixed(2)}` })),
+        updated_at: now,
+      };
+      const insertRes = await fetch(`${SUPABASE_URL}/rest/v1/products`, {
+        method: 'POST',
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        body: JSON.stringify([row]),
+      });
+      if (!insertRes.ok) throw new Error(`Insert error: ${(await insertRes.text()).slice(0, 200)}`);
+      return res.json({ success: true, keyword, product: p.name });
+    }
+
+    // ── Modo batch normal ─────────────────────────────────────────────────────
     const allProducts = [];
     const errors = [];
 

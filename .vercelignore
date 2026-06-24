@@ -1,0 +1,40 @@
+# Python build scripts (dev only)
+*.py
+requirements.txt
+render.yaml
+__pycache__/
+
+# Old/backup HTML files
+index_backup_broken_ui.html
+index_v3.html
+old_index.html
+old_modal.html
+oldest_index.html
+original_index.html
+script2.html
+
+# Old JS files
+original_logic.js
+script_0.js
+script_1.js
+script_2.js
+script2.js
+temp.js
+test.js
+test_apis.js
+data.js
+
+# Screenshots and dev artifacts
+screenshot*.png
+demo.mp4
+add_chart.py
+
+# Node
+node_modules/
+
+# Dev docs
+TODO_MANANA.md
+GEMINI.md
+README_DATA_PIPELINE.md
+.env.example
+supabase_setup.sql

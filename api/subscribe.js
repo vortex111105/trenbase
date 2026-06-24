@@ -34,8 +34,8 @@ export default async function handler(req) {
           attributes: {
             checkout_data: { email: email || '' },
             product_options: {
-              redirect_url: 'https://trenbase.vercel.app?subscribed=1',
-              receipt_link_url: 'https://trenbase.vercel.app?subscribed=1',
+              redirect_url: 'https://trendbase.vercel.app?subscribed=1',
+              receipt_link_url: 'https://trendbase.vercel.app?subscribed=1',
             },
           },
           relationships: {

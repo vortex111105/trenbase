@@ -1,5 +1,7 @@
 export const config = { runtime: 'edge' };
 
+const SITE_URL = process.env.ALLOWED_ORIGIN || 'https://trenbase.vercel.app';
+
 // ── RATE LIMIT ───────────────────────────────────────────────────────────────
 const rateLimitMap = new Map();
 
@@ -30,6 +32,17 @@ const MODEL_BY_PLAN = {
 };
 
 export default async function handler(req) {
+  if (req.method === 'OPTIONS') {
+    return new Response(null, {
+      status: 204,
+      headers: {
+        'Access-Control-Allow-Origin': SITE_URL,
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      },
+    });
+  }
+
   if (req.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 });
   }
@@ -90,7 +103,7 @@ export default async function handler(req) {
 
     return new Response(JSON.stringify({ text, model }), {
       status: 200,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': SITE_URL },
     });
   } catch (err) {
     return new Response(JSON.stringify({ error: 'Internal error: ' + err.message }), { status: 500 });

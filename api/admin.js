@@ -1,10 +1,16 @@
 // /api/admin.js — Panel de datos para el owner
 const SUPABASE_URL = 'https://rbrundkswmlbgkicdnty.supabase.co';
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
-const ADMIN_SECRET = process.env.ADMIN_SECRET || 'trendbase2025admin';
+const ADMIN_SECRET = process.env.ADMIN_SECRET;
+const SITE_URL = process.env.ALLOWED_ORIGIN || 'https://trenbase.vercel.app';
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', SITE_URL);
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-admin-secret');
+  if (req.method === 'OPTIONS') return res.status(204).end();
+
+  if (!ADMIN_SECRET) return res.status(500).json({ error: 'Server misconfigured: ADMIN_SECRET not set' });
 
   // Simple auth
   const secret = req.headers['x-admin-secret'] || req.query.secret;
