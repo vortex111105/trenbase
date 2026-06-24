@@ -1,12 +1,14 @@
 export const config = { runtime: 'edge' };
 
-const VARIANT_IDS = {
-  starter: '1744638',
-  pro: '1744624',
-  business: '1744644',
+const PRICE_IDS = {
+  starter: 'pri_01kvxv1dmsz2329sdcz0dk687v',
+  pro: 'pri_01kvxv3kpba8vgcxp52s5z1tz9',
 };
 
 export default async function handler(req) {
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { status: 204, headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Headers': 'Content-Type' } });
+  }
   if (req.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 });
   }
@@ -17,38 +19,29 @@ export default async function handler(req) {
   }
 
   const { plan, email } = body;
-  const variantId = VARIANT_IDS[plan];
-  if (!variantId) return new Response(JSON.stringify({ error: 'Invalid plan' }), { status: 400 });
+  const priceId = PRICE_IDS[plan];
+  if (!priceId) return new Response(JSON.stringify({ error: 'Invalid plan' }), { status: 400 });
 
   try {
-    const res = await fetch('https://api.lemonsqueezy.com/v1/checkouts', {
+    const payload = {
+      items: [{ price_id: priceId, quantity: 1 }],
+      checkout: { url: 'https://www.trendbase.app/dashboard?subscribed=1' },
+    };
+    if (email) payload.customer = { email };
+
+    const res = await fetch('https://api.paddle.com/transactions', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/vnd.api+json',
-        'Accept': 'application/vnd.api+json',
-        'Authorization': `Bearer ${process.env.LEMONSQUEEZY_API_KEY}`,
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.PADDLE_API_KEY}`,
       },
-      body: JSON.stringify({
-        data: {
-          type: 'checkouts',
-          attributes: {
-            checkout_data: { email: email || '' },
-            product_options: {
-              redirect_url: 'https://trendbase.vercel.app?subscribed=1',
-              receipt_link_url: 'https://trendbase.vercel.app?subscribed=1',
-            },
-          },
-          relationships: {
-            store: { data: { type: 'stores', id: '397047' } },
-            variant: { data: { type: 'variants', id: variantId } },
-          },
-        },
-      }),
+      body: JSON.stringify(payload),
     });
 
     const data = await res.json();
-    if (!res.ok) return new Response(JSON.stringify({ error: JSON.stringify(data) }), { status: res.status });
-    const checkoutUrl = data.data?.attributes?.url;
+    if (!res.ok) return new Response(JSON.stringify({ error: data }), { status: res.status });
+
+    const checkoutUrl = data.data?.checkout?.url;
     return new Response(JSON.stringify({ url: checkoutUrl }), {
       status: 200,
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },

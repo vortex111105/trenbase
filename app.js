@@ -401,6 +401,7 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.classList.remove('text-gray-900/50');
       btn.classList.add('bg-gray-100', 'text-gray-900');
     }
+    if(sectionId === 'sec-perfil') loadProfileSection();
   }
 
   window.renderTable = function() {
@@ -1223,6 +1224,120 @@ window.exportCSV = function() {
   a.click();
   document.body.removeChild(a);
 };
+
+// ─── PADDLE / UPGRADE ────────────────────────────────────────────────────────
+window.upgradePlan = async function(plan) {
+  const btn = document.getElementById(`btn-plan-${plan}`);
+  const originalText = btn?.innerHTML;
+  if(btn) { btn.innerHTML = 'Redirigiendo...'; btn.disabled = true; }
+
+  try {
+    const session = JSON.parse(localStorage.getItem('tb_session') || '{}');
+    const email = (() => {
+      try {
+        const p = JSON.parse(atob((session.access_token || '').split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
+        return p.email || '';
+      } catch { return ''; }
+    })();
+
+    const res = await fetch('/api/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan, email }),
+    });
+    const data = await res.json();
+    if(data.url) {
+      window.location.href = data.url;
+    } else {
+      alert('Error al generar el checkout. Intentá de nuevo.');
+      if(btn) { btn.innerHTML = originalText; btn.disabled = false; }
+    }
+  } catch(err) {
+    alert('Error de conexión. Intentá de nuevo.');
+    if(btn) { btn.innerHTML = originalText; btn.disabled = false; }
+  }
+};
+
+window.manageBilling = function() {
+  window.open('mailto:ifraga.ok@gmail.com?subject=Facturaci%C3%B3n%20TrendBase', '_blank');
+};
+
+window.signOut = async function() {
+  localStorage.removeItem('tb_session');
+  localStorage.removeItem('tb_plan');
+  window.location.href = '/';
+};
+
+function loadProfileSection() {
+  const session = JSON.parse(localStorage.getItem('tb_session') || '{}');
+  let email = '';
+  try {
+    const p = JSON.parse(atob((session.access_token || '').split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
+    email = p.email || '';
+  } catch {}
+
+  const plan = getUserPlan();
+
+  const avatar = document.getElementById('pfAvatar');
+  if(avatar) avatar.textContent = (email[0] || 'U').toUpperCase();
+
+  const pfEmail = document.getElementById('pfEmail');
+  if(pfEmail) pfEmail.textContent = email || 'Sin sesión';
+
+  const badge = document.getElementById('pfPlanBadge');
+  if(badge) {
+    const labels = { free: 'Plan Free', starter: 'Plan Starter', pro: 'Plan Pro' };
+    const classes = {
+      free: 'bg-gray-200 text-gray-600',
+      starter: 'bg-black text-white',
+      pro: 'bg-champagne text-obsidian',
+    };
+    badge.textContent = labels[plan] || 'Plan Free';
+    badge.className = `mt-1.5 inline-block text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wider ${classes[plan] || classes.free}`;
+  }
+
+  // Highlight active plan card and mark button as current
+  ['free', 'starter', 'pro'].forEach(p => {
+    const card = document.getElementById(`plan-card-${p}`);
+    const btn = document.getElementById(`btn-plan-${p}`);
+    if(!btn) return;
+    if(p === plan) {
+      btn.textContent = 'Plan actual';
+      btn.disabled = true;
+      btn.className = 'w-full py-2.5 rounded-xl text-sm font-bold border-2 border-black text-black cursor-default';
+      if(card) card.style.borderColor = p === 'pro' ? '#D4AF37' : 'black';
+    }
+  });
+}
+
+// Handle post-checkout redirect
+if(typeof window !== 'undefined' && window.location.search.includes('subscribed=1')) {
+  setTimeout(async () => {
+    // Ask Supabase to refresh the session so app_metadata.plan is fresh
+    try {
+      const session = JSON.parse(localStorage.getItem('tb_session') || '{}');
+      if(session.refresh_token) {
+        const res = await fetch('/api/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'refresh', refresh_token: session.refresh_token }),
+        });
+        if(res.ok) {
+          const data = await res.json();
+          if(data.access_token) localStorage.setItem('tb_session', JSON.stringify(data));
+        }
+      }
+    } catch {}
+    applyPlanGates();
+    loadProfileSection();
+    history.replaceState({}, '', window.location.pathname);
+    const toast = document.createElement('div');
+    toast.className = 'fixed top-6 left-1/2 -translate-x-1/2 z-[999] bg-black text-white text-sm font-bold px-6 py-3 rounded-2xl shadow-xl';
+    toast.textContent = '🎉 ¡Suscripción activada! Ya tenés acceso completo.';
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 5000);
+  }, 2500);
+}
 
 // ─── PLAN ENFORCEMENT ────────────────────────────────────────────────────────
 function getUserPlan() {
