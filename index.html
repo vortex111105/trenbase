@@ -795,62 +795,72 @@
       <h2 class="text-[12rem] md:text-[22rem] font-black text-white opacity-[0.02] select-none blur-[2px] whitespace-nowrap tracking-tighter">pricing</h2>
     </div>
 
-    <div class="relative z-10 w-full max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
-      
-      <!-- Left Column: Stacked Cards -->
-      <div class="flex flex-col gap-8">
-        
-        <!-- Free Plan -->
-        <div class="bg-gradient-to-br from-[#2A2A2E]/90 via-[#18181B]/70 to-[#0A0A0C]/50 backdrop-blur-3xl rounded-[3rem] p-10 border border-white/5 flex flex-col transition-all hover:-translate-y-2 saas-shadow spotlight-card spotlight-dark">
-          <div class="text-xs text-white/40 mb-2 font-medium tracking-wide">Plan Básico</div>
-          <div class="text-4xl font-bold text-white mb-8">Gratis</div>
-          
-          <ul class="space-y-4 flex-1 mb-8">
-            <li class="flex items-center gap-3 text-sm text-white/60"><i data-lucide="check" class="w-4 h-4 text-white/40"></i> 10 Búsquedas mensuales</li>
-            <li class="flex items-center gap-3 text-sm text-white/60"><i data-lucide="check" class="w-4 h-4 text-white/40"></i> Historial básico de 30 días</li>
-            <li class="flex items-center gap-3 text-sm text-white/60"><i data-lucide="check" class="w-4 h-4 text-white/40"></i> Soporte por email</li>
+    <div class="relative z-10 w-full max-w-6xl mx-auto px-6">
+
+      <!-- Header -->
+      <div class="text-center mb-16">
+        <p class="text-xs font-bold text-white/30 uppercase tracking-widest mb-3">Planes</p>
+        <h2 class="text-4xl md:text-5xl font-black text-white mb-4">Simple. Sin sorpresas.</h2>
+        <p class="text-white/40 text-sm">Cancelá cuando quieras. Sin contratos.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+
+        <!-- FREE -->
+        <div class="bg-gradient-to-br from-[#2A2A2E]/90 via-[#18181B]/70 to-[#0A0A0C]/50 backdrop-blur-3xl rounded-[2.5rem] p-8 border border-white/5 flex flex-col transition-all hover:-translate-y-1 spotlight-card spotlight-dark">
+          <div class="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-2">Free</div>
+          <div class="text-4xl font-black text-white mb-1">$0</div>
+          <div class="text-xs text-white/30 mb-8">Para siempre</div>
+          <ul class="space-y-3 flex-1 mb-8">
+            <li class="flex items-start gap-3 text-sm text-white/50"><i data-lucide="check" class="w-4 h-4 text-white/30 shrink-0 mt-0.5"></i>50 productos trending diarios</li>
+            <li class="flex items-start gap-3 text-sm text-white/50"><i data-lucide="check" class="w-4 h-4 text-white/30 shrink-0 mt-0.5"></i>Score, margen y tendencia</li>
+            <li class="flex items-start gap-3 text-sm text-white/50"><i data-lucide="check" class="w-4 h-4 text-white/30 shrink-0 mt-0.5"></i>Links de proveedores</li>
+            <li class="flex items-start gap-3 text-sm text-white/50"><i data-lucide="check" class="w-4 h-4 text-white/30 shrink-0 mt-0.5"></i>Guardar hasta 5 productos</li>
+            <li class="flex items-start gap-3 text-sm text-white/50"><i data-lucide="check" class="w-4 h-4 text-white/30 shrink-0 mt-0.5"></i>Calculadora ROI</li>
+            <li class="flex items-start gap-3 text-sm text-white/50"><i data-lucide="check" class="w-4 h-4 text-white/30 shrink-0 mt-0.5"></i>2 alertas de precio</li>
+            <li class="flex items-start gap-3 text-sm text-white/50"><i data-lucide="check" class="w-4 h-4 text-white/30 shrink-0 mt-0.5"></i>Precios en ARS / UYU / CLP</li>
           </ul>
-          
-          <button onclick="openAuthModal('signup')" class="w-full py-4 rounded-2xl bg-white/5 text-white text-sm font-bold border border-white/10 hover:bg-white/10 transition">Empezar Gratis</button>
+          <button onclick="openAuthModal('signup')" class="w-full py-3.5 rounded-2xl bg-white/5 text-white text-sm font-bold border border-white/10 hover:bg-white/10 transition">Empezar Gratis</button>
         </div>
 
-        <!-- Elite Plan -->
-        <div class="bg-gradient-to-br from-[#2A2A2E]/90 via-[#18181B]/70 to-[#0A0A0C]/50 backdrop-blur-3xl rounded-[3rem] p-10 border border-white/5 flex flex-col transition-all hover:-translate-y-2 saas-shadow spotlight-card spotlight-dark">
-          <div class="text-xs text-white/40 mb-2 font-medium tracking-wide">Plan Élite</div>
-          <div class="text-4xl font-bold text-white mb-8">$19.99<span class="text-lg text-white/40 font-normal">/m</span></div>
-          
-          <ul class="space-y-4 flex-1 mb-8">
-            <li class="flex items-center gap-3 text-sm text-white/60"><i data-lucide="check" class="w-4 h-4 text-white/40"></i> Todo lo del Plan Pro</li>
-            <li class="flex items-center gap-3 text-sm text-white/60"><i data-lucide="check" class="w-4 h-4 text-white/40"></i> Acceso a la API nativa</li>
-            <li class="flex items-center gap-3 text-sm text-white/60"><i data-lucide="check" class="w-4 h-4 text-white/40"></i> Integración con Shopify</li>
+        <!-- STARTER -->
+        <div class="bg-gradient-to-br from-[#303036] via-[#1F1F22] to-[#141416] rounded-[2.5rem] p-8 border border-white/10 flex flex-col transition-all hover:-translate-y-1 spotlight-card spotlight-dark relative">
+          <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-white text-black text-[10px] font-black px-4 py-1 rounded-full uppercase tracking-wider">Más popular</div>
+          <div class="text-[10px] font-bold text-[#D4AF37] uppercase tracking-widest mb-2">Starter</div>
+          <div class="text-4xl font-black text-white mb-1">$19<span class="text-base font-medium text-white/40">/mes</span></div>
+          <div class="text-xs text-white/30 mb-8">USD · cancelá cuando quieras</div>
+          <ul class="space-y-3 flex-1 mb-8">
+            <li class="flex items-start gap-3 text-sm text-white/80"><i data-lucide="check" class="w-4 h-4 text-[#D4AF37] shrink-0 mt-0.5"></i>Catálogo completo (500+ productos)</li>
+            <li class="flex items-start gap-3 text-sm text-white/80"><i data-lucide="check" class="w-4 h-4 text-[#D4AF37] shrink-0 mt-0.5"></i>Filtros por categoría y región</li>
+            <li class="flex items-start gap-3 text-sm text-white/80"><i data-lucide="check" class="w-4 h-4 text-[#D4AF37] shrink-0 mt-0.5"></i>Precios reales de proveedores</li>
+            <li class="flex items-start gap-3 text-sm text-white/80"><i data-lucide="check" class="w-4 h-4 text-[#D4AF37] shrink-0 mt-0.5"></i>Historial de 90 días por producto</li>
+            <li class="flex items-start gap-3 text-sm text-white/80"><i data-lucide="check" class="w-4 h-4 text-[#D4AF37] shrink-0 mt-0.5"></i>Push a tienda (Shopify / TiendaNube)</li>
+            <li class="flex items-start gap-3 text-sm text-white/80"><i data-lucide="check" class="w-4 h-4 text-[#D4AF37] shrink-0 mt-0.5"></i>Mi Negocio — ventas, stock y ROI</li>
+            <li class="flex items-start gap-3 text-sm text-white/80"><i data-lucide="check" class="w-4 h-4 text-[#D4AF37] shrink-0 mt-0.5"></i>Exportación CSV completa</li>
+            <li class="flex items-start gap-3 text-sm text-white/80"><i data-lucide="check" class="w-4 h-4 text-[#D4AF37] shrink-0 mt-0.5"></i>10 alertas activas</li>
+            <li class="flex items-start gap-3 text-sm text-white/80"><i data-lucide="check" class="w-4 h-4 text-[#D4AF37] shrink-0 mt-0.5"></i>Email digest semanal</li>
           </ul>
-          
-          <button onclick="openAuthModal('login')" class="w-full py-4 rounded-2xl bg-white/5 text-white text-sm font-bold border border-white/10 hover:bg-white/10 transition">Contactar Ventas</button>
+          <button onclick="openAuthModal('signup')" class="w-full py-3.5 rounded-2xl bg-white text-black font-extrabold hover:scale-[1.02] transition shadow-[0_0_30px_rgba(255,255,255,0.15)]">Activar Starter →</button>
+        </div>
+
+        <!-- PRO -->
+        <div class="bg-gradient-to-br from-[#2A2A2E]/90 via-[#18181B]/70 to-[#0A0A0C]/50 backdrop-blur-3xl rounded-[2.5rem] p-8 border border-white/5 flex flex-col transition-all hover:-translate-y-1 spotlight-card spotlight-dark">
+          <div class="text-[10px] font-bold text-[#D4AF37] uppercase tracking-widest mb-2">Pro</div>
+          <div class="text-4xl font-black text-white mb-1">$39<span class="text-base font-medium text-white/40">/mes</span></div>
+          <div class="text-xs text-white/30 mb-8">USD · cancelá cuando quieras</div>
+          <ul class="space-y-3 flex-1 mb-8">
+            <li class="flex items-start gap-3 text-sm text-white/80"><i data-lucide="check" class="w-4 h-4 text-[#D4AF37] shrink-0 mt-0.5"></i>Todo lo del plan Starter</li>
+            <li class="flex items-start gap-3 text-sm text-white/80"><i data-lucide="check" class="w-4 h-4 text-[#D4AF37] shrink-0 mt-0.5"></i>Chat IA ilimitado</li>
+            <li class="flex items-start gap-3 text-sm text-white/80"><i data-lucide="check" class="w-4 h-4 text-[#D4AF37] shrink-0 mt-0.5"></i>Análisis de mercado por nicho</li>
+            <li class="flex items-start gap-3 text-sm text-white/80"><i data-lucide="check" class="w-4 h-4 text-[#D4AF37] shrink-0 mt-0.5"></i>Alertas ilimitadas y personalizadas</li>
+          </ul>
+          <button onclick="openAuthModal('signup')" class="w-full py-3.5 rounded-2xl bg-[#D4AF37] text-black font-extrabold hover:opacity-90 transition">Activar Pro →</button>
         </div>
 
       </div>
 
-      <!-- Right Column: Pro Plan -->
-      <div class="h-full flex relative">
-        <div class="absolute -inset-0.5 bg-gradient-to-b from-white/10 to-transparent rounded-[3rem] blur opacity-50 z-0"></div>
-        <div class="bg-gradient-to-br from-[#303036] via-[#1F1F22] to-[#141416] rounded-[3rem] p-12 border border-white/10 flex flex-col relative z-20 shadow-2xl shadow-black/50 w-full spotlight-card spotlight-dark">
-          <!-- Subtle top glow -->
-          <div class="absolute -top-10 inset-x-0 h-32 bg-white/10 blur-[50px] rounded-full pointer-events-none"></div>
-          
-          <div class="text-xs text-white/60 mb-2 font-medium tracking-wide">Plan Pro</div>
-          <div class="text-6xl font-bold text-white mb-12">$9.99<span class="text-xl text-white/40 font-normal">/m</span></div>
-          
-          <ul class="space-y-6 flex-1 relative z-10 mb-12">
-            <li class="flex items-center gap-4 text-sm text-white/90"><div class="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center"><i data-lucide="check" class="w-3 h-3 text-white"></i></div> Búsquedas ilimitadas</li>
-            <li class="flex items-center gap-4 text-sm text-white/90"><div class="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center"><i data-lucide="check" class="w-3 h-3 text-white"></i></div> Historial completo de 1 año</li>
-            <li class="flex items-center gap-4 text-sm text-white/90"><div class="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center"><i data-lucide="check" class="w-3 h-3 text-white"></i></div> Exportación en CSV / Excel</li>
-            <li class="flex items-center gap-4 text-sm text-white/90"><div class="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center"><i data-lucide="check" class="w-3 h-3 text-white"></i></div> Alertas en tiempo real</li>
-            <li class="flex items-center gap-4 text-sm text-white/90"><div class="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center"><i data-lucide="check" class="w-3 h-3 text-white"></i></div> Proveedores exclusivos</li>
-          </ul>
-          
-          <button onclick="openAuthModal('signup')" class="w-full py-4 rounded-2xl bg-white text-black font-extrabold hover:scale-105 transition shadow-[0_0_30px_rgba(255,255,255,0.2)] relative z-10">Obtener Pro</button>
-        </div>
-      </div>
+      <!-- Guarantee -->
+      <p class="text-center text-xs text-white/25 mt-10">✓ Garantía de reembolso de 7 días · ✓ Sin contratos · ✓ Cancelación inmediata</p>
 
     </div>
   </section>
