@@ -509,7 +509,7 @@
           <p class="text-[10px] text-gray-500 font-bold">Top videos escalando en TikTok Ads</p>
           <div class="grid grid-cols-2 gap-3 flex-1">
             <div class="relative aspect-[9/16] bg-gray-900 rounded-xl overflow-hidden group cursor-pointer border border-gray-100 saas-shadow-sm">
-              <img src="https://images.unsplash.com/photo-1585386959984-a4155224a1ad?q=80&w=200&auto=format&fit=crop" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition group-hover:scale-105 duration-500">
+              <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=200&auto=format&fit=crop" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition group-hover:scale-105 duration-500">
               <div class="absolute inset-0 flex items-center justify-center">
                 <div class="w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-md">
                   <i data-lucide="play" class="w-4 h-4 text-black fill-current"></i>
@@ -518,7 +518,7 @@
               <div class="absolute bottom-2 left-2 text-[8px] font-bold text-gray-900 bg-white/90 px-1.5 py-0.5 rounded shadow-sm">1.2M Vistas</div>
             </div>
             <div class="relative aspect-[9/16] bg-gray-900 rounded-xl overflow-hidden group cursor-pointer border border-gray-100 saas-shadow-sm">
-              <img src="https://images.unsplash.com/photo-1491553895911-0055eca6402d?q=80&w=200&auto=format&fit=crop" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition group-hover:scale-105 duration-500">
+              <img src="https://images.unsplash.com/photo-1522337660859-02fbefca4702?q=80&w=200&auto=format&fit=crop" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition group-hover:scale-105 duration-500">
               <div class="absolute inset-0 flex items-center justify-center">
                 <div class="w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-md">
                   <i data-lucide="play" class="w-4 h-4 text-black fill-current"></i>
@@ -669,80 +669,26 @@
     <section id="sec-perfil" class="dash-section space-y-6">
       <div class="flex justify-between items-center mb-2">
         <div>
-          <h2 class="text-2xl font-extrabold text-gray-900 tracking-tight">Mi Cuenta</h2>
-          <p class="text-xs text-gray-500 mt-1">Plan actual y suscripción</p>
+          <h2 class="text-2xl font-extrabold text-gray-900 tracking-tight">Mi Perfil</h2>
+          <p class="text-xs text-gray-500 mt-1">Ajustes de cuenta</p>
         </div>
       </div>
-
-      <!-- User card -->
       <div class="bg-white rounded-[2rem] p-8 saas-shadow max-w-3xl">
-        <div class="flex items-center gap-5 mb-7 border-b border-gray-100 pb-7">
-          <div id="pfAvatar" class="w-14 h-14 bg-gray-900 rounded-full flex items-center justify-center text-white text-xl font-bold shrink-0">?</div>
+        <div class="flex items-center gap-6 mb-8 border-b border-gray-100 pb-8">
+          <div class="w-20 h-20 bg-gray-900 rounded-full flex items-center justify-center text-white text-3xl font-bold">N</div>
           <div>
-            <p id="pfEmail" class="text-sm font-bold text-gray-800">—</p>
-            <div id="pfPlanBadge" class="mt-1.5 inline-block bg-gray-200 text-gray-600 text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wider">Free</div>
+            <h3 class="text-xl font-bold text-gray-900">Nacho Frag</h3>
+            <p class="text-sm text-gray-500">nachofrag@trendbase.com</p>
+            <div class="mt-2 inline-block bg-black text-white text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wider">Plan Pro</div>
           </div>
         </div>
-        <div class="space-y-3">
-          <button onclick="manageBilling()" class="w-full bg-gray-50 hover:bg-gray-100 text-left px-5 py-3.5 rounded-xl border border-gray-200 font-bold text-gray-800 transition flex justify-between items-center text-sm">
+        <div class="space-y-6">
+          <button class="w-full bg-gray-50 hover:bg-gray-100 text-left px-6 py-4 rounded-xl border border-gray-200 font-bold text-gray-800 transition flex justify-between items-center">
             Facturación y Suscripción <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
           </button>
-          <button onclick="signOut()" class="w-full bg-gray-50 hover:bg-gray-100 text-left px-5 py-3.5 rounded-xl border border-gray-200 font-bold text-red-500 transition flex justify-between items-center text-sm">
-            Cerrar Sesión <i data-lucide="log-out" class="w-4 h-4 text-red-400"></i>
+          <button class="w-full bg-gray-50 hover:bg-gray-100 text-left px-6 py-4 rounded-xl border border-gray-200 font-bold text-gray-800 transition flex justify-between items-center">
+            Cambiar Contraseña <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
           </button>
-        </div>
-      </div>
-
-      <!-- Pricing table -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl">
-        <!-- Free -->
-        <div id="plan-card-free" class="bg-white rounded-[2rem] p-6 saas-shadow border-2 border-transparent transition-all">
-          <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Free</div>
-          <div class="text-3xl font-black text-gray-900 mb-0.5">$0</div>
-          <div class="text-xs text-gray-400 mb-5">Para siempre</div>
-          <ul class="space-y-2 text-xs text-gray-600 mb-6">
-            <li class="flex items-start gap-2"><span class="text-green-500 shrink-0">✓</span>50 productos trending diarios</li>
-            <li class="flex items-start gap-2"><span class="text-green-500 shrink-0">✓</span>Score, margen y tendencia</li>
-            <li class="flex items-start gap-2"><span class="text-green-500 shrink-0">✓</span>Proveedores con links de búsqueda</li>
-            <li class="flex items-start gap-2"><span class="text-green-500 shrink-0">✓</span>Guardar hasta 5 productos</li>
-            <li class="flex items-start gap-2"><span class="text-green-500 shrink-0">✓</span>Calculadora ROI</li>
-            <li class="flex items-start gap-2"><span class="text-green-500 shrink-0">✓</span>2 alertas de precio</li>
-            <li class="flex items-start gap-2"><span class="text-green-500 shrink-0">✓</span>Precios en ARS / UYU / CLP</li>
-          </ul>
-          <button id="btn-plan-free" class="w-full py-2.5 rounded-xl text-sm font-bold border border-gray-200 text-gray-400 cursor-default">Plan actual</button>
-        </div>
-
-        <!-- Starter -->
-        <div id="plan-card-starter" class="bg-white rounded-[2rem] p-6 saas-shadow border-2 border-transparent transition-all">
-          <div class="text-[10px] font-bold text-champagne uppercase tracking-wider mb-1">Starter</div>
-          <div class="text-3xl font-black text-gray-900 mb-0.5">$19<span class="text-sm font-medium text-gray-400">/mes</span></div>
-          <div class="text-xs text-gray-400 mb-5">USD · cancelá cuando quieras</div>
-          <ul class="space-y-2 text-xs text-gray-600 mb-6">
-            <li class="flex items-start gap-2"><span class="text-green-500 shrink-0">✓</span>Catálogo completo (500+ productos)</li>
-            <li class="flex items-start gap-2"><span class="text-green-500 shrink-0">✓</span>Filtros por categoría y región</li>
-            <li class="flex items-start gap-2"><span class="text-green-500 shrink-0">✓</span>Precios reales de proveedores</li>
-            <li class="flex items-start gap-2"><span class="text-green-500 shrink-0">✓</span>Historial de 90 días por producto</li>
-            <li class="flex items-start gap-2"><span class="text-green-500 shrink-0">✓</span>Push a tienda (Shopify / TiendaNube)</li>
-            <li class="flex items-start gap-2"><span class="text-green-500 shrink-0">✓</span>Mi Negocio — tracker ventas, stock y ROI</li>
-            <li class="flex items-start gap-2"><span class="text-green-500 shrink-0">✓</span>Exportación CSV completa</li>
-            <li class="flex items-start gap-2"><span class="text-green-500 shrink-0">✓</span>10 alertas activas</li>
-            <li class="flex items-start gap-2"><span class="text-green-500 shrink-0">✓</span>Email digest semanal</li>
-          </ul>
-          <button id="btn-plan-starter" onclick="upgradePlan('starter')" class="w-full py-2.5 rounded-xl text-sm font-bold bg-black text-white hover:bg-gray-800 transition">Activar Starter →</button>
-        </div>
-
-        <!-- Pro -->
-        <div id="plan-card-pro" class="bg-gray-900 rounded-[2rem] p-6 saas-shadow border-2 border-transparent transition-all">
-          <div class="text-[10px] font-bold text-champagne uppercase tracking-wider mb-1">Pro</div>
-          <div class="text-3xl font-black text-white mb-0.5">$39<span class="text-sm font-medium text-gray-500">/mes</span></div>
-          <div class="text-xs text-gray-500 mb-5">USD · cancelá cuando quieras</div>
-          <ul class="space-y-2 text-xs text-gray-300 mb-6">
-            <li class="flex items-start gap-2"><span class="text-champagne shrink-0">✓</span>Todo lo del plan Starter</li>
-            <li class="flex items-start gap-2"><span class="text-champagne shrink-0">✓</span>Chat IA ilimitado</li>
-            <li class="flex items-start gap-2"><span class="text-champagne shrink-0">✓</span>Análisis de mercado por nicho</li>
-            <li class="flex items-start gap-2"><span class="text-champagne shrink-0">✓</span>Alertas ilimitadas y personalizadas</li>
-          </ul>
-          <button id="btn-plan-pro" onclick="upgradePlan('pro')" class="w-full py-2.5 rounded-xl text-sm font-bold bg-champagne text-obsidian hover:opacity-90 transition">Activar Pro →</button>
         </div>
       </div>
     </section>
