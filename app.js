@@ -408,14 +408,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const tbody = document.getElementById('tableBody');
     if(!tbody) return;
     const start = (currentPage - 1) * PAGE_SIZE;
-    const plan = getUserPlan();
-    const limit = plan === 'pro' ? Infinity : plan === 'starter' ? 150 : 20;
-    // Apply catalog limit first, then filters (filters only for Pro)
-    let filtered = window.productsData.slice(0, limit);
-    if(plan === 'pro') {
-      if(currentFilter.cat) filtered = filtered.filter(p => p.cat === currentFilter.cat);
-      if(currentFilter.mode === 'marca-propia') filtered = filtered.filter(p => p.type === 'marca-propia');
-    }
+    let filtered = window.productsData;
+    if(currentFilter.cat) filtered = filtered.filter(p => p.cat === currentFilter.cat);
+    if(currentFilter.mode === 'marca-propia') filtered = filtered.filter(p => p.type === 'marca-propia');
     const list = filtered.slice(start, start + PAGE_SIZE);
 
     tbody.innerHTML = list.map((p) => {
@@ -423,13 +418,15 @@ document.addEventListener('DOMContentLoaded', () => {
       const isHot = p.score >= 90;
       const badgeStyle = isHot ? 'bg-pastel-pink text-pink-700' : 'bg-gray-100 text-gray-600';
       const pltsHtml = (p.plts || []).map(plt => `<span class="bg-gray-100 text-gray-500 text-[10px] uppercase font-bold px-2 py-1 rounded mr-1">${plt}</span>`).join('');
-
+      const imgHtml = p.img
+        ? `<img src="${p.img}" class="w-10 h-10 rounded-xl object-cover border border-gray-200" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+        : '';
       return `
         <tr class="border-b border-gray-100 hover:bg-gray-50/50 transition">
           <td class="p-4 pl-6">
             <div class="flex items-center gap-4">
-              <div class="w-10 h-10 rounded-xl bg-gray-100 border border-gray-200 flex items-center justify-center flex-shrink-0">
-                <i data-lucide="image" class="w-4 h-4 text-gray-400"></i>
+              <div class="w-10 h-10 rounded-xl bg-gray-100 border border-gray-200 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                ${imgHtml}<span class="w-10 h-10 flex items-center justify-center ${p.img ? 'hidden' : ''}"><i data-lucide="package" class="w-4 h-4 text-gray-400"></i></span>
               </div>
               <div class="font-bold text-gray-900 leading-tight max-w-[200px] truncate" title="${p.name}">${p.name}</div>
             </div>
@@ -447,26 +444,14 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
     }).join('');
 
-    const total = window.productsData.length;
-    const showing = filtered.length;
-    let pageInfoText = `Mostrando ${start + 1}-${Math.min(start + PAGE_SIZE, showing)} de ${showing}`;
-    if(plan !== 'pro' && total > showing) {
-      const nextPlan = plan === 'free' ? 'Starter' : 'Pro';
-      const nextLimit = plan === 'free' ? 150 : total;
-      pageInfoText += ` · <a href="#" onclick="document.getElementById('upgradeModal')?.classList.remove('hidden')" class="text-champagne font-bold hover:underline">Actualizá a ${nextPlan} para ver ${nextLimit === total ? 'los ' + total : nextLimit} productos →</a>`;
-    }
-    document.getElementById('pageInfo').innerHTML = pageInfoText;
+    document.getElementById('pageInfo').textContent = `Mostrando ${start + 1}-${Math.min(start + PAGE_SIZE, filtered.length)} de ${filtered.length}`;
     lucide.createIcons();
   }
   
   window.nextPage = function() {
-    const plan = getUserPlan();
-    const limit = plan === 'pro' ? Infinity : plan === 'starter' ? 150 : 20;
-    let filtered = window.productsData.slice(0, limit);
-    if(plan === 'pro') {
-      if(currentFilter.cat) filtered = filtered.filter(p => p.cat === currentFilter.cat);
-      if(currentFilter.mode === 'marca-propia') filtered = filtered.filter(p => p.type === 'marca-propia');
-    }
+    let filtered = window.productsData;
+    if(currentFilter.cat) filtered = filtered.filter(p => p.cat === currentFilter.cat);
+    if(currentFilter.mode === 'marca-propia') filtered = filtered.filter(p => p.type === 'marca-propia');
     if(currentPage * PAGE_SIZE < filtered.length) {
       currentPage++;
       renderTable();
@@ -766,18 +751,17 @@ function escapeHtml(str) {
 }
 
 async function askAI() {
-  const plan = getUserPlan();
-  if(plan !== 'pro') {
-    const msgs = document.getElementById('aiMessages');
-    if(msgs) msgs.innerHTML = `<div class="p-4 bg-gray-50 rounded-xl text-sm text-gray-600 text-center">
-      🔒 El chat IA está disponible en el <strong>Plan Pro</strong>.<br>
-      <button onclick="showSection('sec-perfil',null)" class="mt-2 text-xs font-bold text-black underline">Ver planes →</button>
-    </div>`;
-    return;
-  }
   const input = document.getElementById('aiInput');
   const msgs = document.getElementById('aiMessages');
   if (!input || !msgs || input.value.trim() === '') return;
+  const plan = getUserPlan();
+  if(plan !== 'pro') {
+    msgs.innerHTML += `<div class="p-3 bg-gray-50 rounded-xl text-xs text-gray-500 text-center mb-2">
+      🔒 Chat IA disponible en <strong>Plan Pro</strong> — <button onclick="showSection('sec-perfil',null)" class="font-bold text-black underline">Ver planes →</button>
+    </div>`;
+    input.value = '';
+    return;
+  }
 
   const text = input.value.trim();
   input.value = '';
@@ -1355,57 +1339,27 @@ function getUserPlan() {
 
 function applyPlanGates() {
   const plan = getUserPlan();
+  if(plan === 'pro') return;
 
-  function addOverlay(sectionId, requiredPlan, title, description) {
-    const sec = document.getElementById(sectionId);
-    if(!sec || sec.querySelector('.plan-gate-overlay')) return;
+  // Gate sections that require Pro (hard overlay)
+  const proSections = ['sec-negocio', 'sec-alertas'];
+  proSections.forEach(id => {
+    const sec = document.getElementById(id);
+    if(!sec || sec.querySelector('.pro-gate-overlay')) return;
     const overlay = document.createElement('div');
-    overlay.className = 'plan-gate-overlay absolute inset-0 z-20 flex flex-col items-center justify-center backdrop-blur-sm bg-white/80 rounded-[2rem]';
+    overlay.className = 'pro-gate-overlay absolute inset-0 z-20 flex flex-col items-center justify-center backdrop-blur-sm bg-white/80 rounded-[2rem]';
     overlay.innerHTML = `
       <div class="text-center p-8 max-w-sm">
         <div class="w-14 h-14 bg-black rounded-2xl flex items-center justify-center mx-auto mb-4">
           <i data-lucide="lock" class="w-7 h-7 text-white"></i>
         </div>
-        <h3 class="text-xl font-extrabold text-gray-900 mb-2">Plan ${requiredPlan}</h3>
-        <p class="text-sm text-gray-500 mb-6 leading-relaxed">${description}</p>
+        <h3 class="text-xl font-extrabold text-gray-900 mb-2">Función Pro</h3>
+        <p class="text-sm text-gray-500 mb-6 leading-relaxed">Esta sección está disponible en el plan Starter o Pro.</p>
         <button onclick="showSection('sec-perfil',null)" class="bg-black text-white font-bold px-6 py-3 rounded-xl text-sm hover:bg-gray-900 transition">Ver planes →</button>
       </div>`;
     sec.style.position = 'relative';
     sec.appendChild(overlay);
-  }
-
-  // FREE: lock Análisis section
-  if(plan === 'free') {
-    addOverlay('sec-analisis', 'Starter',
-      'Accedé al análisis completo de mercado, oportunidades y comparativa de competencia por categoría.');
-  }
-
-  // FREE + STARTER: lock chat IA (inside sec-analisis, so only matters for starter)
-  if(plan === 'free' || plan === 'starter') {
-    const chatWrap = document.getElementById('aiInput');
-    if(chatWrap && !chatWrap.dataset.gated) {
-      chatWrap.dataset.gated = '1';
-      chatWrap.placeholder = '🔒 Chat IA disponible en Plan Pro';
-      chatWrap.readOnly = true;
-      chatWrap.classList.add('cursor-not-allowed', 'bg-gray-50', 'text-gray-400');
-      const sendBtn = document.getElementById('aiSendBtn') || chatWrap.closest('form')?.querySelector('button[type="submit"]');
-      if(sendBtn) sendBtn.disabled = true;
-    }
-  }
-
-  // FREE + STARTER: disable category filter buttons
-  if(plan === 'free' || plan === 'starter') {
-    document.querySelectorAll('[onclick*="setFilter"]').forEach(btn => {
-      if(btn.dataset.filterGated) return;
-      btn.dataset.filterGated = '1';
-      btn.title = 'Filtros disponibles en Plan Pro';
-      btn.classList.add('opacity-40', 'cursor-not-allowed');
-      btn.onclick = (e) => { e.stopPropagation(); e.preventDefault(); };
-    });
-  }
-
-  // Re-render table with plan limits applied
-  if(typeof window.renderTable === 'function') window.renderTable();
+  });
 
   lucide.createIcons();
 }
