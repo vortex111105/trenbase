@@ -25,6 +25,8 @@ export default function middleware(request) {
 
   // Validación de CORS para rutas API
   const allowedOrigins = [
+    'https://www.trendbase.app',
+    'https://trendbase.app',
     'https://trenbase.vercel.app',
     'https://www.trenbase.vercel.app',
     'http://localhost:3000',
@@ -33,22 +35,9 @@ export default function middleware(request) {
   ];
 
   if (url.includes('/api/')) {
-    // Permitir cron job de Vercel
-    if (url.includes('/api/generate') && request.headers.get('x-cron-secret')) {
-      return undefined;
-    }
-
     if (origin && !allowedOrigins.includes(origin) && !origin.endsWith('.vercel.app')) {
       return new Response(
         JSON.stringify({ error: 'CORS: Origin no autorizado.' }),
-        { status: 403, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
-
-    const secFetchSite = request.headers.get('sec-fetch-site');
-    if (secFetchSite === 'cross-site') {
-      return new Response(
-        JSON.stringify({ error: 'CORS: Cross-site requests bloqueados.' }),
         { status: 403, headers: { 'Content-Type': 'application/json' } }
       );
     }
