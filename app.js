@@ -401,7 +401,6 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.classList.remove('text-gray-900/50');
       btn.classList.add('bg-gray-100', 'text-gray-900');
     }
-    if(sectionId === 'sec-perfil') loadProfileSection();
   }
 
   window.renderTable = function() {
@@ -418,15 +417,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const isHot = p.score >= 90;
       const badgeStyle = isHot ? 'bg-pastel-pink text-pink-700' : 'bg-gray-100 text-gray-600';
       const pltsHtml = (p.plts || []).map(plt => `<span class="bg-gray-100 text-gray-500 text-[10px] uppercase font-bold px-2 py-1 rounded mr-1">${plt}</span>`).join('');
-      const imgHtml = p.img
-        ? `<img src="${p.img}" class="w-10 h-10 rounded-xl object-cover border border-gray-200" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
-        : '';
+
       return `
         <tr class="border-b border-gray-100 hover:bg-gray-50/50 transition">
           <td class="p-4 pl-6">
             <div class="flex items-center gap-4">
-              <div class="w-10 h-10 rounded-xl bg-gray-100 border border-gray-200 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                ${imgHtml}<span class="w-10 h-10 flex items-center justify-center ${p.img ? 'hidden' : ''}"><i data-lucide="package" class="w-4 h-4 text-gray-400"></i></span>
+              <div class="w-10 h-10 rounded-xl bg-gray-100 border border-gray-200 flex items-center justify-center flex-shrink-0">
+                <i data-lucide="image" class="w-4 h-4 text-gray-400"></i>
               </div>
               <div class="font-bold text-gray-900 leading-tight max-w-[200px] truncate" title="${p.name}">${p.name}</div>
             </div>
@@ -754,14 +751,6 @@ async function askAI() {
   const input = document.getElementById('aiInput');
   const msgs = document.getElementById('aiMessages');
   if (!input || !msgs || input.value.trim() === '') return;
-  const plan = getUserPlan();
-  if(plan !== 'pro') {
-    msgs.innerHTML += `<div class="p-3 bg-gray-50 rounded-xl text-xs text-gray-500 text-center mb-2">
-      🔒 Chat IA disponible en <strong>Plan Pro</strong> — <button onclick="showSection('sec-perfil',null)" class="font-bold text-black underline">Ver planes →</button>
-    </div>`;
-    input.value = '';
-    return;
-  }
 
   const text = input.value.trim();
   input.value = '';
@@ -1209,120 +1198,6 @@ window.exportCSV = function() {
   document.body.removeChild(a);
 };
 
-// ─── PADDLE / UPGRADE ────────────────────────────────────────────────────────
-window.upgradePlan = async function(plan) {
-  const btn = document.getElementById(`btn-plan-${plan}`);
-  const originalText = btn?.innerHTML;
-  if(btn) { btn.innerHTML = 'Redirigiendo...'; btn.disabled = true; }
-
-  try {
-    const session = JSON.parse(localStorage.getItem('tb_session') || '{}');
-    const email = (() => {
-      try {
-        const p = JSON.parse(atob((session.access_token || '').split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
-        return p.email || '';
-      } catch { return ''; }
-    })();
-
-    const res = await fetch('/api/subscribe', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ plan, email }),
-    });
-    const data = await res.json();
-    if(data.url) {
-      window.location.href = data.url;
-    } else {
-      alert('Error al generar el checkout. Intentá de nuevo.');
-      if(btn) { btn.innerHTML = originalText; btn.disabled = false; }
-    }
-  } catch(err) {
-    alert('Error de conexión. Intentá de nuevo.');
-    if(btn) { btn.innerHTML = originalText; btn.disabled = false; }
-  }
-};
-
-window.manageBilling = function() {
-  window.open('mailto:ifraga.ok@gmail.com?subject=Facturaci%C3%B3n%20TrendBase', '_blank');
-};
-
-window.signOut = async function() {
-  localStorage.removeItem('tb_session');
-  localStorage.removeItem('tb_plan');
-  window.location.href = '/';
-};
-
-function loadProfileSection() {
-  const session = JSON.parse(localStorage.getItem('tb_session') || '{}');
-  let email = '';
-  try {
-    const p = JSON.parse(atob((session.access_token || '').split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
-    email = p.email || '';
-  } catch {}
-
-  const plan = getUserPlan();
-
-  const avatar = document.getElementById('pfAvatar');
-  if(avatar) avatar.textContent = (email[0] || 'U').toUpperCase();
-
-  const pfEmail = document.getElementById('pfEmail');
-  if(pfEmail) pfEmail.textContent = email || 'Sin sesión';
-
-  const badge = document.getElementById('pfPlanBadge');
-  if(badge) {
-    const labels = { free: 'Plan Free', starter: 'Plan Starter', pro: 'Plan Pro' };
-    const classes = {
-      free: 'bg-gray-200 text-gray-600',
-      starter: 'bg-black text-white',
-      pro: 'bg-champagne text-obsidian',
-    };
-    badge.textContent = labels[plan] || 'Plan Free';
-    badge.className = `mt-1.5 inline-block text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wider ${classes[plan] || classes.free}`;
-  }
-
-  // Highlight active plan card and mark button as current
-  ['free', 'starter', 'pro'].forEach(p => {
-    const card = document.getElementById(`plan-card-${p}`);
-    const btn = document.getElementById(`btn-plan-${p}`);
-    if(!btn) return;
-    if(p === plan) {
-      btn.textContent = 'Plan actual';
-      btn.disabled = true;
-      btn.className = 'w-full py-2.5 rounded-xl text-sm font-bold border-2 border-black text-black cursor-default';
-      if(card) card.style.borderColor = p === 'pro' ? '#D4AF37' : 'black';
-    }
-  });
-}
-
-// Handle post-checkout redirect
-if(typeof window !== 'undefined' && window.location.search.includes('subscribed=1')) {
-  setTimeout(async () => {
-    // Ask Supabase to refresh the session so app_metadata.plan is fresh
-    try {
-      const session = JSON.parse(localStorage.getItem('tb_session') || '{}');
-      if(session.refresh_token) {
-        const res = await fetch('/api/auth', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'refresh', refresh_token: session.refresh_token }),
-        });
-        if(res.ok) {
-          const data = await res.json();
-          if(data.access_token) localStorage.setItem('tb_session', JSON.stringify(data));
-        }
-      }
-    } catch {}
-    applyPlanGates();
-    loadProfileSection();
-    history.replaceState({}, '', window.location.pathname);
-    const toast = document.createElement('div');
-    toast.className = 'fixed top-6 left-1/2 -translate-x-1/2 z-[999] bg-black text-white text-sm font-bold px-6 py-3 rounded-2xl shadow-xl';
-    toast.textContent = '🎉 ¡Suscripción activada! Ya tenés acceso completo.';
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 5000);
-  }, 2500);
-}
-
 // ─── PLAN ENFORCEMENT ────────────────────────────────────────────────────────
 function getUserPlan() {
   try {
@@ -1341,11 +1216,12 @@ function applyPlanGates() {
   const plan = getUserPlan();
   if(plan === 'pro') return;
 
-  // Gate sections that require Pro (hard overlay)
+  // Sections that require Pro
   const proSections = ['sec-negocio', 'sec-alertas'];
   proSections.forEach(id => {
     const sec = document.getElementById(id);
-    if(!sec || sec.querySelector('.pro-gate-overlay')) return;
+    if(!sec) return;
+    if(sec.querySelector('.pro-gate-overlay')) return; // already applied
     const overlay = document.createElement('div');
     overlay.className = 'pro-gate-overlay absolute inset-0 z-20 flex flex-col items-center justify-center backdrop-blur-sm bg-white/80 rounded-[2rem]';
     overlay.innerHTML = `
@@ -1354,13 +1230,12 @@ function applyPlanGates() {
           <i data-lucide="lock" class="w-7 h-7 text-white"></i>
         </div>
         <h3 class="text-xl font-extrabold text-gray-900 mb-2">Función Pro</h3>
-        <p class="text-sm text-gray-500 mb-6 leading-relaxed">Esta sección está disponible en el plan Starter o Pro.</p>
-        <button onclick="showSection('sec-perfil',null)" class="bg-black text-white font-bold px-6 py-3 rounded-xl text-sm hover:bg-gray-900 transition">Ver planes →</button>
+        <p class="text-sm text-gray-500 mb-6 leading-relaxed">Esta sección está disponible en el plan Pro. Accedé a métricas de tu negocio, alertas en tiempo real y mucho más.</p>
+        <button onclick="window.location.href='/api/subscribe'" class="bg-black text-white font-bold px-6 py-3 rounded-xl text-sm hover:bg-gray-900 transition">Activar Plan Pro →</button>
       </div>`;
     sec.style.position = 'relative';
     sec.appendChild(overlay);
   });
-
   lucide.createIcons();
 }
 
@@ -1553,6 +1428,29 @@ window.syncWithStore = async function() {
   } catch(e) {
     if(btn) { btn.disabled = false; btn.innerHTML = '<i data-lucide="refresh-cw" class="w-3.5 h-3.5 inline-block mr-1"></i> Sincronizar ahora'; }
     alert('Error al sincronizar: ' + e.message);
+  }
+};
+
+// ─── PADDLE CHECKOUT ─────────────────────────────────────────────────────────
+window.upgradePlan = async function(plan) {
+  try {
+    const session = JSON.parse(localStorage.getItem('tb_session') || '{}');
+    const email = (() => {
+      try {
+        const p = JSON.parse(atob((session.access_token || '').split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
+        return p.email || '';
+      } catch { return ''; }
+    })();
+    const res = await fetch('/api/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan, email }),
+    });
+    const data = await res.json();
+    if(data.url) window.location.href = data.url;
+    else alert('Error al generar el checkout. Intentá de nuevo.');
+  } catch(err) {
+    alert('Error de conexión. Intentá de nuevo.');
   }
 };
 
