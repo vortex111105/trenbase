@@ -347,32 +347,24 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderOpportunities() {
     const el = document.getElementById('oppList');
     if(!el) return;
-    
-    // Sort by low competition and high score
+
     const sorted = [...window.productsData].sort((a,b) => {
       const aComp = a.comp === 'Baja' ? 3 : (a.comp === 'Media' ? 2 : 1);
       const bComp = b.comp === 'Baja' ? 3 : (b.comp === 'Media' ? 2 : 1);
-      const aScore = a.score * a.margin * aComp;
-      const bScore = b.score * b.margin * bComp;
-      return bScore - aScore;
-    }).slice(0, 4);
-    
+      return (b.score * b.margin * bComp) - (a.score * a.margin * aComp);
+    }).slice(0, 8);
+
     el.innerHTML = sorted.map((p, i) => {
       const isLow = p.comp === 'Baja';
       const badgeBg = isLow ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700';
-      const originalIdx = products.indexOf(p);
+      const originalIdx = window.productsData.indexOf(p);
       return `
-        <div class="flex items-center justify-between p-3 border border-gray-100 rounded-xl hover:border-gray-200 hover:bg-gray-50 transition cursor-pointer" onclick="openProduct(${originalIdx})">
-          <div class="flex items-center gap-3">
-            <div class="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center font-bold text-gray-400 text-xs">${i+1}</div>
-            <div>
-              <div class="font-bold text-sm text-gray-900 truncate max-w-[120px]">${p.name}</div>
-              <div class="text-[10px] text-gray-400 font-mono mt-0.5">${p.cat}</div>
-            </div>
-          </div>
-          <div class="text-right flex flex-col items-end">
-            <div class="text-sm font-extrabold text-green-500">${p.margin}% ROI</div>
-            <div class="text-[9px] font-bold px-1.5 py-0.5 rounded mt-1 ${badgeBg} uppercase tracking-wider">Comp ${p.comp}</div>
+        <div class="flex-shrink-0 w-44 p-3 border border-gray-100 rounded-xl hover:border-gray-200 hover:bg-gray-50 transition cursor-pointer" onclick="openProduct(${originalIdx})">
+          <div class="text-[10px] font-mono text-gray-400 mb-1">#${i+1} · ${p.cat}</div>
+          <div class="font-bold text-sm text-gray-900 leading-tight mb-3" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${p.name}</div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm font-extrabold text-green-500">${p.margin}% ROI</span>
+            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded ${badgeBg} uppercase tracking-wider">Comp ${p.comp}</span>
           </div>
         </div>
       `;

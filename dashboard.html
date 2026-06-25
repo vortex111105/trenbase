@@ -61,6 +61,36 @@
     .dash-section { display: none; }
     .dash-section.active-section { display: block; animation: fadeIn 0.3s ease-out; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Collapsible sidebar */
+    #sidebar {
+      width: 4.5rem;
+      flex-shrink: 0;
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+    }
+    #sidebar:hover { width: 16rem; }
+    .sidebar-label {
+      opacity: 0;
+      white-space: nowrap;
+      transition: opacity 0.15s ease;
+      flex-shrink: 0;
+    }
+    #sidebar:hover .sidebar-label { opacity: 1; }
+    .sidebar-extra {
+      opacity: 0;
+      white-space: nowrap;
+      transition: opacity 0.15s ease;
+      pointer-events: none;
+    }
+    #sidebar:hover .sidebar-extra {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Horizontal opp banner scrollbar */
+    #oppList::-webkit-scrollbar { height: 3px; }
+    #oppList::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 4px; }
 </style>
 
   <style>
@@ -114,46 +144,41 @@
 <body class="bg-bgmain text-gray-900 h-screen flex overflow-hidden">
 
   <!-- Sidebar -->
-  <aside class="w-64 bg-sidebar text-white flex flex-col m-3 rounded-[2rem] shadow-2xl relative z-20">
-    <a href="index.html" class="p-8 pb-6 flex items-center gap-3 hover:opacity-80 transition cursor-pointer">
-      <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
+  <aside id="sidebar" class="bg-sidebar text-white flex flex-col m-3 rounded-[2rem] shadow-2xl relative z-20">
+    <a href="index.html" class="px-4 py-6 flex items-center gap-3 hover:opacity-80 transition cursor-pointer overflow-hidden">
+      <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
         <i data-lucide="zap" class="w-5 h-5 text-black"></i>
       </div>
-      <h1 class="text-xl font-bold tracking-tight">TrendBase</h1>
+      <h1 class="text-xl font-bold tracking-tight sidebar-label">TrendBase</h1>
     </a>
     
             <nav class="flex-1 px-4 space-y-2 mt-4" id="sidebarNav">
       <button onclick="showSection('sec-tendencias', this)" class="w-full flex items-center gap-3 px-4 py-3 bg-white/10 text-white rounded-xl font-medium transition nav-btn active-nav">
-        <i data-lucide="trending-up" class="w-5 h-5"></i> Tendencias
+        <i data-lucide="trending-up" class="w-5 h-5 flex-shrink-0"></i> <span class="sidebar-label">Tendencias</span>
       </button>
       <button onclick="showSection('sec-analisis', this)" class="w-full flex items-center gap-3 px-4 py-3 text-white/50 hover:text-white hover:bg-white/5 rounded-xl font-medium transition nav-btn">
-        <i data-lucide="bar-chart-2" class="w-5 h-5"></i> Análisis
+        <i data-lucide="bar-chart-2" class="w-5 h-5 flex-shrink-0"></i> <span class="sidebar-label">Análisis</span>
       </button>
       <button onclick="showSection('sec-alertas', this)" class="w-full flex items-center justify-between px-4 py-3 text-white/50 hover:text-white hover:bg-white/5 rounded-xl font-medium transition nav-btn">
-        <span class="flex items-center gap-3"><i data-lucide="bell" class="w-5 h-5"></i> Alertas</span>
-        <span class="bg-red-500 text-white text-[9px] font-mono px-2 py-0.5 rounded-full">3</span>
+        <span class="flex items-center gap-3"><i data-lucide="bell" class="w-5 h-5 flex-shrink-0"></i> <span class="sidebar-label">Alertas</span></span>
+        <span class="bg-red-500 text-white text-[9px] font-mono px-2 py-0.5 rounded-full sidebar-extra">3</span>
       </button>
       <button onclick="showSection('sec-guardados', this)" class="w-full flex items-center justify-between px-4 py-3 text-white/50 hover:text-white hover:bg-white/5 rounded-xl font-medium transition nav-btn">
-        <span class="flex items-center gap-3"><i data-lucide="bookmark" class="w-5 h-5"></i> Guardados</span>
-        <span class="bg-white/10 text-white text-[9px] font-mono px-2 py-0.5 rounded-full">0</span>
+        <span class="flex items-center gap-3"><i data-lucide="bookmark" class="w-5 h-5 flex-shrink-0"></i> <span class="sidebar-label">Guardados</span></span>
+        <span class="bg-white/10 text-white text-[9px] font-mono px-2 py-0.5 rounded-full sidebar-extra">0</span>
       </button>
       <button onclick="showSection('sec-perfil', this)" class="w-full flex items-center gap-3 px-4 py-3 text-white/50 hover:text-white hover:bg-white/5 rounded-xl font-medium transition nav-btn mt-6 border-t border-white/5 pt-4">
-        <i data-lucide="user" class="w-5 h-5"></i> Mi Perfil
+        <i data-lucide="user" class="w-5 h-5 flex-shrink-0"></i> <span class="sidebar-label">Mi Perfil</span>
       </button>
       <button onclick="showSection('sec-negocio', this)" class="w-full flex items-center gap-3 px-4 py-3 text-white/50 hover:text-white hover:bg-white/5 rounded-xl font-medium transition nav-btn">
-        <i data-lucide="briefcase" class="w-5 h-5"></i> Mi Negocio
+        <i data-lucide="briefcase" class="w-5 h-5 flex-shrink-0"></i> <span class="sidebar-label">Mi Negocio</span>
       </button>
       <a href="index.html" class="flex items-center gap-3 px-4 py-3 text-white/50 hover:text-white hover:bg-white/5 rounded-xl font-medium transition mt-4 border-t border-white/10 pt-4">
-        <i data-lucide="home" class="w-5 h-5"></i> Volver al Inicio
+        <i data-lucide="home" class="w-5 h-5 flex-shrink-0"></i> <span class="sidebar-label">Volver al Inicio</span>
       </a>
     </nav>
 
-    
-
-    
-
-    
-    <div class="p-6">
+    <div class="p-4 sidebar-extra">
       <div class="bg-gradient-to-br from-white/10 to-white/5 p-5 rounded-2xl border border-white/10">
         <p class="text-xs text-white/60 mb-3">Obtén métricas avanzadas y proveedores exclusivos.</p>
         <button class="w-full bg-white text-black text-sm font-bold py-2 rounded-xl">Upgrade Pro</button>
@@ -228,54 +253,49 @@
 
       </div>
       
-      <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <div class="xl:col-span-2 flex flex-col">
-          <!-- Products Table -->
-    <div class="bg-white rounded-[2rem] saas-shadow h-[600px] flex flex-col overflow-hidden min-h-[400px]">
-      <div class="p-6 border-b border-gray-100 flex justify-between items-center">
-        <h3 class="font-bold text-gray-800">Top Productos en Tendencia</h3>
-        <div class="flex gap-2">
-          <button onclick="exportCSV()" class="bg-gray-50 hover:bg-gray-100 text-gray-600 px-4 py-2 rounded-xl text-xs font-bold transition border border-gray-200">Exportar CSV</button>
-        </div>
-      </div>
-      <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse">
-          <thead>
-            <tr class="bg-gray-50 text-gray-400 text-xs font-medium uppercase tracking-wider">
-              <th class="p-4 pl-6 font-mono font-medium">Producto</th>
-              <th class="p-4 font-mono font-medium">Categoría</th>
-              <th class="p-4 font-mono font-medium">Plataformas</th>
-              <th class="p-4 font-mono font-medium">Precio Venta</th>
-              <th class="p-4 font-mono font-medium">TrendScore</th>
-              <th class="p-4 pr-6"></th>
-            </tr>
-          </thead>
-          <tbody id="tableBody" class="text-sm">
-            <!-- Rows injected by JS -->
-          </tbody>
-        </table>
-      </div>
-      
-      <!-- Pagination -->
-      <div class="p-4 border-t border-gray-100 flex justify-between items-center bg-gray-50/50 mt-auto">
-        <span class="text-xs text-gray-500 font-medium" id="pageInfo">Mostrando 1-10 de 500</span>
-        <div class="flex gap-2">
-          <button onclick="prevPage()" class="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition shadow-sm"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
-          <button onclick="nextPage()" class="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition shadow-sm"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
-        </div>
-      </div>
-    </div>
-        </div>
-        <div class="xl:col-span-1 flex flex-col">
-          <!-- Oportunidades List -->
-      <div class="bg-white rounded-[2rem] p-6 saas-shadow saas-card-hover flex flex-col">
-        <div class="flex justify-between items-center mb-6">
-          <h3 class="font-bold text-gray-800">Top Oportunidades</h3>
+      <!-- Top Oportunidades Banner Horizontal -->
+      <div class="bg-white rounded-[2rem] p-4 saas-shadow">
+        <div class="flex items-center gap-3 mb-3">
+          <h3 class="font-bold text-gray-800 text-sm">Top Oportunidades</h3>
           <span class="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-1 rounded-md uppercase tracking-wider">Alta Rentabilidad</span>
         </div>
-        <div id="oppList" class="flex flex-col gap-3 flex-1">
-          <div class="text-sm text-gray-400 text-center py-4 font-medium">Cargando oportunidades...</div>
+        <div id="oppList" class="flex flex-row gap-3 overflow-x-auto pb-1">
+          <div class="flex-shrink-0 text-sm text-gray-400 py-2 font-medium">Cargando oportunidades...</div>
         </div>
+      </div>
+
+      <!-- Products Table full width -->
+      <div class="bg-white rounded-[2rem] saas-shadow h-[600px] flex flex-col overflow-hidden min-h-[400px]">
+        <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+          <h3 class="font-bold text-gray-800">Top Productos en Tendencia</h3>
+          <div class="flex gap-2">
+            <button onclick="exportCSV()" class="bg-gray-50 hover:bg-gray-100 text-gray-600 px-4 py-2 rounded-xl text-xs font-bold transition border border-gray-200">Exportar CSV</button>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-gray-50 text-gray-400 text-xs font-medium uppercase tracking-wider">
+                <th class="p-4 pl-6 font-mono font-medium">Producto</th>
+                <th class="p-4 font-mono font-medium">Categoría</th>
+                <th class="p-4 font-mono font-medium">Plataformas</th>
+                <th class="p-4 font-mono font-medium">Precio Venta</th>
+                <th class="p-4 font-mono font-medium">TrendScore</th>
+                <th class="p-4 pr-6"></th>
+              </tr>
+            </thead>
+            <tbody id="tableBody" class="text-sm">
+              <!-- Rows injected by JS -->
+            </tbody>
+          </table>
+        </div>
+        <!-- Pagination -->
+        <div class="p-4 border-t border-gray-100 flex justify-between items-center bg-gray-50/50 mt-auto">
+          <span class="text-xs text-gray-500 font-medium" id="pageInfo">Mostrando 1-10 de 500</span>
+          <div class="flex gap-2">
+            <button onclick="prevPage()" class="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition shadow-sm"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+            <button onclick="nextPage()" class="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition shadow-sm"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+          </div>
         </div>
       </div>
 
