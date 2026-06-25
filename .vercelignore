@@ -41,6 +41,7 @@ api/mercadolibre.js
 api/panel.js
 api/refresh.js
 api/store-sync.js
+api/stats.js
 
 # Dev docs
 TODO_MANANA.md
