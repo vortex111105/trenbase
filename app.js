@@ -1,6 +1,6 @@
 let saved = JSON.parse(localStorage.getItem('tb_saved') || '[]');
 let currentProdIndex = null;
-let currentFilter = { cat: null, mode: null };
+let currentFilter = { cat: null, mode: null, q: '' };
 
 document.addEventListener('DOMContentLoaded', () => {
   lucide.createIcons();
@@ -22,13 +22,16 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const res = await fetch('/api/products');
       if (!res.ok) throw new Error('Failed to load products');
-      window.productsData = await res.json();
+      const data = await res.json();
+      // API returns { products: [...] } — extract the array
+      window.productsData = Array.isArray(data) ? data : (data.products || []);
+      if (!window.productsData.length) throw new Error('Empty products');
       initDashboard();
     } catch (e) {
-      console.error(e);
+      console.error('[loadRealProducts]', e.message);
       if (window.MOCK_DATA && window.MOCK_DATA.products) {
-          window.productsData = window.MOCK_DATA.products;
-          initDashboard();
+        window.productsData = window.MOCK_DATA.products;
+        initDashboard();
       }
     }
   }
@@ -38,6 +41,25 @@ document.addEventListener('DOMContentLoaded', () => {
   loadRealProducts();
   setInterval(loadRealProducts, 6 * 60 * 60 * 1000);
   setInterval(loadFxRates, 30 * 60 * 1000);
+
+  // Wire up search inputs
+  let searchTimeout;
+  function handleSearch(q) {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      currentFilter.q = q.trim().toLowerCase();
+      currentPage = 1;
+      renderTable();
+    }, 250);
+  }
+  document.getElementById('searchInput')?.addEventListener('input', e => handleSearch(e.target.value));
+  // Also sync both search boxes
+  document.querySelectorAll('input[placeholder="Buscar producto..."]').forEach(el => {
+    el.addEventListener('input', e => {
+      document.querySelectorAll('input[placeholder="Buscar producto..."]').forEach(o => { if(o !== e.target) o.value = e.target.value; });
+      handleSearch(e.target.value);
+    });
+  });
 
   const PAGE_SIZE = 10;
   let currentPage = 1;
@@ -402,6 +424,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let filtered = window.productsData;
     if(currentFilter.cat) filtered = filtered.filter(p => p.cat === currentFilter.cat);
     if(currentFilter.mode === 'marca-propia') filtered = filtered.filter(p => p.type === 'marca-propia');
+    if(currentFilter.q) filtered = filtered.filter(p => (p.name||'').toLowerCase().includes(currentFilter.q) || (p.cat||'').toLowerCase().includes(currentFilter.q));
     const list = filtered.slice(start, start + PAGE_SIZE);
 
     tbody.innerHTML = list.map((p) => {
