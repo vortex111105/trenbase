@@ -1,7 +1,7 @@
 export const config = { runtime: 'edge' };
 
 const SUPABASE_URL = 'https://rbrundkswmlbgkicdnty.supabase.co';
-const SITE_URL = process.env.ALLOWED_ORIGIN || 'https://trenbase.vercel.app';
+const SITE_URL = process.env.ALLOWED_ORIGIN || 'https://www.trendbase.app';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': SITE_URL,

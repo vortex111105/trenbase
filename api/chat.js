@@ -1,6 +1,6 @@
 export const config = { runtime: 'edge' };
 
-const SITE_URL = process.env.ALLOWED_ORIGIN || 'https://trenbase.vercel.app';
+const SITE_URL = process.env.ALLOWED_ORIGIN || 'https://www.trendbase.app';
 
 // ── RATE LIMIT ───────────────────────────────────────────────────────────────
 const rateLimitMap = new Map();
