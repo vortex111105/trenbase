@@ -1182,6 +1182,92 @@ window.deleteNegocioProduct = function deleteNegocioProduct(idx) {
       renderNegocio();
     }
 
+// ─── PUSH A TIENDA ────────────────────────────────────────────────────────────
+window.togglePushForm = function() {
+  const form = document.getElementById('push-form');
+  if(!form) return;
+  const isHidden = form.classList.contains('hidden');
+  form.classList.toggle('hidden', !isHidden);
+  document.getElementById('push-result')?.classList.add('hidden');
+
+  const platform = document.getElementById('push-platform')?.value || 'shopify';
+  document.getElementById('push-shopify-fields')?.classList.toggle('hidden', platform !== 'shopify');
+  document.getElementById('push-tiendanube-fields')?.classList.toggle('hidden', platform !== 'tiendanube');
+
+  document.getElementById('push-platform')?.addEventListener('change', function() {
+    document.getElementById('push-shopify-fields')?.classList.toggle('hidden', this.value !== 'shopify');
+    document.getElementById('push-tiendanube-fields')?.classList.toggle('hidden', this.value !== 'tiendanube');
+  }, { once: true });
+};
+
+window.pushProductToStore = async function() {
+  const p = window.productsData[currentProdIndex];
+  if(!p) return;
+
+  const platform = document.getElementById('push-platform')?.value || 'shopify';
+  const resultEl = document.getElementById('push-result');
+  const btn = document.querySelector('#push-form button[onclick="pushProductToStore()"]');
+
+  let credentials;
+  if(platform === 'shopify') {
+    const domain = document.getElementById('push-domain')?.value.trim();
+    const token  = document.getElementById('push-token')?.value.trim();
+    if(!domain || !token) { showToast('Completá el dominio y el token de Shopify', 'error'); return; }
+    credentials = { domain, token };
+  } else {
+    const userId = document.getElementById('push-userid')?.value.trim();
+    const token  = document.getElementById('push-tn-token')?.value.trim();
+    if(!userId || !token) { showToast('Completá el User ID y el token de TiendaNube', 'error'); return; }
+    credentials = { userId, token };
+  }
+
+  if(btn) { btn.disabled = true; btn.textContent = 'Publicando...'; }
+
+  const priceLocal = parseFloat(String(p.price_str || '').replace(/[^0-9.]/g, '')) || 0;
+
+  try {
+    const res = await fetch('/api/push-product', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        platform,
+        credentials,
+        product: {
+          name:        p.name,
+          cat:         p.cat,
+          description: p.description || `Producto trending en ${(p.regions||[]).join(', ')}. Categoría: ${p.cat}. Margen estimado: ${p.margin}%.`,
+          price_local: priceLocal,
+          currency:    'ARS',
+          image_url:   null,
+          margin:      p.margin,
+        },
+      }),
+    });
+
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error || 'Error al publicar');
+
+    if(resultEl) {
+      resultEl.className = 'mt-2 p-3 bg-green-50 border border-green-100 rounded-xl text-xs text-green-700';
+      resultEl.innerHTML = `
+        <div class="font-bold mb-1">Producto publicado</div>
+        <a href="${data.admin_url}" target="_blank" rel="noopener" class="underline">Ver en panel admin →</a>
+        ${data.store_url ? `<br><a href="${data.store_url}" target="_blank" rel="noopener" class="underline">Ver en tienda →</a>` : ''}
+      `;
+      resultEl.classList.remove('hidden');
+    }
+    showToast('Producto publicado en tu tienda', 'success');
+  } catch(e) {
+    if(resultEl) {
+      resultEl.className = 'mt-2 p-3 bg-red-50 border border-red-100 rounded-xl text-xs text-red-600';
+      resultEl.textContent = e.message;
+      resultEl.classList.remove('hidden');
+    }
+  } finally {
+    if(btn) { btn.disabled = false; btn.textContent = 'Publicar producto →'; }
+  }
+};
+
 window.switchModalTab = function switchModalTab(tab, btn) {
       document.querySelectorAll('.modal-tab').forEach(t => {
         t.classList.remove('text-gray-900', 'border-gray-900');

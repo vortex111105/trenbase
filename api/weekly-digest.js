@@ -13,7 +13,8 @@ const CRON_SECRET = process.env.CRON_SECRET;
 
 export default async function handler(req, res) {
   // Verificar que viene del cron de Vercel o llamada manual autorizada
-  const auth = req.headers['authorization'] || req.query?.secret;
+  const urlParams = new URL(req.url, 'https://trendbase.app').searchParams;
+  const auth = req.headers['authorization'] || urlParams.get('secret');
   const isVercelCron = req.headers['x-vercel-cron'] === '1';
   if(!isVercelCron && auth !== `Bearer ${CRON_SECRET}`) {
     return res.status(401).json({ error: 'No autorizado' });

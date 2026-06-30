@@ -24,7 +24,7 @@ export default async function handler(req) {
   }
 
   const { action, email, password } = body;
-  const key = process.env.SUPABASE_ANON_KEY;
+  const key = process.env.SUPABASE_SERVICE_KEY;
 
   if (action === 'google') {
     const redirectTo = SITE_URL + '?auth=callback';
