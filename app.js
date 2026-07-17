@@ -596,8 +596,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Product image using img_kw
     const imgWrap = document.getElementById('pmImgWrap');
     if(imgWrap) {
-      const kw = encodeURIComponent(p.img_kw || p.name || 'product');
-      imgWrap.innerHTML = `<img src="https://source.unsplash.com/800x200/?${kw}" class="w-full h-full object-cover" onerror="this.parentElement.style.display='none'">`;
+      const kw = encodeURIComponent((p.img_kw || p.name || 'product').trim().split(/\s+/).slice(0,3).join(','));
+      imgWrap.innerHTML = `<img src="https://loremflickr.com/800/200/${kw}" class="w-full h-full object-cover" onerror="this.parentElement.style.display='none'">`;
     }
 
     // Render suppliers (from product data as baseline)
@@ -1731,18 +1731,17 @@ function renderAnalysisWidgets() {
   const topProds = [...products].sort((a,b) => (b.score||0)-(a.score||0)).slice(0,2);
   const creativosEl = document.getElementById('analisis-creativos');
   if(creativosEl) {
-    const viewCounts = ['1.2M', '850K'];
     creativosEl.innerHTML = topProds.map((p, i) => {
-      const kw = encodeURIComponent(p.img_kw || p.name || 'product trending');
+      const kw = encodeURIComponent((p.img_kw || p.name || 'product').trim().split(/\s+/).slice(0,3).join(','));
       return `
         <div class="relative aspect-[9/16] bg-gray-900 rounded-xl overflow-hidden group cursor-pointer border border-gray-100">
-          <img src="https://source.unsplash.com/200x350/?${kw}&sig=${i}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-500 group-hover:scale-105">
+          <img src="https://loremflickr.com/200/350/${kw}?lock=${i+1}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-500 group-hover:scale-105">
           <div class="absolute inset-0 flex items-center justify-center">
             <div class="w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-md">
               <i data-lucide="play" class="w-4 h-4 text-black"></i>
             </div>
           </div>
-          <div class="absolute bottom-2 left-2 text-[8px] font-bold text-gray-900 bg-white/90 px-1.5 py-0.5 rounded shadow-sm">${viewCounts[i]} Vistas</div>
+          <div class="absolute bottom-2 left-2 text-[8px] font-bold text-gray-900 bg-white/90 px-1.5 py-0.5 rounded shadow-sm truncate max-w-[90%]">${p.name || 'Idea de creativo'}</div>
         </div>`;
     }).join('');
     lucide.createIcons();
