@@ -1,28 +1,32 @@
 // /api/products.js — Lee todos los productos de Supabase
 const SUPABASE_URL = 'https://rbrundkswmlbgkicdnty.supabase.co';
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
+const BASE_COLS = 'id,name,cat,score,change,change_num,plts,margin,margin_str,hot,regions,comp,price_min,price_str,history,rank,suppliers,updated_at';
+
+function fetchPage(cols, pageSize, offset) {
+  return fetch(
+    `${SUPABASE_URL}/rest/v1/products?select=${cols}&order=score.desc&limit=${pageSize}&offset=${offset}`,
+    { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+  );
+}
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Content-Type', 'application/json');
 
   try {
-    // Fetch all products using offset pagination
+    // img_url si la columna existe; fallback a columnas base
+    let cols = BASE_COLS + ',img_url';
     let allRaw = [];
     const pageSize = 1000;
     let offset = 0;
 
     while (true) {
-      const dbRes = await fetch(
-        `${SUPABASE_URL}/rest/v1/products?select=id,name,cat,score,change,change_num,plts,margin,margin_str,hot,regions,comp,price_min,price_str,history,rank,suppliers,updated_at&order=score.desc&limit=${pageSize}&offset=${offset}`,
-        {
-          headers: {
-            'apikey': SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`,
-          }
-        }
-      );
-
+      let dbRes = await fetchPage(cols, pageSize, offset);
+      if (!dbRes.ok && cols !== BASE_COLS) {
+        cols = BASE_COLS;
+        dbRes = await fetchPage(cols, pageSize, offset);
+      }
       const batch = await dbRes.json();
       if (!Array.isArray(batch) || batch.length === 0) break;
       allRaw = allRaw.concat(batch);
