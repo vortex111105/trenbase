@@ -597,7 +597,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const imgWrap = document.getElementById('pmImgWrap');
     if(imgWrap) {
       const kw = encodeURIComponent((p.img_kw || p.name || 'product').trim().split(/\s+/).slice(0,3).join(','));
-      imgWrap.innerHTML = `<img src="https://loremflickr.com/800/200/${kw}" class="w-full h-full object-cover" onerror="this.parentElement.style.display='none'">`;
+      const imgSrc = p.img_url || `https://loremflickr.com/800/200/${kw}`;
+      imgWrap.innerHTML = `<img src="${imgSrc}" class="w-full h-full object-cover" onerror="this.parentElement.style.display='none'">`;
     }
 
     // Render suppliers (from product data as baseline)
@@ -1733,9 +1734,10 @@ function renderAnalysisWidgets() {
   if(creativosEl) {
     creativosEl.innerHTML = topProds.map((p, i) => {
       const kw = encodeURIComponent((p.img_kw || p.name || 'product').trim().split(/\s+/).slice(0,3).join(','));
+      const cImg = p.img_url || `https://loremflickr.com/200/350/${kw}?lock=${i+1}`;
       return `
         <div class="relative aspect-[9/16] bg-gray-900 rounded-xl overflow-hidden group cursor-pointer border border-gray-100">
-          <img src="https://loremflickr.com/200/350/${kw}?lock=${i+1}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-500 group-hover:scale-105">
+          <img src="${cImg}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-500 group-hover:scale-105">
           <div class="absolute inset-0 flex items-center justify-center">
             <div class="w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-md">
               <i data-lucide="play" class="w-4 h-4 text-black"></i>

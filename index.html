@@ -994,11 +994,14 @@ document.getElementById('authModal').addEventListener('click', function(e) {
         grid.innerHTML = items.map(p => {
           const [chip, icon] = CAT_STYLE[p.cat] || ['bg-gray-100 text-gray-700', 'package'];
           const margin = p.margin ? `Margen: ${p.margin}%` : (p.margin_str ? `Margen: ${p.margin_str}` : '');
+          const media = p.img_url
+            ? `<img src="${p.img_url}" alt="${p.name || ''}" class="w-full h-full object-cover" onerror="this.remove()">`
+            : `<i data-lucide="${icon}" class="w-12 h-12 text-gray-300"></i>`;
           return `
         <div class="bg-white border-none rounded-[2rem] overflow-hidden saas-shadow hover:-translate-y-2 transition-transform duration-300">
           <div class="h-40 relative overflow-hidden bg-gradient-to-br from-gray-100 via-gray-50 to-white flex items-center justify-center">
             <span class="absolute top-3 right-3 z-10 ${chip} text-[10px] font-bold px-2 py-1 rounded-lg">Score: ${p.score ?? '—'}</span>
-            <i data-lucide="${icon}" class="w-12 h-12 text-gray-300"></i>
+            ${media}
           </div>
           <div class="p-5">
             <div class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">${p.cat || ''}</div>
